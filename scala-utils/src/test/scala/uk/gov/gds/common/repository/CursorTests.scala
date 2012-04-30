@@ -15,6 +15,8 @@ class CursorTests
   with MongoDatabaseBackedTest
   with PaginationSupport {
 
+  protected def databaseManager = MongoDatabaseManagerForTests
+
   test("A cursor with fewer items than the page size returns the correct number of results") {
     given("A collection containing 5 items")
     val items = TestData.createItems(5)
