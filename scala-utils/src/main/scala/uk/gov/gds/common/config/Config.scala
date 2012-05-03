@@ -6,9 +6,9 @@ import uk.gov.gds.common.logging.Logging
 
 object Config extends Logging {
 
-  private val testConfigFile = "/test-gds-scala-config.properties"
-  private val developmentConfigFile = "/development-gds-scala-config.properties"
-  private val productionConfigFile = "/etc/gds-scala-config.properties"
+  private val testConfigFile = "/test-gds-java-config.properties"
+  private val developmentConfigFile = "/development-gds-java-config.properties"
+  private val productionConfigFile = "/etc/gds-java-config.properties"
 
   private lazy val properties = loadConfig(configFileAsStream())
 
