@@ -8,7 +8,9 @@ object Config extends Logging {
 
   private val testConfigFile = "/test-gds-java-config.properties"
   private val developmentConfigFile = "/development-gds-java-config.properties"
-  private val productionConfigFile = "/etc/gds-java-config.properties"
+
+  // TODO: Currently ertp specific. Genericise
+  private val productionConfigFile = "/etc/gds-ertp-config.properties"
 
   private lazy val properties = loadConfig(configFileAsStream())
 
