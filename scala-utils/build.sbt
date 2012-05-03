@@ -20,7 +20,8 @@ libraryDependencies ++= Seq(
         "com.novus" %% "salat-core" % "0.0.8-SNAPSHOT",
         "net.liftweb" %% "lift-json-ext" % "2.4",
         "org.scalatra" %% "scalatra-auth" % "2.0.4",
-        "com.icegreen" % "greenmail" % "1.3"
+        "com.icegreen" % "greenmail" % "1.3",
+        "com.codahale" %% "jerkson" % "0.4.2"
     )
 
 parallelExecution in Test := false
