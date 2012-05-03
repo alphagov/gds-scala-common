@@ -2,9 +2,7 @@ organization := "uk.gov.gds"
 
 name := "gds-scala-utils"
 
-version := "0.1.0-SNAPSHOT"
-
-scalaVersion := "2.9.1"
+version := "0.3.0-SNAPSHOT"
 
 libraryDependencies ++= Seq(
         "com.mongodb.casbah" %% "casbah" % "2.1.5-1",
@@ -35,3 +33,7 @@ resolvers ++= Seq(
     "repo.codahale" at "http://repo.codahale.com",
     "Sonatype OSS Snapshots" at "http://oss.sonatype.org/content/repositories/snapshots/"
 )
+
+publishArtifact in (Test, packageBin) := true
+
+publishArtifact in (Test, packageSrc) := true
