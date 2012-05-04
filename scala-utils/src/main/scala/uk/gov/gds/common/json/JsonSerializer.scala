@@ -5,8 +5,8 @@ import uk.gov.gds.common.logging.Logging
 
 object JsonSerializer extends Logging {
 
-  def toJson[A](obj: A)(implicit m: Manifest[A]): String = try {
-    generate[A](obj)
+  def toJson(obj: AnyRef) = try {
+    generate(obj)
   }
   catch {
     case e: Exception =>
