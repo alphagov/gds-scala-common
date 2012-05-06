@@ -13,6 +13,6 @@ case "0.11.2" => "com.github.siasia" %% "xsbt-web-plugin" % "0.11.2-0.2.11"
 
 addSbtPlugin("com.github.mpeltonen" % "sbt-idea" % "1.0.0")
 
-addSbtPlugin("play" % "sbt-plugin" % "2.0")
+addSbtPlugin("play" % "sbt-plugin" % "2.0.1")
 
 //addSbtPlugin("gov.gds" %% "sbt-version-info-plugin" % "1.2.3")
