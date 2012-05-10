@@ -21,7 +21,7 @@ abstract class MongoRepositoryBase[A <: CaseClass](implicit m: Manifest[A])
 
   protected val collection: MongoCollection
   protected implicit val ctx = NoTypeHints
-  private lazy val emptyQuery = MongoDBObject()
+  protected lazy val emptyQuery = MongoDBObject()
 
   protected implicit def domainObj2mongoObj(o: A) = grater[A].asDBObject(o)
 
@@ -62,12 +62,16 @@ abstract class MongoRepositoryBase[A <: CaseClass](implicit m: Manifest[A])
 
   protected class SimpleMongoCursor(query: DBObject,
                                     pageSize: Int,
-                                    currentPage: Long)
+                                    currentPage: Long,
+                                    order: Option[MongoDBObject] = None)
     extends CursorBase[A](pageSize, currentPage) {
 
     def pageOfData = logAndTimeQuery[List[A]](
-      logMessage = "Mongo query: " + query + " with page:" + currentPage + " skip:" + skipSize + " page-size:" + pageSize,
-      query = collection.find(query).skip(skipSize).limit(pageSize)
+      logMessage = "Mongo query: " + query + " with page:" + currentPage + " skip:" + skipSize + " page-size:" + pageSize + " sort order " + order,
+      query = order match {
+        case Some(direction) => collection.find(query).sort(direction).skip(skipSize).limit(pageSize)
+        case _ => collection.find(query).skip(skipSize).limit(pageSize)
+      }
     )
 
     def total = logAndTimeQuery(
@@ -80,9 +84,17 @@ abstract class MongoRepositoryBase[A <: CaseClass](implicit m: Manifest[A])
 
     def apply(query: DBObject) = buildCursor(query)
 
+    def apply(query: DBObject, order: DBObject) = buildCursor(query = query, order = Some(order))
+
     def apply(query: DBObject, page: Int, pageSize: Int) = buildCursor(
       query = query,
       pageSize = pageSize
+    )
+
+    def apply(query: DBObject, page: Int, pageSize: Int, order: MongoDBObject) = buildCursor(
+      query = query,
+      pageSize = pageSize,
+      order = Some(order)
     )
 
     def apply(pageSize: Int = defaultPageSize) = buildCursor(
@@ -92,10 +104,13 @@ abstract class MongoRepositoryBase[A <: CaseClass](implicit m: Manifest[A])
 
     private def buildCursor(query: DBObject,
                             pageSize: Int = defaultPageSize,
-                            currentPage: Int = 1) =
+                            currentPage: Int = 1,
+                            order: Option[MongoDBObject] = None) =
       new SimpleMongoCursor(
         query = query,
         pageSize = pageSize,
-        currentPage = currentPage)
+        currentPage = currentPage,
+        order = order)
   }
+
 }

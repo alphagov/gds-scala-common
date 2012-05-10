@@ -5,8 +5,10 @@ import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.GivenWhenThen
 import uk.gov.gds.common.testutil.MongoDatabaseBackedTest
 import uk.gov.gds.common.pagination.PaginationSupport
-import uk.gov.gds.common.mongo.repository.SimpleMongoRepository
 import uk.gov.gds.common.mongo.MongoDatabaseManagerForTests
+import org.joda.time.DateTime
+import uk.gov.gds.common.mongo.repository._
+import uk.gov.gds.common.mongo.repository.DirectedQuery._
 
 class CursorTests
   extends FunSuite
@@ -226,11 +228,78 @@ class CursorTests
         item._1 should be(item._2)
     }
   }
+
+  test("we can retreive a cursor of data with a date based query") {
+    given("some test data that has a date component")
+    TestDateData.createItems(5)
+
+    when("we load them back using a date based query")
+    val cursor = TestDateData.load(lt(new DateTime))
+    val data = cursor.map(item => item)
+
+    then("we should have a data set of the correct size and content in the correct order")
+    cursor.total should be(5)
+    data(0).name should be("1")
+    data(1).name should be("2")
+    data(2).name should be("3")
+    data(3).name should be("4")
+    data(4).name should be("5")
+  }
+
+  test("we can retreive a cursor of data with a date based query - with order reveresed") {
+    
+    given("some test data that has a date component")
+    TestDateData.createItems(5)
+
+    when("we load them back using a date based query")
+    val cursor = TestDateData.load(lt(new DateTime), sort = Ascending)
+    val data = cursor.map(item => item)
+
+    then("we should have a data set of the correct size and content in the correct (revered) order")
+    cursor.total should be(5)
+    data(0).name should be("5")
+    data(1).name should be("4")
+    data(2).name should be("3")
+    data(3).name should be("2")
+    data(4).name should be("1")
+  }
+
+  test("we can retreive a cursor of data with a date based query - with query direction of greater than given date") {
+
+    given("some test data that has a date component")
+    TestDateData.createItems(5)
+
+    when("we load them back using a date based query")
+    val cursor = TestDateData.load(gt((new DateTime).minusHours(36)))
+    val data = cursor.map(item => item)
+
+    then("we should have a data set of the correct size and content in the correct (revered) order")
+    cursor.total should be(1)
+    data(0).name should be("1")
+  }
+
+  test("we can retreive a cursor of data with a date based query - with query direction of less than given date") {
+
+    given("some test data that has a date component")
+    TestDateData.createItems(5)
+
+    when("we load them back using a date based query")
+    val cursor = TestDateData.load(lt((new DateTime).minusHours(36)))
+    val data = cursor.map(item => item)
+
+    then("we should have a data set of the correct size and content in the correct (revered) order")
+    cursor.total should be(4)
+    data(0).name should be("2")
+    data(1).name should be("3")
+    data(2).name should be("4")
+    data(3).name should be("5")
+  }
 }
 
 private[repository] case class Data(key: Int, value: String)
 
 private[repository] object TestData extends SimpleMongoRepository[Data] {
+
   lazy val collection = MongoDatabaseManagerForTests("test-data")
 
   def createItems(numberOfItems: Int) = 1.to(numberOfItems).map {
@@ -238,3 +307,19 @@ private[repository] object TestData extends SimpleMongoRepository[Data] {
       store(Data(key = i, value = "test"))
   }
 }
+
+private[repository] case class DataWithTimestampField(name: String, dateOfBirth: DateTime) extends HasTimestamp {
+  override val timeStampProperty = "dateOfBirth"
+}
+
+private[repository] object TestDateData extends TimestampBasedMongoRepository[DataWithTimestampField] {
+  lazy val collection = MongoDatabaseManagerForTests("testDateData")
+  lazy val now = new DateTime
+  val databaseTimeStampProperty = "dateOfBirth"
+
+  def createItems(numberOfItems: Int) = 1.to(numberOfItems).map {
+    i => store(DataWithTimestampField(name = i.toString, dateOfBirth = now.minusDays(i)))
+  }
+
+}
+
