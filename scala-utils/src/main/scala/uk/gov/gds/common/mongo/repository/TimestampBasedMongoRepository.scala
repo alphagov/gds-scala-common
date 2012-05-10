@@ -1,25 +1,32 @@
 package uk.gov.gds.common.mongo.repository
 
 import com.novus.salat.CaseClass
-import uk.gov.gds.common.repository.HasIdentity
+import uk.gov.gds.common.repository.HasTimestamp
+import org.joda.time.DateTime
 
-abstract class TimestampBasedMongoRepository[A <: CaseClass with HasIdentity](implicit m: Manifest[A])
+object DirectedQuery extends SyntacticSugarForMongoQueries {
+  def gt(time: DateTime) = ("$gt" -> time)
+
+  def lt(time: DateTime) = ("$lt" -> time)
+}
+
+abstract class TimestampBasedMongoRepository[A <: CaseClass with HasTimestamp](implicit m: Manifest[A])
   extends SimpleMongoRepository[A] {
 
-  protected val databaseIdProperty: String
+  protected val databaseTimeStampProperty: String
 
-  override def load(id: String) = collection.findOne(where(databaseIdProperty -> id))
+  def load(q: (String, DateTime), sort: Order = Descending) = SimpleMongoCursor(
+    query((databaseTimeStampProperty, where(q))), order((databaseTimeStampProperty, sort.order))
+  )
 
-  override def load(ids: List[String]) = SimpleMongoCursor(where(databaseIdProperty -> in(ids)))
-
-  override def delete(id: String) = collection -= where(databaseIdProperty -> id)
-
-  override def startup() {
+  @inline override def startup() {
     super.startup()
-    createIdIndex()
+    createIndexes()
   }
 
-  protected def createIdIndex() {
-    addIndex(index(databaseIdProperty -> Ascending))
+  @inline override protected def createIndexes() {
+    super.createIndexes()
+    addIndex(index(databaseTimeStampProperty -> Ascending))
   }
+
 }
