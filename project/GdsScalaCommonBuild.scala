@@ -1,6 +1,6 @@
 import sbt._
 
-object RouterBuild extends Build {
+object GdsScalaCommonBuild extends Build {
  
   val root = Project("gds-common", file(".")).aggregate(commonScalaUtils)
   
