@@ -27,27 +27,23 @@ class ChangeLogTests
     changeLog.applyChangeScripts()
 
     then("The change log audit should contain the changescript that we applied")
-    val appliedChangeScripts = changeLog.all
+    changeLog.all.total should be(1)
 
-    appliedChangeScripts.total should be(1)
+    changeLog.load(simpleChangeScript) match {
+      case None =>
+        fail("Change script should have been created")
+      case Some(changeScriptAuditEntry) =>
+        changeScriptAuditEntry.status should be(ChangeScriptStatus.ok)
+        val dateOfApplication = changeScriptAuditEntry.runAt
 
-    val listMatchingOurName = appliedChangeScripts.pageOfData.filter(x => x.name.equals(simpleChangeScript.name))
-    listMatchingOurName.size should be(1)
-    val changeScriptAuditEntry = listMatchingOurName.head
-    val dateOfApplication = changeScriptAuditEntry.runAt
+        when("We re-run the change script application")
+        changeLog.applyChangeScripts()
 
-    changeScriptAuditEntry.status should be(ChangeScriptStatus.ok)
+        then("The same change script should not be applied twice")
+        changeLog.all.total should be(1)
 
-    when("We re-run the change script application")
-    changeLog.applyChangeScripts()
-
-    then("The same change script should not be applied twice")
-    appliedChangeScripts.total should be(1)
-    val newListMatchingOurName = appliedChangeScripts.pageOfData.filter(x => x.name.equals(simpleChangeScript.name))
-    val newDateOfApplication = newListMatchingOurName.head.runAt
-
-    newListMatchingOurName.size should be(1)
-    newDateOfApplication should be(dateOfApplication)
+        changeLog.load(simpleChangeScript).get.runAt should be(dateOfApplication)
+    }
   }
 
   test("Fails change script run if a changescript throws an exception") {
