@@ -12,7 +12,7 @@ abstract class ChangeLogRepository
     changeScripts.foreach(s => load(s).getOrElse(commitChangeScript(s)))
   }
 
-  def load(changeScript: ChangeScript): Option[ChangeScriptAudit] = load(changeScript.getClass.getName)
+  def load(changeScript: ChangeScript): Option[ChangeScriptAudit] = load(changeScript.name)
 
   override def deleteAll() {
     logger.warn("Deleting ALL changescripts from repository. I hope you knew what you were doing!")
@@ -20,15 +20,16 @@ abstract class ChangeLogRepository
   }
 
   private def commitChangeScript(changeScript: ChangeScript) {
-    logger.info("Applying change script " + changeScript.getClass.getSimpleName)
-
     try {
+      logger.info("Applying change script " + changeScript.shortName)
       changeScript.applyToDatabase()
-      store(ChangeScriptAudit(changeScript))
+      store(SuccessfulChangeScriptAudit(changeScript))
     }
     catch {
       case e: Exception =>
-        logger.error("Change script failed to apply " + changeScript.getClass.getName, e)
+        store(FailedChangeScriptAudit(changeScript))
+        logger.error("Change script failed to apply " + changeScript.shortName, e)
+
         throw new ChangeScriptFailedException
     }
   }
