@@ -4,7 +4,7 @@ import uk.gov.gds.common.mongo.MongoDatabaseManagerForTests
 
 class MigrationTestRepostiory(val changeScripts: List[ChangeScript]) extends ChangeLogRepository {
 
-  protected val databaseIdProperty = "scala-common-test-changelog"
+  protected val databaseIdProperty = "name"
 
   protected val collection = MongoDatabaseManagerForTests.collection("changelog")
 

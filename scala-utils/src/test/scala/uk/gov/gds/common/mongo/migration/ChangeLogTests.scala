@@ -29,7 +29,21 @@ class ChangeLogTests
     val appliedChangeScripts = changeLog.all
 
     appliedChangeScripts.total should be(1)
-    appliedChangeScripts.pageOfData.filter(x => x.name.equals(simpleChangeScript.getClass.getName)).size should be(1)
+
+    val listMatchingOurName = appliedChangeScripts.pageOfData.filter(x => x.name.equals(simpleChangeScript.getClass.getName))
+    listMatchingOurName.size should be(1)
+    val dateOfApplication = listMatchingOurName.head.runAt
+
+    when("We re-run the change script application")
+    changeLog.applyChangeScripts()
+
+    then("The same change script should not be applied twice")
+    appliedChangeScripts.total should be(1)
+    val newListMatchingOurName =  appliedChangeScripts.pageOfData.filter(x => x.name.equals(simpleChangeScript.getClass.getName))
+    val newDateOfApplication = newListMatchingOurName.head.runAt
+
+    newListMatchingOurName.size should be(1)
+    newDateOfApplication should be(dateOfApplication)
   }
 
   case class SimpleChangeScriptThatDoesNothing() extends ChangeScript {
