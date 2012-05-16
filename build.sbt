@@ -11,3 +11,11 @@ packageOptions in ThisBuild <+= (version, name) map { (v, n) =>
 }
 
 
+resolvers ++= Seq(
+    "GDS maven repo snapshots" at "http://alphagov.github.com/maven/snapshots",
+    "GDS maven repo releases" at "http://alphagov.github.com/maven/releases",
+    "Java.net Maven2 Repository" at "http://download.java.net/maven/2/",
+    "repo.novus snaps" at "http://repo.novus.com/snapshots/",
+    "repo.codahale" at "http://repo.codahale.com",
+    "Sonatype OSS Snapshots" at "http://oss.sonatype.org/content/repositories/snapshots/"
+)
