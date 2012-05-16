@@ -10,3 +10,10 @@ case class ChangeScriptAudit(name: String, runAt: DateTime) extends HasIdentity 
 object ChangeScriptAudit {
   def apply(changeScript: ChangeScript) = new ChangeScriptAudit(changeScript.getClass.getName, DateTime.now)
 }
+
+trait ChangeScript {
+
+  def applyToDatabase(): Unit
+}
+
+class ChangeScriptFailedException extends RuntimeException

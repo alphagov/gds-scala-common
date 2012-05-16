@@ -9,7 +9,7 @@ abstract class ChangeLogRepository
   with Logging {
 
   def applyChangeScripts() {
-    changeScripts.foreach(cs => load(cs).getOrElse(commitChangeScript(cs)))
+    changeScripts.foreach(s => load(s).getOrElse(commitChangeScript(s)))
   }
 
   def load(changeScript: ChangeScript): Option[ChangeScriptAudit] = load(changeScript.getClass.getName)
@@ -21,7 +21,15 @@ abstract class ChangeLogRepository
 
   private def commitChangeScript(changeScript: ChangeScript) {
     logger.info("Applying change script " + changeScript.getClass.getSimpleName)
-    changeScript.applyToDatabase()
-    store(ChangeScriptAudit(changeScript))
+
+    try {
+      changeScript.applyToDatabase()
+      store(ChangeScriptAudit(changeScript))
+    }
+    catch {
+      case e: Exception =>
+        logger.error("Change script failed to apply " + changeScript.getClass.getName, e)
+        throw new ChangeScriptFailedException
+    }
   }
 }

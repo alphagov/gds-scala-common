@@ -15,7 +15,7 @@ class MigrationTestRepostiory(val changeScripts: List[ChangeScript]) extends Cha
 }
 
 object MigrationTestRepostiory {
-  def apply(changeScripts: List[ChangeScript]) = new MigrationTestRepostiory(changeScripts)
+  def apply(changeScripts: ChangeScript*) = new MigrationTestRepostiory(changeScripts.toList)
 
   def apply(changeScript: ChangeScript) = new MigrationTestRepostiory(List(changeScript))
 
