@@ -1,13 +1,24 @@
 package uk.gov.gds.common.mongo.migration
 
-/**
- * Created with IntelliJ IDEA.
- * User: matwall
- * Date: 16/05/2012
- * Time: 11:46
- * To change this template use File | Settings | File Templates.
- */
+import uk.gov.gds.common.mongo.repository.IdentityBasedMongoRepository
+import uk.gov.gds.common.logging.Logging
 
-class ChangeLogRepository {
+abstract class ChangeLogRepository extends IdentityBasedMongoRepository[ChangeScriptAudit] with ChangeScripts with Logging {
 
+  def applyChangeScripts() {
+    changeScripts.foreach {
+      changeScript =>
+        val name = changeScript.getClass.getName
+
+        logger.info("Applying change script " + name)
+        changeScript.applyToDatabase()
+
+        store(ChangeScriptAudit(changeScript))
+    }
+  }
+
+  override def deleteAll() {
+    logger.warn("Deleting ALL changescripts from repository. I hope you knew what you were doing!")
+    super.deleteAll()
+  }
 }
