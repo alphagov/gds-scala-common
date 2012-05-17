@@ -22,7 +22,8 @@ resolvers ++= Seq(
     "Java.net Maven2 Repository" at "http://download.java.net/maven/2/",
     "repo.novus snaps" at "http://repo.novus.com/snapshots/",
     "repo.codahale" at "http://repo.codahale.com",
-    "Sonatype OSS Snapshots" at "http://oss.sonatype.org/content/repositories/snapshots/"
+    "Sonatype OSS Snapshots" at "http://oss.sonatype.org/content/repositories/snapshots/",
+    "repo scalatools releases" at "https://oss.sonatype.org/content/groups/scala-tools/"
 )
 
 publishArtifact in (Test, packageBin) := true
