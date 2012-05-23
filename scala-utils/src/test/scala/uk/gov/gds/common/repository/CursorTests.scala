@@ -15,7 +15,8 @@ class CursorTests
   with ShouldMatchers
   with GivenWhenThen
   with MongoDatabaseBackedTest
-  with PaginationSupport {
+  with PaginationSupport
+  with SyntacticSugarForMongoQueries{
 
   protected def databaseManager = MongoDatabaseManagerForTests
 
@@ -294,6 +295,20 @@ class CursorTests
     data(2).name should be("4")
     data(3).name should be("5")
   }
+
+  test("we can retreive a cursor of data with a date based query filtered by a field") {
+
+    given("some test data that has a date component")
+    TestDateData.createItems(5)
+
+    when("we load them back using a date based query")
+    val cursor = TestDateData.load(("name", "5"), lt((new DateTime)))
+    val data = cursor.map(item => item)
+
+    then("we should have a data set of the correct size and content in the correct (revered) order")
+    cursor.total should be(1)
+    data(0).name should be("5")
+  }
 }
 
 private[repository] case class Data(key: Int, value: String)
@@ -319,6 +334,9 @@ private[repository] object TestDateData extends TimestampBasedMongoRepository[Da
 
   def createItems(numberOfItems: Int) = 1.to(numberOfItems).map {
     i => store(DataWithTimestampField(name = i.toString, dateOfBirth = now.minusDays(i)))
+  }
+  def createOtherItems(numberOfItems: Int) = 1.to(numberOfItems).map {
+    i => store(DataWithTimestampField(name = (numberOfItems+1-i).toString, dateOfBirth = now.minusDays(i)))
   }
 
 }
