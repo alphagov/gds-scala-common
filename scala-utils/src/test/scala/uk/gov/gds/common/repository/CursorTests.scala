@@ -309,6 +309,22 @@ class CursorTests
     cursor.total should be(1)
     data(0).name should be("5")
   }
+
+  test("we can retreive a cursor of data with a date based query - with page size altered") {
+
+    given("some test data that has a date component")
+    TestDateData.createItems(5)
+
+    when("we load them back using a date based query")
+    val cursor = TestDateData.load(filter = ("name", in(TestDateData.keys)), timeQuery = lt((new DateTime).minusHours(36)), pageSize = 1)
+    val data = cursor.map(item => item)
+
+    then("we should have a data set of the correct size and content in the correct (revered) order")
+    cursor.total should be(4)
+    cursor.pageOfData.size should be(1)
+    data(0).name should be("2")
+  }
+
 }
 
 private[repository] case class Data(key: Int, value: String)
