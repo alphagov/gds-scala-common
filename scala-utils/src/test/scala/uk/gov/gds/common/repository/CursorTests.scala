@@ -235,7 +235,7 @@ class CursorTests
     TestDateData.createItems(5)
 
     when("we load them back using a date based query")
-    val cursor = TestDateData.load(lt(new DateTime))
+    val cursor = TestDateData.load(("name", in(TestDateData.keys)), lt(new DateTime))
     val data = cursor.map(item => item)
 
     then("we should have a data set of the correct size and content in the correct order")
@@ -253,7 +253,7 @@ class CursorTests
     TestDateData.createItems(5)
 
     when("we load them back using a date based query")
-    val cursor = TestDateData.load(lt(new DateTime), sort = Ascending)
+    val cursor = TestDateData.load(("name", in(TestDateData.keys)), lt(new DateTime), sort = Ascending)
     val data = cursor.map(item => item)
 
     then("we should have a data set of the correct size and content in the correct (revered) order")
@@ -271,7 +271,7 @@ class CursorTests
     TestDateData.createItems(5)
 
     when("we load them back using a date based query")
-    val cursor = TestDateData.load(gt((new DateTime).minusHours(36)))
+    val cursor = TestDateData.load(("name", in(TestDateData.keys)), gt((new DateTime).minusHours(36)))
     val data = cursor.map(item => item)
 
     then("we should have a data set of the correct size and content in the correct (revered) order")
@@ -285,7 +285,7 @@ class CursorTests
     TestDateData.createItems(5)
 
     when("we load them back using a date based query")
-    val cursor = TestDateData.load(lt((new DateTime).minusHours(36)))
+    val cursor = TestDateData.load(("name", in(TestDateData.keys)), lt((new DateTime).minusHours(36)))
     val data = cursor.map(item => item)
 
     then("we should have a data set of the correct size and content in the correct (revered) order")
@@ -331,6 +331,8 @@ private[repository] object TestDateData extends TimestampBasedMongoRepository[Da
   lazy val collection = MongoDatabaseManagerForTests("testDateData")
   lazy val now = new DateTime
   val databaseTimeStampProperty = "dateOfBirth"
+
+  lazy val keys = List("1","2","3","4","5")
 
   def createItems(numberOfItems: Int) = 1.to(numberOfItems).map {
     i => store(DataWithTimestampField(name = i.toString, dateOfBirth = now.minusDays(i)))
