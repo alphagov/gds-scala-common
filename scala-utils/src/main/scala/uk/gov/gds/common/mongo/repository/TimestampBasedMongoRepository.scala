@@ -15,9 +15,12 @@ abstract class TimestampBasedMongoRepository[A <: CaseClass with HasTimestamp](i
 
   protected val databaseTimeStampProperty: String
 
-  def load(filter:(String, Any), timeQuery: (String, DateTime), sort: Order = Descending, pageSize: Int = 100) = SimpleMongoCursor(
-    query(filter, (databaseTimeStampProperty, where(timeQuery))), order((databaseTimeStampProperty, sort.order)), pageSize
-  )
+  def load(filter: Seq[(String, Any)], timeQuery: (String, DateTime), sort: Order = Descending, pageSize: Int = 100) = {
+    val q = filter ++ Seq((databaseTimeStampProperty, where(timeQuery)))
+    SimpleMongoCursor(
+      query(q:_*), order((databaseTimeStampProperty, sort.order)), pageSize
+    )
+  }
 
   @inline override def startup() {
     super.startup()

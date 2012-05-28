@@ -235,7 +235,7 @@ class CursorTests
     TestDateData.createItems(5)
 
     when("we load them back using a date based query")
-    val cursor = TestDateData.load(("name", in(TestDateData.keys)), lt(new DateTime))
+    val cursor = TestDateData.load(filter = Seq(("name", in(TestDateData.keys))), timeQuery = lt(new DateTime))
     val data = cursor.map(item => item)
 
     then("we should have a data set of the correct size and content in the correct order")
@@ -253,7 +253,7 @@ class CursorTests
     TestDateData.createItems(5)
 
     when("we load them back using a date based query")
-    val cursor = TestDateData.load(("name", in(TestDateData.keys)), lt(new DateTime), sort = Ascending)
+    val cursor = TestDateData.load(filter = Seq(("name", in(TestDateData.keys))), timeQuery = lt(new DateTime), sort = Ascending)
     val data = cursor.map(item => item)
 
     then("we should have a data set of the correct size and content in the correct (revered) order")
@@ -271,7 +271,7 @@ class CursorTests
     TestDateData.createItems(5)
 
     when("we load them back using a date based query")
-    val cursor = TestDateData.load(("name", in(TestDateData.keys)), gt((new DateTime).minusHours(36)))
+    val cursor = TestDateData.load(filter = Seq(("name", in(TestDateData.keys))), timeQuery = gt((new DateTime).minusHours(36)))
     val data = cursor.map(item => item)
 
     then("we should have a data set of the correct size and content in the correct (revered) order")
@@ -285,7 +285,7 @@ class CursorTests
     TestDateData.createItems(5)
 
     when("we load them back using a date based query")
-    val cursor = TestDateData.load(("name", in(TestDateData.keys)), lt((new DateTime).minusHours(36)))
+    val cursor = TestDateData.load(filter = Seq(("name", in(TestDateData.keys))), timeQuery = lt((new DateTime).minusHours(36)))
     val data = cursor.map(item => item)
 
     then("we should have a data set of the correct size and content in the correct (revered) order")
@@ -302,7 +302,7 @@ class CursorTests
     TestDateData.createItems(5)
 
     when("we load them back using a date based query")
-    val cursor = TestDateData.load(("name", "5"), lt((new DateTime)))
+    val cursor = TestDateData.load(Seq(("name", "5")), lt((new DateTime)))
     val data = cursor.map(item => item)
 
     then("we should have a data set of the correct size and content in the correct (revered) order")
@@ -316,13 +316,29 @@ class CursorTests
     TestDateData.createItems(5)
 
     when("we load them back using a date based query")
-    val cursor = TestDateData.load(filter = ("name", in(TestDateData.keys)), timeQuery = lt((new DateTime).minusHours(36)), pageSize = 1)
+    val cursor = TestDateData.load(filter = Seq(("name", in(TestDateData.keys))), timeQuery = lt((new DateTime).minusHours(36)), pageSize = 1)
     val data = cursor.map(item => item)
 
     then("we should have a data set of the correct size and content in the correct (revered) order")
     cursor.total should be(4)
     cursor.pageOfData.size should be(1)
     data(0).name should be("2")
+  }
+
+  test("we can retreive a cursor of data with a date based query - with 2 colums filtered") {
+
+    given("some test data that has a date component")
+    Test2ColumnDateData.createItemsWithTwoFilterColumns(5)
+
+    when("we load them back using a date based query")
+    val cursor = Test2ColumnDateData.load(filter = Seq(("name", "1"), ("otherName", "11")), timeQuery = lt(new DateTime), pageSize = 1)
+    val data = cursor.map(item => item)
+
+    then("we should have a data set of the correct size and content in the correct) order")
+    cursor.total should be(1)
+    cursor.pageOfData.size should be(1)
+    data(0).name should be("1")
+    data(0).otherName should be("11")
   }
 
 }
@@ -343,6 +359,10 @@ private[repository] case class DataWithTimestampField(name: String, dateOfBirth:
   override val timeStampProperty = "dateOfBirth"
 }
 
+private[repository] case class DataWithTimestampFieldAndSecondColumn(name: String, otherName: String, dateOfBirth: DateTime) extends HasTimestamp {
+  override val timeStampProperty = "dateOfBirth"
+}
+
 private[repository] object TestDateData extends TimestampBasedMongoRepository[DataWithTimestampField] {
   lazy val collection = MongoDatabaseManagerForTests("testDateData")
   lazy val now = new DateTime
@@ -353,9 +373,21 @@ private[repository] object TestDateData extends TimestampBasedMongoRepository[Da
   def createItems(numberOfItems: Int) = 1.to(numberOfItems).map {
     i => store(DataWithTimestampField(name = i.toString, dateOfBirth = now.minusDays(i)))
   }
-  def createOtherItems(numberOfItems: Int) = 1.to(numberOfItems).map {
-    i => store(DataWithTimestampField(name = (numberOfItems+1-i).toString, dateOfBirth = now.minusDays(i)))
+  def createItemsWithTwoFilterColumns(numberOfItems: Int) = 1.to(numberOfItems).map {
+    i => store(DataWithTimestampField(name = i.toString, dateOfBirth = now.minusDays(i)))
   }
 
 }
 
+private[repository] object Test2ColumnDateData extends TimestampBasedMongoRepository[DataWithTimestampFieldAndSecondColumn] {
+  lazy val collection = MongoDatabaseManagerForTests("testDateDataTwoColumn")
+  lazy val now = new DateTime
+  val databaseTimeStampProperty = "dateOfBirth"
+
+  lazy val keys = List("1","2","3","4","5")
+
+  def createItemsWithTwoFilterColumns(numberOfItems: Int) = 1.to(numberOfItems).map {
+    i => store(DataWithTimestampFieldAndSecondColumn(name = i.toString, otherName = (i +10).toString, dateOfBirth = now.minusDays(i)))
+  }
+
+}
