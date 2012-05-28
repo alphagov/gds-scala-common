@@ -42,6 +42,8 @@ trait SyntacticSugarForMongoQueries {
 
   @inline protected def order[A <: String, B <: Int](t: (A, B)*) = (build[A, B] ++= t).result
 
+  @inline protected def ne(a: String) = query("$ne" -> a)
+
   @inline protected def in(ids: List[String]) = query("$in" -> ids)
 
   @inline protected def inOids(ids: List[String]) = query("$in" -> ids.map(oid(_)))
