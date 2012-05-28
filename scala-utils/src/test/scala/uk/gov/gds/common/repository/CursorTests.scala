@@ -8,7 +8,6 @@ import uk.gov.gds.common.pagination.PaginationSupport
 import uk.gov.gds.common.mongo.MongoDatabaseManagerForTests
 import org.joda.time.DateTime
 import uk.gov.gds.common.mongo.repository._
-import uk.gov.gds.common.mongo.repository.DirectedQuery._
 
 class CursorTests
   extends FunSuite
@@ -235,7 +234,7 @@ class CursorTests
     TestDateData.createItems(5)
 
     when("we load them back using a date based query")
-    val cursor = TestDateData.load(filter = Seq(("name", in(TestDateData.keys))), timeQuery = lt(new DateTime))
+    val cursor = TestDateData.load(filter = where("name" -> in(TestDateData.keys)), timeQuery = TestDateData.lt(new DateTime))
     val data = cursor.map(item => item)
 
     then("we should have a data set of the correct size and content in the correct order")
@@ -253,7 +252,7 @@ class CursorTests
     TestDateData.createItems(5)
 
     when("we load them back using a date based query")
-    val cursor = TestDateData.load(filter = Seq(("name", in(TestDateData.keys))), timeQuery = lt(new DateTime), sort = Ascending)
+    val cursor = TestDateData.load(filter = where("name" -> in(TestDateData.keys)), timeQuery = TestDateData.lt(new DateTime), sort = Ascending)
     val data = cursor.map(item => item)
 
     then("we should have a data set of the correct size and content in the correct (revered) order")
@@ -271,7 +270,7 @@ class CursorTests
     TestDateData.createItems(5)
 
     when("we load them back using a date based query")
-    val cursor = TestDateData.load(filter = Seq(("name", in(TestDateData.keys))), timeQuery = gt((new DateTime).minusHours(36)))
+    val cursor = TestDateData.load(filter = where("name" -> in(TestDateData.keys)), timeQuery = TestDateData.gt((new DateTime).minusHours(36)))
     val data = cursor.map(item => item)
 
     then("we should have a data set of the correct size and content in the correct (revered) order")
@@ -285,7 +284,7 @@ class CursorTests
     TestDateData.createItems(5)
 
     when("we load them back using a date based query")
-    val cursor = TestDateData.load(filter = Seq(("name", in(TestDateData.keys))), timeQuery = lt((new DateTime).minusHours(36)))
+    val cursor = TestDateData.load(filter = where("name" -> in(TestDateData.keys)), timeQuery = TestDateData.lt((new DateTime).minusHours(36)))
     val data = cursor.map(item => item)
 
     then("we should have a data set of the correct size and content in the correct (revered) order")
@@ -302,7 +301,7 @@ class CursorTests
     TestDateData.createItems(5)
 
     when("we load them back using a date based query")
-    val cursor = TestDateData.load(Seq(("name", "5")), lt((new DateTime)))
+    val cursor = TestDateData.load(where("name" -> "5"), TestDateData.lt(new DateTime))
     val data = cursor.map(item => item)
 
     then("we should have a data set of the correct size and content in the correct (revered) order")
@@ -316,7 +315,7 @@ class CursorTests
     TestDateData.createItems(5)
 
     when("we load them back using a date based query")
-    val cursor = TestDateData.load(filter = Seq(("name", in(TestDateData.keys))), timeQuery = lt((new DateTime).minusHours(36)), pageSize = 1)
+    val cursor = TestDateData.load(filter = where("name" -> in(TestDateData.keys)), timeQuery = TestDateData.lt((new DateTime).minusHours(36)), pageSize = 1)
     val data = cursor.map(item => item)
 
     then("we should have a data set of the correct size and content in the correct (revered) order")
@@ -331,7 +330,7 @@ class CursorTests
     Test2ColumnDateData.createItemsWithTwoFilterColumns(5)
 
     when("we load them back using a date based query")
-    val cursor = Test2ColumnDateData.load(filter = Seq(("name", "1"), ("otherName", "11")), timeQuery = lt(new DateTime), pageSize = 1)
+    val cursor = Test2ColumnDateData.load(filter = where("name" -> "1", "otherName" -> "11"), timeQuery = TestDateData.lt(new DateTime), pageSize = 1)
     val data = cursor.map(item => item)
 
     then("we should have a data set of the correct size and content in the correct) order")
@@ -371,9 +370,6 @@ private[repository] object TestDateData extends TimestampBasedMongoRepository[Da
   lazy val keys = List("1","2","3","4","5")
 
   def createItems(numberOfItems: Int) = 1.to(numberOfItems).map {
-    i => store(DataWithTimestampField(name = i.toString, dateOfBirth = now.minusDays(i)))
-  }
-  def createItemsWithTwoFilterColumns(numberOfItems: Int) = 1.to(numberOfItems).map {
     i => store(DataWithTimestampField(name = i.toString, dateOfBirth = now.minusDays(i)))
   }
 
