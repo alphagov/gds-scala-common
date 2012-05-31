@@ -11,7 +11,7 @@ import com.mongodb.WriteConcern.{NORMAL, SAFE}
 
 abstract class MongoDatabaseManager extends ContainerEventListener with Logging {
 
-  val databaseName = Config("mongo.database.name")
+
   lazy val database: MongoDB = mongoConnection(databaseName)
   val changeLogRepository = new ChangeLogRepository(this)
   protected val repositoriesToInitialiseOnStartup: List[MongoRepositoryBase[_]]
@@ -19,6 +19,8 @@ abstract class MongoDatabaseManager extends ContainerEventListener with Logging 
   private lazy val mongoConnection = MongoConnection(databaseHosts.map(new ServerAddress(_)))
 
   def databaseChangeScripts: List[ChangeScript] = Nil
+
+  protected def databaseName = Config("mongo.database.name")
 
   override def startup() {
     initializeDatabase()
