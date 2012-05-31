@@ -1,11 +1,11 @@
-package uk.gov.gds.common.mongo.migration
+package uk.gov.gds.common.mongo
 
+import migration.{ChangeScriptFailedException, ChangeScript, ChangeScriptStatus}
 import org.scalatest.matchers.ShouldMatchers
 import uk.gov.gds.common.testutil.MongoDatabaseBackedTest
-import uk.gov.gds.common.mongo.MongoDatabaseManagerForTests
-import org.scalatest.{FunSuite, GivenWhenThen}
+import org.scalatest.{GivenWhenThen, FunSuite}
 
-class ChangeLogTests
+class MongoDatabaseManagerTests
   extends FunSuite
   with ShouldMatchers
   with GivenWhenThen
@@ -18,18 +18,19 @@ class ChangeLogTests
 
   test("Changelog audit stores changescript information") {
     given("A database with no changescripts applied but with one script to apply")
-    val changeLog = MigrationTestRepostiory(simpleChangeScript)
-
     then("the audit table should be empty")
-    changeLog.all.total should be(0)
+
+    val databaseManager = DatabaseManager(simpleChangeScript)
+
+    databaseManager.appliedChangeScripts.total should be(0)
 
     when("We apply the changescript")
-    changeLog.applyChangeScripts()
+    databaseManager.initializeDatabase()
 
     then("The change log audit should contain the changescript that we applied")
-    changeLog.all.total should be(1)
+    databaseManager.appliedChangeScripts.total should be(1)
 
-    changeLog.load(simpleChangeScript) match {
+    databaseManager.changeScriptAuditFor(simpleChangeScript.name) match {
       case None =>
         fail("Change script should have been created")
       case Some(changeScriptAuditEntry) =>
@@ -37,26 +38,26 @@ class ChangeLogTests
         val dateOfApplication = changeScriptAuditEntry.runAt
 
         when("We re-run the change script application")
-        changeLog.applyChangeScripts()
+        databaseManager.initializeDatabase()
 
         then("The same change script should not be applied twice")
-        changeLog.all.total should be(1)
+        databaseManager.appliedChangeScripts.total should be(1)
 
-        changeLog.load(simpleChangeScript).get.runAt should be(dateOfApplication)
+        databaseManager.changeScriptAuditFor(simpleChangeScript.name).get.runAt should be(dateOfApplication)
     }
   }
 
   test("Fails change script run if a changescript throws an exception") {
     given("A database with no changescripts applied but with two set to apply, with the first one likely to fail")
-    val changeLog = MigrationTestRepostiory(changeScriptThatThrowsAnException, simpleChangeScript)
+    val databaseManager = DatabaseManager(changeScriptThatThrowsAnException, simpleChangeScript)
 
     when("we apply the changescripts")
-    evaluating(changeLog.applyChangeScripts()) should produce[ChangeScriptFailedException]
+    evaluating(databaseManager.initializeDatabase()) should produce[ChangeScriptFailedException]
 
     then("None of the change scripts should have applied due to the exception, and an exception should have been thrown")
-    changeLog.all.total should be(1)
+    databaseManager.appliedChangeScripts.total should be(1)
 
-    changeLog.load(changeScriptThatThrowsAnException) match {
+    databaseManager.changeScriptAuditFor(changeScriptThatThrowsAnException.name) match {
       case None => fail("Should have found an audit entry for " + changeScriptThatThrowsAnException.name)
       case Some(changeScriptAuditEntry) => changeScriptAuditEntry.status should be(ChangeScriptStatus.failed)
     }
@@ -64,17 +65,23 @@ class ChangeLogTests
 
   test("Audit records failed change scripts") {
     given("A database with no changescripts applied, but with one to apply that will fail")
-    val changeLog = MigrationTestRepostiory(changeScriptThatThrowsAnException)
+    val databaseManager = DatabaseManager(changeScriptThatThrowsAnException)
 
     when("we apply the changescripts")
-    evaluating(changeLog.applyChangeScripts()) should produce[ChangeScriptFailedException]
+    evaluating(databaseManager.initializeDatabase()) should produce[ChangeScriptFailedException]
 
     then("The status of the change script in the audit should be recorded as failed")
 
-    changeLog.load(changeScriptThatThrowsAnException) match {
+    databaseManager.changeScriptAuditFor(changeScriptThatThrowsAnException) match {
       case None => fail("Should have found an audit entry for " + changeScriptThatThrowsAnException.name)
       case Some(changeScriptAuditEntry) => changeScriptAuditEntry.status should be(ChangeScriptStatus.failed)
     }
+  }
+
+  case class DatabaseManager(changeScripts: ChangeScript*) extends MongoDatabaseManager {
+    protected val repositoriesToInitialiseOnStartup = Nil
+
+    override def databaseChangeScripts = changeScripts.toList
   }
 
   case class SimpleChangeScriptThatDoesNothing() extends ChangeScript {

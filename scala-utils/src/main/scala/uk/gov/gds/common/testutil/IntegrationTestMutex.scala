@@ -2,7 +2,7 @@ package uk.gov.gds.common.testutil
 
 import java.util.concurrent.locks.ReentrantLock
 
-private[testutil] object IntegrationTestMutex {
+object IntegrationTestMutex {
 
   private val mutex = new ReentrantLock()
 

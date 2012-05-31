@@ -2,7 +2,7 @@ organization := "uk.gov.gds"
 
 name := "gds-scala-utils"
 
-version := "0.5.6-SNAPSHOT"
+version := "0.5.7-SNAPSHOT"
 
 libraryDependencies ++= Seq(
         "com.mongodb.casbah" %% "casbah" % "2.1.5-1",

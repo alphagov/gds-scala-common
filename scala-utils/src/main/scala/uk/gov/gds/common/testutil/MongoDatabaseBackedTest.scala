@@ -13,6 +13,7 @@ trait MongoDatabaseBackedTest extends BeforeAndAfterEach with Logging {
     IntegrationTestMutex.lock()
     super.beforeEach()
     databaseManager.emptyDatabase()
+    databaseManager.initializeDatabase()
   }
 
   override protected def afterEach() {

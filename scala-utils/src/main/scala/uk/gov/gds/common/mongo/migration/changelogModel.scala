@@ -29,10 +29,10 @@ trait ChangeScript {
   def applyToDatabase(): Unit
 
   // Override in implementors if you want the migration to fail based on custom checks that you have written.
-  // The framework will run applyToDatabase() first and then run checkHasBeenAppliedToDatabase
+  // The framework will run applyToDatabase() first and then run hasBeenAppliedToDatabase
   // The default case assumes that if applyToDatabase does not throw an exception the script has been applied
   // and no further checks are required. Override if you want to change this behaviour
-  def checkHasBeenAppliedToDatabase(): Boolean = true
+  def hasBeenAppliedToDatabase: Boolean = true
 }
 
 class ChangeScriptFailedException extends RuntimeException
