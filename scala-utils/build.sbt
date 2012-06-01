@@ -2,7 +2,7 @@ organization := "uk.gov.gds"
 
 name := "gds-scala-utils"
 
-version := "0.5.7-SNAPSHOT"
+version := "0.5.8-SNAPSHOT"
 
 libraryDependencies ++= Seq(
         "com.mongodb.casbah" %% "casbah" % "2.1.5-1",
@@ -12,7 +12,8 @@ libraryDependencies ++= Seq(
         "joda-time" % "joda-time" % "2.1",
         "org.joda" % "joda-convert" % "1.2",
         "com.novus" %% "salat-core" % "0.0.8-SNAPSHOT",
-        "org.apache.httpcomponents" % "httpclient" % "4.1.2"
+        "org.apache.httpcomponents" % "httpclient" % "4.1.2",
+        "play" % "play_2.9.1" % "2.0.1"
     )
 
 parallelExecution in Test := false
