@@ -35,4 +35,4 @@ trait ChangeScript {
   def hasBeenAppliedToDatabase: Boolean = true
 }
 
-class ChangeScriptFailedException extends RuntimeException
+class ChangeScriptFailedException(e: Exception) extends RuntimeException(e)

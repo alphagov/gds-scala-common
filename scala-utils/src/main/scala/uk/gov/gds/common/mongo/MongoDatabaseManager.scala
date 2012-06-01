@@ -104,7 +104,7 @@ abstract class MongoDatabaseManager extends ContainerEventListener with Logging 
         changeLogRepository.store(FailedChangeScriptAudit(changeScript))
         logger.error("Change script failed to apply " + changeScript.shortName, e)
 
-        throw new ChangeScriptFailedException
+        throw new ChangeScriptFailedException(e)
     }
   }
 
