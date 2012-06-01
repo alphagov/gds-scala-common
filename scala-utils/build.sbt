@@ -13,7 +13,7 @@ libraryDependencies ++= Seq(
         "org.joda" % "joda-convert" % "1.2",
         "com.novus" %% "salat-core" % "0.0.8-SNAPSHOT",
         "org.apache.httpcomponents" % "httpclient" % "4.1.2",
-        "play" % "play_2.9.1" % "2.0.1"
+        "play" %% "play" % "2.0.1"
     )
 
 parallelExecution in Test := false
@@ -27,6 +27,7 @@ resolvers ++= Seq(
     "Sonatype OSS Snapshots" at "http://oss.sonatype.org/content/repositories/snapshots/",
     "repo scalatools releases" at "https://oss.sonatype.org/content/groups/scala-tools/"
 )
+
 
 publishArtifact in (Test, packageBin) := true
 

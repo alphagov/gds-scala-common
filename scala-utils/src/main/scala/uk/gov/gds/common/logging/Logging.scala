@@ -1,7 +1,7 @@
 package uk.gov.gds.common.logging
 
-import org.slf4j.LoggerFactory
+import play.api.Logger
 
 trait Logging {
-  val logger = LoggerFactory.getLogger(this.getClass)
+  val logger = Logger
 }

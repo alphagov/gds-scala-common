@@ -10,7 +10,6 @@ packageOptions in ThisBuild <+= (version, name) map { (v, n) =>
   )
 }
 
-
 resolvers ++= Seq(
     "GDS maven repo snapshots" at "http://alphagov.github.com/maven/snapshots",
     "GDS maven repo releases" at "http://alphagov.github.com/maven/releases",
