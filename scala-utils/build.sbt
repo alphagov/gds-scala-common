@@ -5,6 +5,7 @@ name := "gds-scala-utils"
 version := "0.5.8-SNAPSHOT"
 
 libraryDependencies ++= Seq(
+        "play" %% "play" % "2.0.1",
         "com.mongodb.casbah" %% "casbah" % "2.1.5-1",
         "javax.servlet" % "servlet-api" % "2.5" % "provided",
         "org.scalatest" %% "scalatest" % "1.7.2",
@@ -12,8 +13,7 @@ libraryDependencies ++= Seq(
         "joda-time" % "joda-time" % "2.1",
         "org.joda" % "joda-convert" % "1.2",
         "com.novus" %% "salat-core" % "0.0.8-SNAPSHOT",
-        "org.apache.httpcomponents" % "httpclient" % "4.1.2",
-        "play" %% "play" % "2.0.1"
+        "org.apache.httpcomponents" % "httpclient" % "4.1.2"
     )
 
 parallelExecution in Test := false
