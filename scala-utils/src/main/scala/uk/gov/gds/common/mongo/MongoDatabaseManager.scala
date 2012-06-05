@@ -65,6 +65,8 @@ abstract class MongoDatabaseManager extends ContainerEventListener with Logging 
         logger.info("Initialising repository " + repository.getClass.getSimpleName)
         repository.startup()
     }
+
+    logger.info("All repositories initialised")
   }
 
   private def withWriteConcern(writeConcern: WriteConcern)(block: => Unit) {
