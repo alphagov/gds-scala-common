@@ -19,6 +19,7 @@ libraryDependencies ++= Seq(
 parallelExecution in Test := false
 
 resolvers ++= Seq(
+    "Typesafe releases" at "http://repo.typesafe.com/typesafe/releases",
     "GDS maven repo snapshots" at "http://alphagov.github.com/maven/snapshots",
     "GDS maven repo releases" at "http://alphagov.github.com/maven/releases",
     "Java.net Maven2 Repository" at "http://download.java.net/maven/2/",
