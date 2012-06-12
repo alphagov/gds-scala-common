@@ -5,6 +5,7 @@ import org.apache.http.conn.scheme.SchemeRegistry
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.client.methods.HttpPost
+import org.apache.http.entity.StringEntity
 import org.apache.http.client.entity.UrlEncodedFormEntity
 import org.apache.http.message.BasicNameValuePair
 import org.apache.http.client.methods.HttpUriRequest
@@ -72,6 +73,18 @@ abstract class ApacheHttpClient extends ContainerEventListener with UrlEncoding 
     val postRequest = new HttpPost(targetUrl(path))
 
     postRequest.setEntity(jsonToPostOverWire(jsonParams))
+    execute(postRequest)
+  }
+
+  def postPlainJson(path: String, json: String) = {
+    val postRequest = new HttpPost(targetUrl(path))
+
+    val jsonEntity = new StringEntity(json)
+    jsonEntity.setContentType("application/json")
+
+    postRequest.setEntity(jsonEntity)
+    postRequest.setHeader("Content-Type", "application/json")
+
     execute(postRequest)
   }
 
