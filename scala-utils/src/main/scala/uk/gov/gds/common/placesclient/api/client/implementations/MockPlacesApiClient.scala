@@ -35,7 +35,6 @@ object MockPlacesApiClient extends PlacesApiClient {
   def numberAddressesFound(postcode: String, lineOne: Option[String]) = getAddresses(postcode, lineOne).size
 
   def getAddresses(postcode: String, lineOne: Option[String]): List[Address] = {
-
     mockAddressList.foreach {
       mockAddress =>
 
@@ -47,7 +46,7 @@ object MockPlacesApiClient extends PlacesApiClient {
         }
     }
 
-    throw new ApiResponseException(404, "No results found for " + postcode)
+    Nil
   }
 
   private lazy val mockAddressList = List(
