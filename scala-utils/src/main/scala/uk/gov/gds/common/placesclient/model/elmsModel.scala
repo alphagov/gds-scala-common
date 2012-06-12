@@ -45,8 +45,17 @@ object Authority {
 }
 
 case class LicenceInteraction(lgilId: Int,
+                              interactionType: String,
                               lgilSubId: Int,
-                              licenceInteractionName: String)
+                              licenceInteractionName: String,
+                              form: Option[LicenceForm] = None,
+                              externalUrl: Option[String] = None)
+
+object LicenceInteraction {
+  def lgslIdToInteractionTypeMap = { Map[Int, String](0 -> "apply", 4 -> "pay for", 11 -> "change", 14 -> "renew",
+    30 -> "dont know yet", 31 -> "dont know yet", 32 -> "dont know yet")
+  }
+}
 
 case class AuthorityLicenceInteraction(agencyId: Int,
                                        licenceId: Int, mode: Int,
@@ -55,5 +64,10 @@ case class AuthorityLicenceInteraction(agencyId: Int,
 }
 
 case class AuthorityLicenceInformation(authority: Authority, licence: ElmsLicence,
-                                       authorityLicenceInteractions: Map[Int, Set[AuthorityLicenceInteraction]]) {
+                                       authorityLicenceInteractions: Map[String, Set[AuthorityLicenceInteraction]]) {
+}
+
+case class LicenceForm(name: String, subForm: Int, formRefNo: Long, fileName: String, fileSizeInBytes: Long,
+                       formVersion: Int) {
+
 }
