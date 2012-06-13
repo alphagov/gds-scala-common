@@ -26,17 +26,17 @@ object RealPlacesApiClient extends PlacesApiClient {
   def numberAddressesFound(postcode: String, lineOne: Option[String]) = getAddresses(postcode, lineOne).size
 
   def getLocalAuthority(postcode: String): Option[LocalAuthority] = {
-    val response = PlacesHttpClient.getWithResponse("/local-authority", Map("postcode" -> postcode))
+    val response = PlacesHttpClient.getWithResponse("/authority", Map("postcode" -> postcode))
     fromJson[Option[LocalAuthority]](EntityUtils.toString(response.getEntity, "UTF-8"))
   }
 
   def getLocalAuthority(address: Address) = {
-    val response = PlacesHttpClient.getWithResponse("/local-authority", Map("postcode" -> address.postcode))
+    val response = PlacesHttpClient.getWithResponse("/authority", Map("postcode" -> address.postcode))
     fromJson[Option[LocalAuthority]](EntityUtils.toString(response.getEntity, "UTF-8"))
   }
 
   def getLocalAuthorityBySnac(snac: String) = {
-    val response = PlacesHttpClient.getWithResponse("/local-authority/" + snac)
+    val response = PlacesHttpClient.getWithResponse("/authority/ertp/" + snac)
     fromJson[Option[LocalAuthority]](EntityUtils.toString(response.getEntity, "UTF-8"))
   }
 }
