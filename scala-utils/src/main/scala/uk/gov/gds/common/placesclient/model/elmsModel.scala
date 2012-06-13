@@ -64,7 +64,7 @@ case class AuthorityLicenceInteraction(agencyId: Int,
 }
 
 case class AuthorityLicenceInformation(authority: Authority, licence: ElmsLicence,
-                                       authorityLicenceInteractions: Map[String, Set[AuthorityLicenceInteraction]]) {
+                                       authorityLicenceInteractions: Map[String, List[AuthorityLicenceInteraction]]) {
 }
 
 case class LicenceForm(name: String, subForm: Int, formRefNo: Long, fileName: String, fileSizeInBytes: Long,
