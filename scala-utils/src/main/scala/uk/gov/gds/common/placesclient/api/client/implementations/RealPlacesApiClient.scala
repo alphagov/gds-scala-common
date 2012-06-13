@@ -13,12 +13,8 @@ object RealPlacesApiClient extends PlacesApiClient {
       case _ => Map.empty
     })
 
-    val response = PlacesHttpClient.getWithResponse("/address", params)
-
-    if (response.getStatusLine.getStatusCode == 404)
-      List.empty
-    else
-      fromJson[List[Address]](EntityUtils.toString(response.getEntity, "UTF-8"))
+    val response = PlacesHttpClient.get("/address", params)
+    fromJson[List[Address]](response)
   }
 
   def addressExists(postcode: String, lineOne: Option[String]) = getAddresses(postcode, lineOne).nonEmpty
@@ -26,18 +22,18 @@ object RealPlacesApiClient extends PlacesApiClient {
   def numberAddressesFound(postcode: String, lineOne: Option[String]) = getAddresses(postcode, lineOne).size
 
   def getLocalAuthority(postcode: String): Option[LocalAuthority] = {
-    val response = PlacesHttpClient.getWithResponse("/authority", Map("postcode" -> postcode))
-    fromJson[Option[LocalAuthority]](EntityUtils.toString(response.getEntity, "UTF-8"))
+    val response = PlacesHttpClient.get("/authority", Map("postcode" -> postcode))
+    fromJson[Option[LocalAuthority]](response)
   }
 
   def getLocalAuthority(address: Address) = {
-    val response = PlacesHttpClient.getWithResponse("/authority", Map("postcode" -> address.postcode))
-    fromJson[Option[LocalAuthority]](EntityUtils.toString(response.getEntity, "UTF-8"))
+    val response = PlacesHttpClient.get("/authority", Map("postcode" -> address.postcode))
+    fromJson[Option[LocalAuthority]](response)
   }
 
   def getLocalAuthorityBySnac(snac: String) = {
-    val response = PlacesHttpClient.getWithResponse("/authority/ertp/" + snac)
-    fromJson[Option[LocalAuthority]](EntityUtils.toString(response.getEntity, "UTF-8"))
+    val response = PlacesHttpClient.get("/authority/ertp/" + snac)
+    fromJson[Option[LocalAuthority]](response)
   }
 }
 

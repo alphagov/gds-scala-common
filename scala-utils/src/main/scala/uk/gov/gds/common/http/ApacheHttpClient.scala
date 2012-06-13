@@ -42,10 +42,6 @@ abstract class ApacheHttpClient extends ContainerEventListener with UrlEncoding 
     execute(new HttpGet(targetUrl(path, paramsToUrlParams(params))))
   }
 
-  def getWithResponse(path: String, params: Map[String, Any] = Map.empty) = {
-    executeWithResponse(new HttpGet(targetUrl(path, paramsToUrlParams(params))))
-  }
-
   def post(path: String) = execute(new HttpPost(targetUrl(path)))
 
   def post(path: String, params: Map[String, String]) = {
@@ -119,29 +115,18 @@ abstract class ApacheHttpClient extends ContainerEventListener with UrlEncoding 
 
   private def addParam(name: String, value: String) = urlEncode(name) + "=" + urlEncode(value)
 
-  def postWithResponse(path: String) = executeWithResponse(new HttpPost(targetUrl(path)))
-
   private def execute(request: HttpUriRequest) = {
-    logger.info("About to query: " + request.getMethod + " " + request.getURI)
-
-    val response = httpClient.execute(request)
-    val statusCode = response.getStatusLine.getStatusCode
-
-    if (statusCode < 200 || statusCode >= 400) {
-      throw new ApiResponseException(statusCode = statusCode, message = EntityUtils.toString(response.getEntity, "UTF-8"))
-    }
-
-    EntityUtils.toString(response.getEntity, "UTF-8")
-  }
-
-  private def executeWithResponse(request: HttpUriRequest) = {
     logger.trace("About to query: " + request.getMethod + " " + request.getURI)
 
     val response = httpClient.execute(request)
     val statusCode = response.getStatusLine.getStatusCode
 
     logger.info(request.getMethod + " " + request.getURI + " => " + statusCode)
-    response
+
+    if (statusCode >= 400)
+      throw new ApiResponseException(statusCode = statusCode, message = EntityUtils.toString(response.getEntity, "UTF-8"))
+
+    EntityUtils.toString(response.getEntity, "UTF-8")
   }
 
   private def jsonToPostOverWire(json: String) = new UrlEncodedFormEntity(List(new BasicNameValuePair("json", json)), "UTF-8")
