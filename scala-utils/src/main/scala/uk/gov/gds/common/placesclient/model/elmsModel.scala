@@ -69,7 +69,12 @@ case class AuthorityLicenceInformation(authority: Authority, licence: ElmsLicenc
                                        authorityLicenceInteractions: Map[String, List[AuthorityLicenceInteraction]]) {
 }
 
-case class LicenceForm(name: String, subForm: Int, formRefNo: Long, fileName: String, fileSizeInBytes: Long,
+case class LicenceForm(name: String,
+                       subForm: Int,
+                       formRefNo: Long,
+                       fileName: String,
+                       fileUrl: Option[String] = None,
+                       fileSizeInBytes: Long,
                        formVersion: Int) {
 
 }
