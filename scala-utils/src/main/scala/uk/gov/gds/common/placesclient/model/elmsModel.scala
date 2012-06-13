@@ -10,6 +10,7 @@ case class ElmsLicence(name: String,
                        legalReferenceNumber: String,
                        legislationName: String,
                        urlSlug: String,
+                       licenceUrl: Option[String] = None,
                        lgslId: Int,
                        elmsAdminArea: ElmsAdminArea) extends HasIdentity {
 
@@ -25,6 +26,7 @@ case class Licences(licences: java.util.Map[Int, Authority])
 case class Authority(name: String,
                      agencyId: Int,
                      urlSlug: String,
+                     authorityUrl: Option[String] = None,
                      snacCode: Option[String] = None,
                      level: String,
                      country: Option[String] = None,
