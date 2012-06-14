@@ -38,15 +38,18 @@ case class Authority(name: String,
 extends HasIdentity {
   def id = urlSlug
 
-  def covers(local: Authority): Boolean = {
-    val co = if (countries.get.isInstanceOf[BasicDBList])
-      countries.get.asInstanceOf[com.mongodb.BasicDBList].toArray.toSet
-    else countries.get
-    val sn = if (snacCodes.get.isInstanceOf[BasicDBList])
-      snacCodes.get.asInstanceOf[com.mongodb.BasicDBList].toArray.toSet
-    else snacCodes.get ;
-    co.contains(local.country.get) && (sn.isEmpty || sn.contains(local.snacCode.get))
-  }
+  def covers(local: Authority): Boolean =
+    countries != None &&
+    {
+      val co = if (countries.get.isInstanceOf[BasicDBList])
+        countries.get.asInstanceOf[com.mongodb.BasicDBList].toArray.toSet
+      else countries.get
+      val sn = if (snacCodes.get.isInstanceOf[BasicDBList])
+        snacCodes.get.asInstanceOf[com.mongodb.BasicDBList].toArray.toSet
+      else snacCodes.get ;
+      co.contains(local.country.get) && (sn.isEmpty || sn.contains(local.snacCode.get))
+    }
+
 }
 
 object Authority {
