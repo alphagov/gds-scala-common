@@ -34,6 +34,8 @@ object MockPlacesApiClient extends PlacesApiClient {
 
   def numberAddressesFound(postcode: String, lineOne: Option[String]) = getAddresses(postcode, lineOne).size
 
+  def getAuthorityByUrlSlug(urlSlug: String) = None
+
   def getAddresses(postcode: String, lineOne: Option[String]): List[Address] = {
     mockAddressList.foreach {
       mockAddress =>

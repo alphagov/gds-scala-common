@@ -1,7 +1,7 @@
 package uk.gov.gds.placesclient.api.client
 
 import implementations.{RealPlacesApiClient, MockPlacesApiClient}
-import uk.gov.gds.placesclient.model.{LocalAuthority, Address}
+import uk.gov.gds.placesclient.model.{Authority, LocalAuthority, Address}
 
 trait PlacesApiClient {
   def getAddresses(postcode: String, lineOne: Option[String]): List[Address]
@@ -15,6 +15,8 @@ trait PlacesApiClient {
   def getLocalAuthority(address: Address): Option[LocalAuthority]
 
   def getLocalAuthorityBySnac(snac: String): Option[LocalAuthority]
+
+  def getAuthorityByUrlSlug(urlSlug: String) : Option[Authority]
 }
 
 object PlacesApiClient {
@@ -35,6 +37,8 @@ object PlacesApiClient {
   def getLocalAuthority(address: Address) = client.getLocalAuthority(address)
 
   def getLocalAuthorityBySnac(snac: String) = client.getLocalAuthorityBySnac(snac)
+
+  def getAuthorityByUrlSlug(urlSlug: String) = client.getAuthorityByUrlSlug(urlSlug)
 }
 
 case class ApiResponseException(statusCode: Int, message: String) extends Exception(message)
