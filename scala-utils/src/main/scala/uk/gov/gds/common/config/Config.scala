@@ -25,10 +25,19 @@ object Config extends Logging {
   }
   else {
     logger.info("No production config found in " + productionConfigFile + ", checking for test configuration")
-
-    Option(getClass.getResourceAsStream(testConfigFile)).getOrElse {
-      logger.info("No test config found in " + testConfigFile + ", loading dev config from " + developmentConfigFile)
-      getClass.getResourceAsStream(developmentConfigFile)
+    Option(getClass.getResource(testConfigFile)) match {
+      case Some(url) => {
+        logger.info("Test config found at: " + url)
+        url.openStream()
+      }
+      case None => {
+        Option(getClass.getResource(developmentConfigFile)) match {
+          case Some(url) => {
+            logger.info("Development config found at: " + url)
+            url.openStream()
+          }
+        }
+      }
     }
   }
 
