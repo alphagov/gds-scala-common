@@ -1,7 +1,7 @@
 package uk.gov.gds.placesclient.api.client
 
 import implementations.{RealPlacesApiClient, MockPlacesApiClient}
-import uk.gov.gds.placesclient.model.{AuthorityLicenceInteraction, Authority, LocalAuthority, Address}
+import uk.gov.gds.placesclient.model._
 
 trait PlacesApiClient {
   def getAddresses(postcode: String, lineOne: Option[String]): List[Address]
@@ -18,7 +18,7 @@ trait PlacesApiClient {
 
   def getAuthorityByUrlSlug(urlSlug: String) : Option[Authority]
 
-  def getAuthorityLicenceInteractionsByAuthorityAndLicence(authorityUrlSlug: String, licenceUrlSlug: String) : Option[AuthorityLicenceInteraction]
+  def getAuthorityLicenceInteractionsByAuthorityAndLicence(authorityUrlSlug: String, licenceUrlSlug: String) : Option[AuthorityLicenceInformation]
 }
 
 object PlacesApiClient {
@@ -41,7 +41,7 @@ object PlacesApiClient {
   def getLocalAuthorityBySnac(snac: String) = client.getLocalAuthorityBySnac(snac)
 
   def getAuthorityByUrlSlug(urlSlug: String) = client.getAuthorityByUrlSlug(urlSlug)
-  def getAuthorityLicenceInteractionsByAuthorityAndLicence(authorityUrlSlug: String, licenceUrlSlug: String) : Option[AuthorityLicenceInteraction] =
+  def getAuthorityLicenceInteractionsByAuthorityAndLicence(authorityUrlSlug: String, licenceUrlSlug: String) : Option[AuthorityLicenceInformation] =
     client.getAuthorityLicenceInteractionsByAuthorityAndLicence(authorityUrlSlug, licenceUrlSlug)
 
 }
