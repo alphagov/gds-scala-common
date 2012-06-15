@@ -2,6 +2,7 @@ package uk.gov.gds.placesclient.api.client
 
 import implementations.{RealPlacesApiClient, MockPlacesApiClient}
 import uk.gov.gds.placesclient.model.{Authority, LocalAuthority, Address}
+import uk.gov.gds.common.logging.Logging
 
 trait PlacesApiClient {
   def getAddresses(postcode: String, lineOne: Option[String]): List[Address]
@@ -19,11 +20,16 @@ trait PlacesApiClient {
   def getAuthorityByUrlSlug(urlSlug: String) : Option[Authority]
 }
 
-object PlacesApiClient {
+object PlacesApiClient extends Logging{
 
-  private lazy val client = System.getProperty("MODE", "PROD_MODE") match {
-    case "CACHED_MODE" => MockPlacesApiClient
-    case "PROD_MODE" => RealPlacesApiClient
+  private lazy val client = {
+    logger.info("Initialising PlacesApiClient MODE= "+System.getProperty("MODE", "PROD_MODE") +
+                " Should be one of (CACHED_MODE or PROD_MODE)")
+    System.getProperty("MODE", "PROD_MODE") match {
+      case "CACHED_MODE" => MockPlacesApiClient
+      case "PROD_MODE" => RealPlacesApiClient
+      case _ => RealPlacesApiClient
+    }
   }
 
   def getAddresses(postcode: String, lineOne: Option[String]) = client.getAddresses(postcode, lineOne)
