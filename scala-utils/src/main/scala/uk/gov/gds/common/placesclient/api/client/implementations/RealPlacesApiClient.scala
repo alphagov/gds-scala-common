@@ -3,7 +3,7 @@ package uk.gov.gds.placesclient.api.client.implementations
 import uk.gov.gds.common.json.JsonSerializer._
 import org.apache.http.util.EntityUtils
 import uk.gov.gds.placesclient.api.client.{PlacesApiClient, PlacesHttpClient}
-import uk.gov.gds.placesclient.model.{Authority, LocalAuthority, Address}
+import uk.gov.gds.placesclient.model.{AuthorityLicenceInteraction, Authority, LocalAuthority, Address}
 
 object RealPlacesApiClient extends PlacesApiClient {
 
@@ -39,6 +39,11 @@ object RealPlacesApiClient extends PlacesApiClient {
   def getAuthorityByUrlSlug(urlSlug: String) = {
     val response = PlacesHttpClient.get("/authority/"+urlSlug)
     fromJson[Option[Authority]](response)
+  }
+
+  def getAuthorityLicenceInteractionsByAuthorityAndLicence(authorityUrlSlug: String, licenceUrlSlug: String) = {
+    val response = PlacesHttpClient.get("/elms-licence/"+authorityUrlSlug+"/"+licenceUrlSlug)
+    fromJson[Option[AuthorityLicenceInteraction]](response)
   }
 }
 
