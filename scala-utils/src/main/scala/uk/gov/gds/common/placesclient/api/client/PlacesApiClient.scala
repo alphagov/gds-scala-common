@@ -1,8 +1,8 @@
 package uk.gov.gds.placesclient.api.client
 
 import implementations.{RealPlacesApiClient, MockPlacesApiClient}
-import uk.gov.gds.placesclient.model.{Authority, LocalAuthority, Address}
 import uk.gov.gds.common.logging.Logging
+import uk.gov.gds.placesclient.model._
 
 trait PlacesApiClient {
   def getAddresses(postcode: String, lineOne: Option[String]): List[Address]
