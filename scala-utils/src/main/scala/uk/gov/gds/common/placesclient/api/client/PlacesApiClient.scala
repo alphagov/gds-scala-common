@@ -18,7 +18,15 @@ trait PlacesApiClient {
 
   def getAuthorityByUrlSlug(urlSlug: String) : Option[Authority]
 
+  def getAuthorityBySnacCode(snacCode: String) : Option[Authority]
+
   def getAuthorityLicenceInformationByAuthorityAndLicence(authorityUrlSlug: String, licenceUrlSlug: String) : Option[AuthorityLicenceInformation]
+
+  def getAuthorityLicenceInformationBySnacCodeAndLegalRefNbr(sncCode: String, legalRefNbr: String) : Option[AuthorityLicenceInformation]
+
+  def getLicenceInformationByUrlSlug(urlSlug: String) : Option[ElmsLicenceInformation]
+
+  def getLicenceInformationByLegalReferenceNumber(legalReferenceNumber: Int) : Option[ElmsLicenceInformation]
 }
 
 object PlacesApiClient {
@@ -41,8 +49,19 @@ object PlacesApiClient {
   def getLocalAuthorityBySnac(snac: String) = client.getLocalAuthorityBySnac(snac)
 
   def getAuthorityByUrlSlug(urlSlug: String) = client.getAuthorityByUrlSlug(urlSlug)
-  def getAuthorityLicenceInformationByAuthorityAndLicence(authorityUrlSlug: String, licenceUrlSlug: String) : Option[AuthorityLicenceInformation] =
+
+  def getAuthorityBySnacCode(snacCode: String) = client.getAuthorityBySnacCode(snacCode)
+
+  def getAuthorityLicenceInformationByAuthorityAndLicence(authorityUrlSlug: String, licenceUrlSlug: String) =
     client.getAuthorityLicenceInformationByAuthorityAndLicence(authorityUrlSlug, licenceUrlSlug)
+
+  def getAuthorityLicenceInformationBySnacCodeAndLegalRefNbr(sncCode: String, legalRefNbr: String) =
+    client.getAuthorityLicenceInformationBySnacCodeAndLegalRefNbr(sncCode, legalRefNbr)
+
+  def getLicenceInformationByUrlSlug(urlSlug: String) = client.getLicenceInformationByUrlSlug(urlSlug)
+
+  def getLicenceInformationByLegalReferenceNumber(legalReferenceNumber: Int) =
+    client.getLicenceInformationByLegalReferenceNumber(legalReferenceNumber)
 
 }
 

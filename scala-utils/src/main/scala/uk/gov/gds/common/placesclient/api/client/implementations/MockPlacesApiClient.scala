@@ -34,9 +34,17 @@ object MockPlacesApiClient extends PlacesApiClient {
 
   def numberAddressesFound(postcode: String, lineOne: Option[String]) = getAddresses(postcode, lineOne).size
 
-  def getAuthorityByUrlSlug(urlSlug: String) = None
+  def getAuthorityByUrlSlug(urlSlug: String) = { throw new Exception("Not Implemented") }
 
-  def getAuthorityLicenceInformationByAuthorityAndLicence(authorityUrlSlug: String, licenceUrlSlug: String) = None
+  def getAuthorityLicenceInformationByAuthorityAndLicence(authorityUrlSlug: String, licenceUrlSlug: String) = { throw new Exception("Not Implemented") }
+
+  def getAuthorityBySnacCode(snacCode: String) = { throw new Exception("Not Implemented") }
+
+  def getAuthorityLicenceInformationBySnacCodeAndLegalRefNbr(sncCode: String, legalRefNbr: String) = { throw new Exception("Not Implemented") }
+
+  def getLicenceInformationByUrlSlug(urlSlug: String) = { throw new Exception("Not Implemented") }
+
+  def getLicenceInformationByLegalReferenceNumber(legalReferenceNumber: Int) = { throw new Exception("Not Implemented") }
 
   def getAddresses(postcode: String, lineOne: Option[String]): List[Address] = {
     mockAddressList.foreach {
