@@ -2,7 +2,6 @@ package uk.gov.gds.placesclient.model
 
 import uk.gov.gds.common.repository.HasIdentity
 import com.mongodb.casbah.Imports.BasicDBList
-import com.mongodb.casbah.commons.MongoDBObject
 
 case class ElmsAdminArea(code: String, name: String) extends HasIdentity {
   def id = code
@@ -42,10 +41,10 @@ extends HasIdentity {
     countries != None &&
     {
       val co = if (countries.get.isInstanceOf[BasicDBList])
-        countries.get.asInstanceOf[com.mongodb.BasicDBList].toArray.toSet
+        countries.get.asInstanceOf[BasicDBList].toArray.toSet
       else countries.get
       val sn = if (snacCodes.get.isInstanceOf[BasicDBList])
-        snacCodes.get.asInstanceOf[com.mongodb.BasicDBList].toArray.toSet
+        snacCodes.get.asInstanceOf[BasicDBList].toArray.toSet
       else snacCodes.get ;
       co.contains(local.country.get) && (sn.isEmpty || sn.contains(local.snacCode.get))
     }
