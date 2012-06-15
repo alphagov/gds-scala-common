@@ -18,7 +18,7 @@ trait PlacesApiClient {
 
   def getAuthorityByUrlSlug(urlSlug: String) : Option[Authority]
 
-  def getAuthorityLicenceInteractionsByAuthorityAndLicence(authorityUrlSlug: String, licenceUrlSlug: String) : Option[AuthorityLicenceInformation]
+  def getAuthorityLicenceInformationByAuthorityAndLicence(authorityUrlSlug: String, licenceUrlSlug: String) : Option[AuthorityLicenceInformation]
 }
 
 object PlacesApiClient {
@@ -41,8 +41,8 @@ object PlacesApiClient {
   def getLocalAuthorityBySnac(snac: String) = client.getLocalAuthorityBySnac(snac)
 
   def getAuthorityByUrlSlug(urlSlug: String) = client.getAuthorityByUrlSlug(urlSlug)
-  def getAuthorityLicenceInteractionsByAuthorityAndLicence(authorityUrlSlug: String, licenceUrlSlug: String) : Option[AuthorityLicenceInformation] =
-    client.getAuthorityLicenceInteractionsByAuthorityAndLicence(authorityUrlSlug, licenceUrlSlug)
+  def getAuthorityLicenceInformationByAuthorityAndLicence(authorityUrlSlug: String, licenceUrlSlug: String) : Option[AuthorityLicenceInformation] =
+    client.getAuthorityLicenceInformationByAuthorityAndLicence(authorityUrlSlug, licenceUrlSlug)
 
 }
 

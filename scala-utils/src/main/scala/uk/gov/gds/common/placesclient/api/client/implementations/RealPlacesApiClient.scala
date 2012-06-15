@@ -41,7 +41,7 @@ object RealPlacesApiClient extends PlacesApiClient {
     fromJson[Option[Authority]](response)
   }
 
-  def getAuthorityLicenceInteractionsByAuthorityAndLicence(authorityUrlSlug: String, licenceUrlSlug: String) = {
+  def getAuthorityLicenceInformationByAuthorityAndLicence(authorityUrlSlug: String, licenceUrlSlug: String) = {
     val response = PlacesHttpClient.get("/elms-licence/"+authorityUrlSlug+"/"+licenceUrlSlug)
     fromJson[Option[AuthorityLicenceInformation]](response)
   }
