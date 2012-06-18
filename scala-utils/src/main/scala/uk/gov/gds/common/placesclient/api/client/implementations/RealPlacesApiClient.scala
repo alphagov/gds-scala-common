@@ -51,13 +51,13 @@ object RealPlacesApiClient extends PlacesApiClient {
     fromJson[Option[AuthorityLicenceInformation]](response)
   }
 
-  def getAuthorityLicenceInformationBySnacCodeAndLegalRefNbr(sncCode: String, legalRefNbr: String) = {
-    val response = PlacesHttpClient.get("/elms-licence/"+sncCode+"/"+legalRefNbr)
+  def getAuthorityLicenceInformationBySnacCodeAndLegalRefNbr(snacCode: String, legalRefNbr: Int) = {
+    val response = PlacesHttpClient.get("/elms-licence/"+legalRefNbr+"/"+snacCode)
     fromJson[Option[AuthorityLicenceInformation]](response)
   }
 
-  def getLicenceInformationByUrlSlug(urlSlug: String) = {
-    val response = PlacesHttpClient.get("/elms-licence/"+urlSlug)
+  def getLicenceInformationByUrlSlugAndLegalRefNbr(urlSlug: String, legalReferenceNumber: Int) = {
+    val response = PlacesHttpClient.get("/elms-licence/"+urlSlug+"/"+legalReferenceNumber)
     fromJson[Option[ElmsLicenceInformation]](response)
   }
 

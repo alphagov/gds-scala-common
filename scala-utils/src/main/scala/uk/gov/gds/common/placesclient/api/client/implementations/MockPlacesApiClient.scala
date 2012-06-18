@@ -40,9 +40,9 @@ object MockPlacesApiClient extends PlacesApiClient {
 
   def getAuthorityBySnacCode(snacCode: String) = { throw new Exception("Not Implemented") }
 
-  def getAuthorityLicenceInformationBySnacCodeAndLegalRefNbr(sncCode: String, legalRefNbr: String) = { throw new Exception("Not Implemented") }
+  def getAuthorityLicenceInformationBySnacCodeAndLegalRefNbr(snacCode: String, legalRefNbr: Int) = { throw new Exception("Not Implemented") }
 
-  def getLicenceInformationByUrlSlug(urlSlug: String) = { throw new Exception("Not Implemented") }
+  def getLicenceInformationByUrlSlugAndLegalRefNbr(urlSlug: String, legalReferenceNumber: Int) = { throw new Exception("Not Implemented") }
 
   def getLicenceInformationByLegalReferenceNumber(legalReferenceNumber: Int) = { throw new Exception("Not Implemented") }
 
