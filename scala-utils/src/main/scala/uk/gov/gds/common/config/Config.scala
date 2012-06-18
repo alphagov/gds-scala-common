@@ -36,6 +36,7 @@ object Config extends Logging {
             logger.info("Development config found at: " + url)
             url.openStream()
           }
+          case None => throw new IllegalStateException("No config file found")
         }
       }
     }
