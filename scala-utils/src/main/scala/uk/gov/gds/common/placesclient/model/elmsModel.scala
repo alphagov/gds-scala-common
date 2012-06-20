@@ -59,12 +59,18 @@ case class LicenceInteraction(lgilId: Int,
                               interactionType: String,
                               lgilSubId: Int,
                               licenceInteractionName: String,
+                              description: Option[String] = None,
                               form: Option[LicenceForm] = None,
-                              externalUrl: Option[String] = None)
+                              subForms: Option[List[LicenceForm]] = None,
+                              supportingDocuments: Option[List[SupportingDocument]] = None,
+                              externalUrl: Option[String] = None,
+                              fee: Option[BigDecimal] = None)
 
 object LicenceInteraction {
-  def lgslIdToInteractionTypeMap = { Map[Int, String](0 -> "apply", 4 -> "pay for", 11 -> "change", 14 -> "renew",
-    30 -> "dont know yet", 31 -> "dont know yet", 32 -> "dont know yet")
+  def lgilIdToInteractionTypeMap = { Map[Int, String](0 -> "apply", 4 -> "pay for",
+                                                      8 -> "information", 9 -> "guidance",
+                                                      11 -> "change", 14 -> "renew",
+                                                      30 -> "dont know yet", 31 -> "dont know yet", 32 -> "dont know yet")
   }
 }
 
@@ -84,6 +90,11 @@ case class LicenceForm(name: String,
                        fileName: String,
                        fileUrl: Option[String] = None,
                        fileSizeInBytes: Long,
-                       formVersion: Int) {
+                       formVersion: Int) {}
 
-}
+case class SupportingDocument(name: String,
+                              description: Option[String] = None,
+                              fileExtensions: List[String],
+                              isRequired: Boolean = false){}
+
+
