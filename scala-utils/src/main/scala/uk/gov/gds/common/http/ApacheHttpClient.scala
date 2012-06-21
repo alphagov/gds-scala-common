@@ -42,6 +42,10 @@ abstract class ApacheHttpClient extends ContainerEventListener with UrlEncoding 
     execute(new HttpGet(targetUrl(path, paramsToUrlParams(params))))
   }
 
+  def getOptional(path: String, params: Map[String, Any] = Map.empty) = {
+    executeOptional(new HttpGet(targetUrl(path, paramsToUrlParams(params))))
+  }
+
   def post(path: String) = execute(new HttpPost(targetUrl(path)))
 
   def post(path: String, params: Map[String, String]) = {
@@ -116,6 +120,20 @@ abstract class ApacheHttpClient extends ContainerEventListener with UrlEncoding 
   private def addParam(name: String, value: String) = urlEncode(name) + "=" + urlEncode(value)
 
   private def execute(request: HttpUriRequest) = {
+    executeEither(request) match {
+      case Left(result) => result
+      case Right(exception) => throw exception
+    }
+  }
+
+  private def executeOptional(request: HttpUriRequest) = {
+    executeEither(request) match {
+      case Left(result) => Some(result)
+      case Right(exception) => None
+    }
+  }
+
+  private def executeEither(request: HttpUriRequest):Either[String, ApiResponseException] = {
     logger.trace("About to query: " + request.getMethod + " " + request.getURI)
 
     val response = httpClient.execute(request)
@@ -124,9 +142,9 @@ abstract class ApacheHttpClient extends ContainerEventListener with UrlEncoding 
     logger.info(request.getMethod + " " + request.getURI + " => " + statusCode)
 
     if (statusCode >= 400)
-      throw new ApiResponseException(statusCode = statusCode, message = EntityUtils.toString(response.getEntity, "UTF-8"))
-
-    EntityUtils.toString(response.getEntity, "UTF-8")
+      Right(new ApiResponseException(statusCode = statusCode, message = EntityUtils.toString(response.getEntity, "UTF-8")))
+    else
+      Left(EntityUtils.toString(response.getEntity, "UTF-8"))
   }
 
   private def jsonToPostOverWire(json: String) = new UrlEncodedFormEntity(List(new BasicNameValuePair("json", json)), "UTF-8")

@@ -22,48 +22,39 @@ object RealPlacesApiClient extends PlacesApiClient {
   def numberAddressesFound(postcode: String, lineOne: Option[String]) = getAddresses(postcode, lineOne).size
 
   def getLocalAuthority(postcode: String): Option[LocalAuthority] = {
-    val response = PlacesHttpClient.get("/authority", Map("postcode" -> postcode))
-    fromJson[Option[LocalAuthority]](response)
+    PlacesHttpClient.getOptional("/authority", Map("postcode" -> postcode)).flatMap(fromJson[Option[LocalAuthority]](_))
   }
 
   def getLocalAuthority(address: Address) = {
-    val response = PlacesHttpClient.get("/authority", Map("postcode" -> address.postcode))
-    fromJson[Option[LocalAuthority]](response)
+    PlacesHttpClient.getOptional("/authority", Map("postcode" -> address.postcode)).flatMap(fromJson[Option[LocalAuthority]](_))
   }
 
   def getLocalAuthorityBySnac(snac: String) = {
-    val response = PlacesHttpClient.get("/authority/ertp/" + snac)
-    fromJson[Option[LocalAuthority]](response)
+    PlacesHttpClient.getOptional("/authority/ertp/" + snac).flatMap(fromJson[Option[LocalAuthority]](_))
   }
 
   def getAuthorityByUrlSlug(urlSlug: String) = {
-    val response = PlacesHttpClient.get("/authority/"+urlSlug)
-    fromJson[Option[Authority]](response)
+    PlacesHttpClient.getOptional("/authority/"+urlSlug).flatMap(fromJson[Option[Authority]](_))
   }
 
   def getAuthorityBySnacCode(snacCode: String) = {
-    val response = PlacesHttpClient.get("/authority/"+snacCode)
-    fromJson[Option[Authority]](response)
+    PlacesHttpClient.getOptional("/authority/"+snacCode).flatMap(fromJson[Option[Authority]](_))
   }
 
   def getAuthorityLicenceInformationByAuthorityAndLicence(authorityUrlSlug: String, licenceUrlSlug: String) = {
-    val response = PlacesHttpClient.get("/elms-licence/"+authorityUrlSlug+"/"+licenceUrlSlug)
-    fromJson[Option[AuthorityLicenceInformation]](response)
+    PlacesHttpClient.getOptional("/elms-licence/"+authorityUrlSlug+"/"+licenceUrlSlug).flatMap(fromJson[Option[AuthorityLicenceInformation]](_))
   }
 
   def getAuthorityLicenceInformationBySnacCodeAndLegalRefNbr(snacCode: String, legalRefNbr: Int) = {
-    val response = PlacesHttpClient.get("/elms-licence/"+legalRefNbr+"/"+snacCode)
-    fromJson[Option[AuthorityLicenceInformation]](response)
+    PlacesHttpClient.getOptional("/elms-licence/"+legalRefNbr+"/"+snacCode).flatMap(fromJson[Option[AuthorityLicenceInformation]](_))
   }
 
   def getLicenceInformationByUrlSlugAndLegalRefNbr(urlSlug: String, legalReferenceNumber: Int) = {
-    val response = PlacesHttpClient.get("/elms-licence/"+urlSlug+"/"+legalReferenceNumber)
-    fromJson[Option[ElmsLicenceInformation]](response)
+    PlacesHttpClient.getOptional("/elms-licence/"+urlSlug+"/"+legalReferenceNumber).flatMap(fromJson[Option[ElmsLicenceInformation]](_))
   }
 
   def getLicenceInformationByLegalReferenceNumber(legalReferenceNumber: Int) = {
-    val response = PlacesHttpClient.get("/elms-licence/"+legalReferenceNumber)
-    fromJson[Option[ElmsLicenceInformation]](response)
+    PlacesHttpClient.getOptional("/elms-licence/"+legalReferenceNumber).flatMap(fromJson[Option[ElmsLicenceInformation]](_))
   }
 }
 
