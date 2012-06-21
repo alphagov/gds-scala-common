@@ -61,8 +61,8 @@ case class LicenceInteraction(lgilId: Int,
                               licenceInteractionName: String,
                               description: Option[String] = None,
                               form: Option[LicenceForm] = None,
-                              subForms: Option[List[LicenceForm]] = None,
-                              supportingDocuments: Option[List[SupportingDocument]] = None,
+                              subForms: List[LicenceForm] = List(),
+                              supportingDocuments: List[SupportingDocument] = List(),
                               externalUrl: Option[String] = None,
                               fee: Option[BigDecimal] = None)
 
@@ -90,11 +90,11 @@ case class LicenceForm(name: String,
                        fileName: String,
                        fileUrl: Option[String] = None,
                        fileSizeInBytes: Long,
-                       formVersion: Int) {}
+                       formVersion: Int)
 
 case class SupportingDocument(name: String,
                               description: Option[String] = None,
                               fileExtensions: List[String],
-                              isRequired: Boolean = false){}
+                              isRequired: Boolean = false)
 
 
