@@ -1,6 +1,6 @@
 package uk.gov.gds.placesclient.api.client.implementations
 
-import uk.gov.gds.placesclient.model.{LocalAuthority, Address}
+import uk.gov.gds.placesclient.model.{Authority, LocalAuthority, Address}
 import uk.gov.gds.placesclient.api.client.PlacesApiClient
 import uk.gov.gds.common.http.ApiResponseException
 
@@ -45,6 +45,11 @@ object MockPlacesApiClient extends PlacesApiClient {
   def getLicenceInformationByUrlSlugAndLegalRefNbr(urlSlug: String, legalReferenceNumber: Int) = { throw new Exception("Not Implemented") }
 
   def getLicenceInformationByLegalReferenceNumber(legalReferenceNumber: Int) = { throw new Exception("Not Implemented") }
+
+  def getAllAuthorities() = { throw new Exception("Not Implemented") }
+
+  def getAuthorityLicenceInteractions(authorityUrlSlug: String) = { throw new Exception("Not Implemented") }
+
 
   def getAddresses(postcode: String, lineOne: Option[String]): List[Address] = {
     mockAddressList.foreach {

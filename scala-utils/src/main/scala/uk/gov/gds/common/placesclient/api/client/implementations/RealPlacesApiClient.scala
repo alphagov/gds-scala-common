@@ -56,5 +56,15 @@ object RealPlacesApiClient extends PlacesApiClient {
   def getLicenceInformationByLegalReferenceNumber(legalReferenceNumber: Int) = {
     PlacesHttpClient.getOptional("/elms-licence/"+legalReferenceNumber).flatMap(fromJson[Option[ElmsLicenceInformation]](_))
   }
+
+  def getAllAuthorities() = {
+    PlacesHttpClient.getOptional("/authorities").flatMap(fromJson[Option[List[Authority]]](_))
+  }
+
+  def getAuthorityLicenceInteractions(authorityUrlSlug: String) = {
+    PlacesHttpClient.getOptional("/authority/"+authorityUrlSlug+"/licence-interactions").flatMap(fromJson[Option[List[AuthorityLicenceInteraction]]](_))
+  }
+
+
 }
 

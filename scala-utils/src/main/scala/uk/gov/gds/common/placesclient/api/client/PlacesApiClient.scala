@@ -28,6 +28,10 @@ trait PlacesApiClient {
   def getLicenceInformationByUrlSlugAndLegalRefNbr(urlSlug: String, legalReferenceNumber: Int) : Option[ElmsLicenceInformation]
 
   def getLicenceInformationByLegalReferenceNumber(legalReferenceNumber: Int) : Option[ElmsLicenceInformation]
+
+  def getAllAuthorities(): Option[List[Authority]]
+
+  def getAuthorityLicenceInteractions(authorityUrlSlug: String) : Option[List[AuthorityLicenceInteraction]]
 }
 
 object PlacesApiClient extends Logging{
@@ -68,6 +72,9 @@ object PlacesApiClient extends Logging{
 
   def getLicenceInformationByLegalReferenceNumber(legalReferenceNumber: Int) =
     client.getLicenceInformationByLegalReferenceNumber(legalReferenceNumber)
+
+  def getAllAuthorities() = client.getAllAuthorities()
+  def getAuthorityLicenceInteractions(authorityUrlSlug: String) = client.getAuthorityLicenceInteractions(authorityUrlSlug)
 
 }
 
