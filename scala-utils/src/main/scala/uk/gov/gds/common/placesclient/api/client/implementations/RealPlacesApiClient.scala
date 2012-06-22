@@ -65,6 +65,10 @@ object RealPlacesApiClient extends PlacesApiClient {
     PlacesHttpClient.getOptional("/authority/"+authorityUrlSlug+"/licence-interactions").flatMap(fromJson[Option[List[AuthorityLicenceInteraction]]](_))
   }
 
+  def getCompetentAuthorityByPostcodeAndLicenceUrlSlug(postcode: String, licenceUrlSlug: String) = {
+    PlacesHttpClient.getOptional("/competent-authority/"+postcode+"/"+licenceUrlSlug).flatMap(fromJson[Option[AuthorityLicenceInformation]](_))
+  }
+
 
 }
 
