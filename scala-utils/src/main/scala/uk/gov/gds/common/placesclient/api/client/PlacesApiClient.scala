@@ -80,6 +80,8 @@ object PlacesApiClient extends Logging{
   def getAllAuthorities() = client.getAllAuthorities()
   def getAuthorityLicenceInteractions(authorityUrlSlug: String) = client.getAuthorityLicenceInteractions(authorityUrlSlug)
 
+  def getAllLicences() = client.getAllLicences()
+
   def getCompetentAuthoritiesByPostcodeAndLicenceUrlSlug(postcode: String, licenceUrlSlug: String) = client.getCompetentAuthoritiesByPostcodeAndLicenceUrlSlug(postcode, licenceUrlSlug)
 }
 
