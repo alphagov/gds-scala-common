@@ -33,7 +33,7 @@ trait PlacesApiClient {
 
   def getAuthorityLicenceInteractions(authorityUrlSlug: String) : Option[List[AuthorityLicenceInteraction]]
 
-  def getCompetentAuthorityByPostcodeAndLicenceUrlSlug(postcode: String, licenceUrlSlug: String) : Option[AuthorityLicenceInformation]
+  def getCompetentAuthoritiesByPostcodeAndLicenceUrlSlug(postcode: String, licenceUrlSlug: String) : Option[List[AuthorityLicenceInformation]]
 }
 
 object PlacesApiClient extends Logging{
@@ -78,7 +78,7 @@ object PlacesApiClient extends Logging{
   def getAllAuthorities() = client.getAllAuthorities()
   def getAuthorityLicenceInteractions(authorityUrlSlug: String) = client.getAuthorityLicenceInteractions(authorityUrlSlug)
 
-  def getCompetentAuthorityByPostcodeAndLicenceUrlSlug(postcode: String, licenceUrlSlug: String) = client.getCompetentAuthorityByPostcodeAndLicenceUrlSlug(postcode, licenceUrlSlug)
+  def getCompetentAuthoritiesByPostcodeAndLicenceUrlSlug(postcode: String, licenceUrlSlug: String) = client.getCompetentAuthoritiesByPostcodeAndLicenceUrlSlug(postcode, licenceUrlSlug)
 }
 
 case class ApiResponseException(statusCode: Int, message: String) extends Exception(message)
