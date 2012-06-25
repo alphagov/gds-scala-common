@@ -34,6 +34,8 @@ trait PlacesApiClient {
   def getAuthorityLicenceInteractions(authorityUrlSlug: String) : Option[List[AuthorityLicenceInteraction]]
 
   def getAllLicences() : Option[List[ElmsLicence]]
+
+  def getCompetentAuthorityByPostcodeAndLicenceUrlSlug(postcode: String, licenceUrlSlug: String) : Option[AuthorityLicenceInformation]
 }
 
 object PlacesApiClient extends Logging{
@@ -78,7 +80,6 @@ object PlacesApiClient extends Logging{
   def getAllAuthorities() = client.getAllAuthorities()
   def getAuthorityLicenceInteractions(authorityUrlSlug: String) = client.getAuthorityLicenceInteractions(authorityUrlSlug)
 
-  def getAllLicences() = client.getAllLicences()
 }
 
 case class ApiResponseException(statusCode: Int, message: String) extends Exception(message)
