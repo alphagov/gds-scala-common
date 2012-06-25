@@ -35,7 +35,7 @@ trait PlacesApiClient {
 
   def getAllLicences() : Option[List[ElmsLicence]]
 
-  def getCompetentAuthorityByPostcodeAndLicenceUrlSlug(postcode: String, licenceUrlSlug: String) : Option[AuthorityLicenceInformation]
+  def getCompetentAuthoritiesByPostcodeAndLicenceUrlSlug(postcode: String, licenceUrlSlug: String) : Option[List[AuthorityLicenceInformation]]
 }
 
 object PlacesApiClient extends Logging{
