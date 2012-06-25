@@ -70,7 +70,7 @@ object RealPlacesApiClient extends PlacesApiClient {
   }
 
   def getCompetentAuthoritiesByPostcodeAndLicenceUrlSlug(postcode: String, licenceUrlSlug: String) = {
-    PlacesHttpClient.getOptional("/competent-authority/"+postcode+"/"+licenceUrlSlug).flatMap(fromJson[Option[List[AuthorityLicenceInformation]]](_))
+    PlacesHttpClient.getOptional("/competent-authority/"+postcode.replace(" ","")+"/"+licenceUrlSlug).flatMap(fromJson[Option[List[AuthorityLicenceInformation]]](_))
   }
 
 
