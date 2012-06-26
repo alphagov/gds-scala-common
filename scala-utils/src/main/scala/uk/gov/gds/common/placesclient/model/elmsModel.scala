@@ -22,7 +22,7 @@ case class ElmsLicence(name: String,
 case class ElmsLicenceInformation(elmsLicence : ElmsLicence,
                                    allUkAuthority : Option[Authority] = None)
 
-case class Licences(licences: java.util.Map[Int, Authority])
+case class Licences(licences: Map[Int, Authority])
 
 case class Authority(name: String,
                      agencyId: Int,
