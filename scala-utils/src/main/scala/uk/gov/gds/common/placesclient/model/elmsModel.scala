@@ -31,7 +31,6 @@ case class Authority(name: String,
                      snacCode: Option[String] = None,
                      level: String,
                      country: Option[String] = None,
-                     gss: Option[String] = None,
                      countries: Option[Set[String]] = None,
                      snacCodes: Option[Set[String]] = None)
 extends HasIdentity {

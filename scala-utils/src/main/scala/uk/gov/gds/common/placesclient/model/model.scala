@@ -14,25 +14,16 @@ object OpcsId {
   def isValid(value: String) = value.matches(opcsIdRegex.toString())
 }
 
-case class LocalAuthorityWithEro(name: String = "",
-                                 ero: Ero = Ero(),
-                                 gss: String,
-                                 opcsId: String) extends HasIdentity {
-  def id = opcsId
-
-  def this(la: Authority) = this(name = la.name,
-    ero = Ero(telephoneNumber = ""),
-    gss = la.gss.get,
-    opcsId = la.snacCode.get)
-}
-
 case class Ero(address: Option[GovUkAddress] = None, telephoneNumber: String = "")
 
 case class LocalAuthority(name: String = "",
                           ero: Ero = Ero(),
-                          gss: String,
                           opcsId: String) extends HasIdentity {
   def id = opcsId
+
+  def this(la: Authority) = this(name = la.name,
+    ero = Ero(telephoneNumber = ""),
+    opcsId = la.snacCode.get)
 }
 
 case class GovUkAddress(lineOne: String = "",

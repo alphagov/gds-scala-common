@@ -8,8 +8,8 @@ object MockPlacesApiClient extends PlacesApiClient {
 
   private case class MockAddressItem(postcode: String, addresses: List[Address])
 
-  val camdenBoroughCouncil = LocalAuthority(name = "Camden Borough Council", opcsId = "00AG", gss = "E09000007")
-  val wandsworthBoroughCouncil = LocalAuthority(name = "Wandsworth Borough Council", opcsId = "00BJ", gss = "E09000032")
+  val camdenBoroughCouncil = LocalAuthority(name = "Camden Borough Council", opcsId = "00AG")
+  val wandsworthBoroughCouncil = LocalAuthority(name = "Wandsworth Borough Council", opcsId = "00BJ")
 
   private def isCamdenCouncil(postcode: String) = postcode.replace(" ", "").equalsIgnoreCase("WC2B6SE")
 
