@@ -11,11 +11,19 @@ import com.mongodb.WriteConcern.{NORMAL, SAFE}
 
 abstract class MongoDatabaseManager extends ContainerEventListener with Logging {
 
-
-  lazy val database: MongoDB = mongoConnection(databaseName)
+  lazy val database: MongoDB = {
+    logger.info("Connection to database: "+databaseName)
+    mongoConnection(databaseName)
+  }
   val changeLogRepository = new ChangeLogRepository(this)
   protected val repositoriesToInitialiseOnStartup: List[MongoRepositoryBase[_]]
-  private lazy val databaseHosts = Config("mongo.database.hosts").split(",").toList
+
+  private lazy val databaseHosts = {
+    val databaseHostString = Config("mongo.database.hosts")
+    logger.info("Mongo Database Hosts: "+databaseHostString)
+    databaseHostString.split(",").toList
+  }
+
   private lazy val mongoConnection = MongoConnection(databaseHosts.map(new ServerAddress(_)))
 
   def databaseChangeScripts: List[ChangeScript] = Nil
