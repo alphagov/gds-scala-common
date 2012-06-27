@@ -1,8 +1,8 @@
-package uk.gov.gds.placesclient.api.client.implementations
+package uk.gov.gds.common.placesclient.api.client.implementations
 
-import uk.gov.gds.placesclient.model.{Authority, LocalAuthority, Address}
-import uk.gov.gds.placesclient.api.client.PlacesApiClient
+import uk.gov.gds.placesclient.model.{LocalAuthority, Address}
 import uk.gov.gds.common.http.ApiResponseException
+import uk.gov.gds.common.placesclient.api.client.PlacesApiClient
 
 object MockPlacesApiClient extends PlacesApiClient {
 
@@ -34,25 +34,35 @@ object MockPlacesApiClient extends PlacesApiClient {
 
   def numberAddressesFound(postcode: String, lineOne: Option[String]) = getAddresses(postcode, lineOne).size
 
-  def getAuthorityByUrlSlug(urlSlug: String) = { throw new Exception("Not Implemented") }
+  def getAuthorityByUrlSlug(urlSlug: String) = 
+    throw new Exception("Not Implemented")
 
-  def getAuthorityLicenceInformationByAuthorityAndLicence(authorityUrlSlug: String, licenceUrlSlug: String) = { throw new Exception("Not Implemented") }
+  def getAuthorityLicenceInformationByAuthorityAndLicence(authorityUrlSlug: String, licenceUrlSlug: String) = 
+    throw new Exception("Not Implemented")
 
-  def getAuthorityBySnacCode(snacCode: String) = { throw new Exception("Not Implemented") }
+  def getAuthorityBySnacCode(snacCode: String) = 
+    throw new Exception("Not Implemented")
 
-  def getAuthorityLicenceInformationBySnacCodeAndLegalRefNbr(snacCode: String, legalRefNbr: Int) = { throw new Exception("Not Implemented") }
+  def getAuthorityLicenceInformationBySnacCodeAndLegalRefNbr(snacCode: String, legalRefNbr: Int) = 
+    throw new Exception("Not Implemented")
 
-  def getLicenceInformationByUrlSlugAndLegalRefNbr(urlSlug: String, legalReferenceNumber: Int) = { throw new Exception("Not Implemented") }
+  def getLicenceInformationByUrlSlugAndLegalRefNbr(urlSlug: String, legalReferenceNumber: Int) = 
+    throw new Exception("Not Implemented")
 
-  def getLicenceInformationByLegalReferenceNumber(legalReferenceNumber: Int) = { throw new Exception("Not Implemented") }
+  def getLicenceInformationByLegalReferenceNumber(legalReferenceNumber: Int) = 
+    throw new Exception("Not Implemented")
 
-  def getAllAuthorities() = { throw new Exception("Not Implemented") }
+  def getAllAuthorities() = 
+    throw new Exception("Not Implemented")
 
-  def getAuthorityLicenceInteractions(authorityUrlSlug: String) = { throw new Exception("Not Implemented") }
+  def getAuthorityLicenceInteractions(authorityUrlSlug: String) = 
+    throw new Exception("Not Implemented")
 
-  def getAllLicences() = { throw new Exception("Not Implemented") }
+  def getAllLicences() = 
+    throw new Exception("Not Implemented")
 
-  def getCompetentAuthoritiesByPostcodeAndLicenceUrlSlug(postcode: String, licenceUrlSlug: String) = { throw new Exception("Not Implemented") }
+  def getCompetentAuthoritiesByPostcodeAndLicenceUrlSlug(postcode: String, licenceUrlSlug: String) = 
+    throw new Exception("Not Implemented")
 
   def getAddresses(postcode: String, lineOne: Option[String]): List[Address] = {
     mockAddressList.foreach {
