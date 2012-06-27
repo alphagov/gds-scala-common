@@ -42,7 +42,7 @@ object RealPlacesApiClient extends PlacesApiClient {
   }
 
   def getAuthorityLicenceInformationByAuthorityAndLicence(authorityUrlSlug: String, licenceUrlSlug: String) = {
-    PlacesHttpClient.getOptional("/elms-licence/"+authorityUrlSlug+"/"+licenceUrlSlug).flatMap(fromJson[Option[AuthorityLicenceInformation]](_))
+    PlacesHttpClient.getOptional("/elms-licence/"+authorityUrlSlug+"/"+licenceUrlSlug).flatMap(fromJson[Option[List[AuthorityLicenceInformation]]](_))
   }
 
   def getAuthorityLicenceInformationBySnacCodeAndLegalRefNbr(snacCode: String, legalRefNbr: Int) = {

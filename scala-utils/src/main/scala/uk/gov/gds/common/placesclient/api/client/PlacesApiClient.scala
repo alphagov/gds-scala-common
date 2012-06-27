@@ -21,7 +21,7 @@ trait PlacesApiClient {
 
   def getAuthorityBySnacCode(snacCode: String) : Option[Authority]
 
-  def getAuthorityLicenceInformationByAuthorityAndLicence(authorityUrlSlug: String, licenceUrlSlug: String) : Option[AuthorityLicenceInformation]
+  def getAuthorityLicenceInformationByAuthorityAndLicence(authorityUrlSlug: String, licenceUrlSlug: String) : Option[List[AuthorityLicenceInformation]]
 
   def getAuthorityLicenceInformationBySnacCodeAndLegalRefNbr(snacCode: String, legalRefNbr: Int) : Option[AuthorityLicenceInformation]
 
