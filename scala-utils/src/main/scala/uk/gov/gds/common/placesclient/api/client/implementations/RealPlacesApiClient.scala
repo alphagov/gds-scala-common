@@ -36,8 +36,8 @@ object RealPlacesApiClient extends PlacesApiClient {
   def getAuthorityBySnacCode(snacCode: String) =
     PlacesHttpClient.getOptional("/authority/" + snacCode).flatMap(fromJson[Option[Authority]](_))
 
-  def getAuthorityLicenceInformationByAuthorityAndLicence(authorityUrlSlug: String, licenceUrlSlug: String) =
-    PlacesHttpClient.getOptional("/elms-licence/" + authorityUrlSlug + "/" + licenceUrlSlug).flatMap(fromJson[Option[List[AuthorityLicenceInformation]]](_))
+  def getAuthorityLicenceInformationByAuthorityAndLicence(authorityUrlSlugWithArea: String, licenceUrlSlug: String) =
+    PlacesHttpClient.getOptional("/elms-licence/" + authorityUrlSlugWithArea + "/" + licenceUrlSlug).flatMap(fromJson[Option[AuthorityLicenceInformation]](_))
 
   def getAuthorityLicenceInformationBySnacCodeAndLegalRefNbr(snacCode: String, legalRefNbr: Int) =
     PlacesHttpClient.getOptional("/elms-licence/" + legalRefNbr + "/" + snacCode).flatMap(fromJson[Option[AuthorityLicenceInformation]](_))
