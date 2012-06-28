@@ -60,5 +60,8 @@ object RealPlacesApiClient extends PlacesApiClient {
   def getCompetentAuthoritiesByPostcodeAndLicenceUrlSlug(postcode: String, licenceUrlSlug: String) =
     PlacesHttpClient.getOptional("/competent-authority/" + postcode.replace(" ", "") + "/" + licenceUrlSlug).flatMap(fromJson[Option[List[AuthorityLicenceInformation]]](_))
 
+  def getLicenceInteractionsByPdfName(pdfName: String) =
+    PlacesHttpClient.getOptional("/elms-licence/form/" + pdfName).flatMap(fromJson[Option[List[LicenceInteraction]]](_))
+
 }
 
