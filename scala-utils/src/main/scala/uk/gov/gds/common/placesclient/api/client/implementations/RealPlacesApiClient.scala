@@ -63,5 +63,8 @@ object RealPlacesApiClient extends PlacesApiClient {
   def getLicenceInteractionsByPdfName(pdfName: String) =
     PlacesHttpClient.getOptional("/elms-licence/form/" + pdfName).flatMap(fromJson[Option[List[LicenceInteraction]]](_))
 
+  def getLicencesProvidedByAuthority(authorityUrlSlug: String) =
+    PlacesHttpClient.getOptional("/elms-licences/" + authorityUrlSlug).flatMap(fromJson[Option[List[ElmsLicence]]](_))
+
 }
 

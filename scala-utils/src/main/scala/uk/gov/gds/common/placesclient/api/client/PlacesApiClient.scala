@@ -38,6 +38,8 @@ trait PlacesApiClient {
   def getCompetentAuthoritiesByPostcodeAndLicenceUrlSlug(postcode: String, licenceUrlSlug: String): Option[List[AuthorityLicenceInformation]]
 
   def getLicenceInteractionsByPdfName(pdfName: String): Option[List[LicenceInteraction]]
+
+  def getLicencesProvidedByAuthority(authorityUrlSlug: String): Option[List[ElmsLicence]]
 }
 
 object PlacesApiClient extends Logging {
@@ -88,6 +90,8 @@ object PlacesApiClient extends Logging {
   def getCompetentAuthoritiesByPostcodeAndLicenceUrlSlug(postcode: String, licenceUrlSlug: String) = client.getCompetentAuthoritiesByPostcodeAndLicenceUrlSlug(postcode, licenceUrlSlug)
 
   def getLicenceInteractionsByPdfName(pdfName: String) = client.getLicenceInteractionsByPdfName(pdfName)
+
+  def getLicencesProvidedByAuthority(authorityUrlSlug: String) = client.getLicencesProvidedByAuthority(authorityUrlSlug)
 }
 
 case class ApiResponseException(statusCode: Int, message: String) extends Exception(message)

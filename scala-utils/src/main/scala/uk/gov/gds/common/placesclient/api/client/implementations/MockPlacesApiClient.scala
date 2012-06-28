@@ -67,6 +67,9 @@ object MockPlacesApiClient extends PlacesApiClient {
   def getLicenceInteractionsByPdfName(pdfName: String) =
     throw new Exception("Not Implemented")
 
+  def getLicencesProvidedByAuthority(authorityUrlSlug: String) =
+    throw new Exception("Not Implemented")
+
   def getAddresses(postcode: String, lineOne: Option[String]): List[Address] = {
     mockAddressList.foreach {
       mockAddress =>
