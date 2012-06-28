@@ -3,18 +3,14 @@ package uk.gov.gds.common.http
 import uk.gov.gds.common.j2ee.ContainerEventListener
 import org.apache.http.conn.scheme.SchemeRegistry
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager
-import org.apache.http.client.methods.HttpGet
-import org.apache.http.client.methods.HttpPost
+import org.apache.http.client.methods.{HttpRequestBase, HttpGet, HttpPost, HttpUriRequest}
 import org.apache.http.entity.StringEntity
 import org.apache.http.client.entity.UrlEncodedFormEntity
 import org.apache.http.message.BasicNameValuePair
-import org.apache.http.client.methods.HttpUriRequest
 import org.apache.http.util.EntityUtils
-import org.apache.http.impl.client.DefaultHttpClient
-import org.apache.http.params.BasicHttpParams
-import org.apache.http.params.HttpConnectionParams
+import org.apache.http.impl.client.{DefaultHttpClient, DefaultHttpRequestRetryHandler}
+import org.apache.http.params.{BasicHttpParams, HttpConnectionParams}
 import org.apache.http.client.params.HttpClientParams
-import org.apache.http.impl.client.DefaultHttpRequestRetryHandler
 import org.apache.http.conn.scheme.Scheme
 import org.apache.http.conn.scheme.PlainSocketFactory
 import org.apache.http.conn.ssl.SSLSocketFactory
@@ -23,6 +19,8 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import scala.collection.JavaConversions._
 import uk.gov.gds.common.json.JsonSerializer._
+import org.apache.http.auth.UsernamePasswordCredentials
+import org.apache.http.impl.auth.BasicScheme
 
 abstract class ApacheHttpClient extends ContainerEventListener with UrlEncoding with Logging {
 
@@ -42,6 +40,12 @@ abstract class ApacheHttpClient extends ContainerEventListener with UrlEncoding 
     execute(new HttpGet(targetUrl(path, paramsToUrlParams(params))))
   }
 
+  def getWithAuthHeader(path: String, params: Map[String, Any] = Map.empty, username: String, password: String) = {
+    val getRequest = new HttpGet(targetUrl(path, paramsToUrlParams(params)))
+    setAuthHeader(getRequest, username, password)
+    execute(getRequest)
+  }
+
   def getOptional(path: String, params: Map[String, Any] = Map.empty) = {
     executeOptional(new HttpGet(targetUrl(path, paramsToUrlParams(params))))
   }
@@ -54,6 +58,16 @@ abstract class ApacheHttpClient extends ContainerEventListener with UrlEncoding 
     postRequest.setEntity(
       new UrlEncodedFormEntity(params.map {case (k,v) => new BasicNameValuePair(k,v)}.toList, "UTF-8")
     )
+    execute(postRequest)
+  }
+
+  def postWithAuthHeader(path: String, params: Map[String, String], username: String, password: String) = {
+    val postRequest = new HttpPost(targetUrl(path))
+
+    postRequest.setEntity(
+      new UrlEncodedFormEntity(params.map {case (k,v) => new BasicNameValuePair(k,v)}.toList, "UTF-8")
+    )
+    setAuthHeader(postRequest, username, password)
     execute(postRequest)
   }
 
@@ -76,7 +90,7 @@ abstract class ApacheHttpClient extends ContainerEventListener with UrlEncoding 
     execute(postRequest)
   }
 
-  def postPlainJson(path: String, json: String) = {
+  def postPlainJsonWithAuthHeader(path: String, json: String, username: String, password: String) = {
     val postRequest = new HttpPost(targetUrl(path))
 
     val jsonEntity = new StringEntity(json)
@@ -84,8 +98,13 @@ abstract class ApacheHttpClient extends ContainerEventListener with UrlEncoding 
 
     postRequest.setEntity(jsonEntity)
     postRequest.setHeader("Content-Type", "application/json")
-
+    setAuthHeader(postRequest, username, password)
     execute(postRequest)
+  }
+
+  private def setAuthHeader(request: HttpRequestBase, username: String, password: String) {
+    val credentials = new UsernamePasswordCredentials(username, password)
+    request.addHeader(new BasicScheme().authenticate(credentials, request))
   }
 
   override def startup() {

@@ -13,6 +13,10 @@ trait JsonResults extends Results {
 
   private def error(message: String) = toJson(Map("error" -> message))
 
+  case class UnauthorizedJsonResult(message: String) extends JsonResult {
+    def toResponse = Unauthorized(error(message)).as(JSON_CONTENT_TYPE)
+  }
+
   case class InternalServerErrorJsonResult(message: String) extends JsonResult {
     def toResponse = InternalServerError(error(message)).as(JSON_CONTENT_TYPE)
   }
