@@ -1,4 +1,4 @@
-package uk.gov.gds.placesclient.model
+package uk.gov.gds.common.placesclient.model
 
 import uk.gov.gds.common.repository.HasIdentity
 

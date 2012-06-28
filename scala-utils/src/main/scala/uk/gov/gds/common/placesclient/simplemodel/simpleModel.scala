@@ -1,6 +1,6 @@
-package uk.gov.gds.placesclient.simplemodel
+package uk.gov.gds.common.placesclient.simplemodel
 
-import uk.gov.gds.placesclient.model.Authority
+import uk.gov.gds.common.placesclient.model.Authority
 
 case class SimpleAuthority(name: String,
                      agencyId: Int,

@@ -1,8 +1,8 @@
 package uk.gov.gds.common.placesclient.api.client.implementations
 
 import uk.gov.gds.common.json.JsonSerializer._
-import uk.gov.gds.placesclient.api.client.PlacesHttpClient
-import uk.gov.gds.placesclient.model._
+import uk.gov.gds.common.placesclient.api.client.PlacesHttpClient
+import uk.gov.gds.common.placesclient.model._
 import uk.gov.gds.common.placesclient.api.client.PlacesApiClient
 
 object RealPlacesApiClient extends PlacesApiClient {
