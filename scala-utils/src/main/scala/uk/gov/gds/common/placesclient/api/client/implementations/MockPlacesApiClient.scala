@@ -55,7 +55,7 @@ object MockPlacesApiClient extends PlacesApiClient {
   def getAllAuthorities() = 
     throw new Exception("Not Implemented")
 
-  def getAuthorityLicenceInteractions(authorityUrlSlug: String) = 
+  def getAuthorityLicenceInformationListByAuthorityUrlSlug(authorityUrlSlug: String) =
     throw new Exception("Not Implemented")
 
   def getAllLicences() = 

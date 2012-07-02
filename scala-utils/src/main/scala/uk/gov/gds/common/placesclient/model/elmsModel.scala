@@ -67,9 +67,11 @@ case class LicenceInteraction(lgilId: Int,
 
 object LicenceInteraction {
   def lgilIdToInteractionTypeMap = { Map[Int, String](0 -> "apply", 4 -> "pay for",
-                                                      8 -> "information", 9 -> "guidance",
+                                                      8 -> "information", 9 -> "regulation",
                                                       11 -> "change", 14 -> "renew",
-                                                      30 -> "dont know yet", 31 -> "dont know yet", 32 -> "dont know yet")
+                                                      30 -> "apply for exemption",
+                                                      31 -> "tell us once",
+                                                      32 -> "notify of incidents or instances")
   }
 }
 

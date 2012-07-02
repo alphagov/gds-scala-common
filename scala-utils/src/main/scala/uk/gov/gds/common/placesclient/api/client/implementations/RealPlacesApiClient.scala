@@ -42,6 +42,9 @@ object RealPlacesApiClient extends PlacesApiClient {
   def getAuthorityLicenceInformationBySnacCodeAndLegalRefNbr(snacCode: String, legalRefNbr: Int) =
     PlacesHttpClient.getOptional("/elms-licence/" + legalRefNbr + "/" + snacCode).flatMap(fromJson[Option[AuthorityLicenceInformation]](_))
 
+  def getAuthorityLicenceInformationListByAuthorityUrlSlug(authorityUrlSlug: String) =
+    PlacesHttpClient.getOptional("/authority/" + authorityUrlSlug + "/licence-information").flatMap(fromJson[Option[List[AuthorityLicenceInformation]]](_))
+
   def getLicenceInformationByUrlSlugAndLegalRefNbr(urlSlug: String, legalReferenceNumber: Int) =
     PlacesHttpClient.getOptional("/elms-licence/" + urlSlug + "/" + legalReferenceNumber).flatMap(fromJson[Option[ElmsLicenceInformation]](_))
 
@@ -50,9 +53,6 @@ object RealPlacesApiClient extends PlacesApiClient {
 
   def getAllAuthorities() =
     PlacesHttpClient.getOptional("/authorities").flatMap(fromJson[Option[List[Authority]]](_))
-
-  def getAuthorityLicenceInteractions(authorityUrlSlug: String) =
-    PlacesHttpClient.getOptional("/authority/" + authorityUrlSlug + "/licence-interactions").flatMap(fromJson[Option[List[AuthorityLicenceInteraction]]](_))
 
   def getAllLicences() =
     PlacesHttpClient.getOptional("/elms-licences").flatMap(fromJson[Option[List[ElmsLicence]]](_))

@@ -25,13 +25,13 @@ trait PlacesApiClient {
 
   def getAuthorityLicenceInformationBySnacCodeAndLegalRefNbr(snacCode: String, legalRefNbr: Int): Option[AuthorityLicenceInformation]
 
+  def getAuthorityLicenceInformationListByAuthorityUrlSlug(authorityUrlSlug: String): Option[List[AuthorityLicenceInformation]]
+
   def getLicenceInformationByUrlSlugAndLegalRefNbr(urlSlug: String, legalReferenceNumber: Int): Option[ElmsLicenceInformation]
 
   def getLicenceInformationByLegalReferenceNumber(legalReferenceNumber: Int): Option[ElmsLicenceInformation]
 
   def getAllAuthorities(): Option[List[Authority]]
-
-  def getAuthorityLicenceInteractions(authorityUrlSlug: String): Option[List[AuthorityLicenceInteraction]]
 
   def getAllLicences(): Option[List[ElmsLicence]]
 
@@ -76,14 +76,15 @@ object PlacesApiClient extends Logging {
   def getAuthorityLicenceInformationBySnacCodeAndLegalRefNbr(snacCode: String, legalRefNbr: Int) =
     client.getAuthorityLicenceInformationBySnacCodeAndLegalRefNbr(snacCode, legalRefNbr)
 
+  def getAuthorityLicenceInformationListByAuthorityUrlSlug(authorityUrlSlug: String) =
+    client.getAuthorityLicenceInformationListByAuthorityUrlSlug(authorityUrlSlug)
+
   def getLicenceInformationByUrlSlugAndLegalRefNbr(urlSlug: String, legalReferenceNumber: Int) = client.getLicenceInformationByUrlSlugAndLegalRefNbr(urlSlug, legalReferenceNumber)
 
   def getLicenceInformationByLegalReferenceNumber(legalReferenceNumber: Int) =
     client.getLicenceInformationByLegalReferenceNumber(legalReferenceNumber)
 
   def getAllAuthorities() = client.getAllAuthorities()
-
-  def getAuthorityLicenceInteractions(authorityUrlSlug: String) = client.getAuthorityLicenceInteractions(authorityUrlSlug)
 
   def getAllLicences() = client.getAllLicences()
 
