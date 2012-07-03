@@ -109,8 +109,8 @@ object MockPlacesApiClient extends PlacesApiClient {
     )
   )
 
-  def getInteractionDetails(authorityUrlSlug: String, serviceId: Long) = Option(Map
-  ("licenceName"-> "Animal boarding establishment lic.",
+  def getInteractionDetails(authorityUrlSlug: String, serviceId: Long): Option[Map[String, String]] =
+  Option(Map("licenceName"-> "Animal boarding establishment lic.",
   "lgslId"-> "374",
   "interactionName"-> "Application to renew an animal boarding establishment lic."
   ))

@@ -66,7 +66,9 @@ object RealPlacesApiClient extends PlacesApiClient {
   def getLicencesProvidedByAuthority(authorityUrlSlug: String) =
     PlacesHttpClient.getOptional("/elms-licences/" + authorityUrlSlug).flatMap(fromJson[Option[List[ElmsLicence]]](_))
 
-  def getInteractionDetails(authorityUrlSlug: String, serviceId: Long) =
-    PlacesHttpClient.getOptional("/places/service/" + authorityUrlSlug + "/" + serviceId).flatMap(fromJson[Option[Map[String, String]]](_))
+  def getInteractionDetails(authorityUrlSlug: String, serviceId: Long) = {
+    Option(fromJson[Map[String, String]](PlacesHttpClient.get("/service/" + authorityUrlSlug + "/" + serviceId)))
+  }
+
 }
 
