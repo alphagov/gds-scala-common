@@ -40,6 +40,8 @@ trait PlacesApiClient {
   def getLicenceInteractionsByPdfName(pdfName: String): Option[List[LicenceInteraction]]
 
   def getLicencesProvidedByAuthority(authorityUrlSlug: String): Option[List[ElmsLicence]]
+
+  def getInteractionDetails(authorityUrlSlug: String, serviceId: Long): Option[Map[String, String]]
 }
 
 object PlacesApiClient extends Logging {
@@ -93,6 +95,8 @@ object PlacesApiClient extends Logging {
   def getLicenceInteractionsByPdfName(pdfName: String) = client.getLicenceInteractionsByPdfName(pdfName)
 
   def getLicencesProvidedByAuthority(authorityUrlSlug: String) = client.getLicencesProvidedByAuthority(authorityUrlSlug)
+
+  def getInteractionDetails(authorityUrlSlug: String, serviceId: Long) = client.getInteractionDetails(authorityUrlSlug, serviceId)
 }
 
 case class ApiResponseException(statusCode: Int, message: String) extends Exception(message)

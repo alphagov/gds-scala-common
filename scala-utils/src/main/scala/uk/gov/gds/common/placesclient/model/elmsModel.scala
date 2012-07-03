@@ -63,7 +63,9 @@ case class LicenceInteraction(lgilId: Int,
                               subForms: List[LicenceForm] = List(),
                               supportingDocuments: List[SupportingDocument] = List(),
                               externalUrl: Option[String] = None,
-                              fee: Option[BigDecimal] = None)
+                              fee: Option[BigDecimal] = None) {
+  def licenceInteractionUrlSlug = licenceInteractionName.replace(" ","-").replace(".","").toLowerCase
+}
 
 object LicenceInteraction {
   def lgilIdToInteractionTypeMap = { Map[Int, String](0 -> "apply", 4 -> "pay for",
