@@ -101,7 +101,7 @@ case class SupportingDocument(name: String,
                               isRequired: Boolean = false)
 
 case class Service(legalReferenceNumber: Int, lgilId: Int, lgilSubId: Int) {
-  override def toString = legalReferenceNumber+""+lgilId+""+lgilSubId
+  override def toString = legalReferenceNumber+lgilId.formatted("%02d")+lgilSubId.formatted("%02d")
 }
 
 object Service {
