@@ -100,7 +100,9 @@ case class SupportingDocument(name: String,
                               fileExtensions: List[String],
                               isRequired: Boolean = false)
 
-case class Service(legalReferenceNumber: Int, lgilId: Int, lgilSubId: Int)
+case class Service(legalReferenceNumber: Int, lgilId: Int, lgilSubId: Int) {
+  override def toString = legalReferenceNumber+""+lgilId+""+lgilSubId
+}
 
 object Service {
   def from(s: String) = {

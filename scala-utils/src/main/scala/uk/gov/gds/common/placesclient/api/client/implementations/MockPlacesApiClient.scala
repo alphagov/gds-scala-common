@@ -1,6 +1,6 @@
 package uk.gov.gds.common.placesclient.api.client.implementations
 
-import uk.gov.gds.common.placesclient.model.{LocalAuthority, Address}
+import uk.gov.gds.common.placesclient.model.{Service, LocalAuthority, Address}
 import uk.gov.gds.common.http.ApiResponseException
 import uk.gov.gds.common.placesclient.api.client.PlacesApiClient
 
@@ -109,7 +109,7 @@ object MockPlacesApiClient extends PlacesApiClient {
     )
   )
 
-  def getInteractionDetails(authorityUrlSlug: String, serviceId: Long): Option[Map[String, String]] =
+  def getInteractionDetails(authorityUrlSlug: String, serviceId: Service): Option[Map[String, String]] =
   Option(Map("licenceName"-> "Animal boarding establishment lic.",
   "lgslId"-> "374",
   "interactionName"-> "Application to renew an animal boarding establishment lic."
