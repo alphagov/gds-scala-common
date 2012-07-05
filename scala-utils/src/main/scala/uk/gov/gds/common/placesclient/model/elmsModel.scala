@@ -100,4 +100,12 @@ case class SupportingDocument(name: String,
                               fileExtensions: List[String],
                               isRequired: Boolean = false)
 
+case class Service(legalReferenceNumber: Int, lgilId: Int, lgilSubId: Int)
 
+object Service {
+  def from(s: String) = {
+    val serviceRegExp = """(\d+)(\d\d)(\d\d)""".r
+    val serviceRegExp(legalReferenceNumber, lgilId, lgilSubId) = s
+    Service(legalReferenceNumber.toInt, lgilId.toInt, lgilSubId.toInt)
+  }
+}
