@@ -48,6 +48,18 @@ extends HasIdentity {
       co.contains(local.country.get) && (sn.isEmpty || sn.contains(local.snacCode.get))
     }
 
+  def getCountryForWorkingDays = {
+    country match {
+      case Some(aCountry) => aCountry
+      case _ => countries match {
+        case Some(set) => set.size match {
+          case 1 => set.toList(0)
+          case _ => "England"
+        }
+        case _ => "England"
+      }
+    }
+  }
 }
 
 object Authority {
