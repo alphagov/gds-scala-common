@@ -14,8 +14,7 @@ object Config extends Logging {
 
   private lazy val properties = loadConfig(configFileAsStream())
 
-  def apply(name: String, default: String = null) =
-    prop(name).getOrElse(Option(default).getOrElse(throw new Exception("Can't find setting: " + name)))
+  def apply(name: String, default: String = null) = prop(name).getOrElse(Option(default).getOrElse(throw new Exception("Can't find setting: " + name)))
 
   private def prop(name: String) = Option(properties.get(name).asInstanceOf[String])
 
@@ -24,22 +23,26 @@ object Config extends Logging {
     new FileInputStream(productionConfigFile)
   }
   else {
-    logger.info("No production config found in " + productionConfigFile + ", checking for test configuration")
-    Option(getClass.getResource(testConfigFile)) match {
-      case Some(url) => {
-        logger.info("Test config found at: " + url)
-        url.openStream()
-      }
-      case None => {
-        Option(getClass.getResource(developmentConfigFile)) match {
-          case Some(url) => {
-            logger.info("Development config found at: " + url)
-            url.openStream()
-          }
-          case None => throw new IllegalStateException("No config file found")
-        }
-      }
+    logger.info("No production config found in " + productionConfigFile + ", checking for test or development configuration")
+
+    modeSystemProperty match {
+      case Some(mode) if ("test".equals(mode)) => configureForTest
+      case _ => configureForDevelopment
     }
+  }
+
+  private def modeSystemProperty = Option(System.getProperty("gds.mode"))
+
+  private def configureForTest = openPropertiesFile(testConfigFile)
+
+  private def configureForDevelopment = openPropertiesFile(developmentConfigFile)
+
+  private def openPropertiesFile(filename: String) = Option(getClass.getResource(filename)) match {
+    case Some(url) =>
+      logger.info("Config file found at: " + url)
+      url.openStream()
+    case _ =>
+      throw new IllegalStateException("Could not open file: " + filename);
   }
 
   private def loadConfig(propertyStream: InputStream) = try {
