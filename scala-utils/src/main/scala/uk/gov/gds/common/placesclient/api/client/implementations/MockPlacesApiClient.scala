@@ -1,6 +1,6 @@
 package uk.gov.gds.common.placesclient.api.client.implementations
 
-import uk.gov.gds.common.placesclient.model.{Service, LocalAuthority, Address}
+import uk.gov.gds.common.placesclient.model.{LocalAuthority, Address}
 import uk.gov.gds.common.http.ApiResponseException
 import uk.gov.gds.common.placesclient.api.client.PlacesApiClient
 
@@ -34,41 +34,17 @@ object MockPlacesApiClient extends PlacesApiClient {
 
   def numberAddressesFound(postcode: String, lineOne: Option[String]) = getAddresses(postcode, lineOne).size
 
-  def getAuthorityByUrlSlug(urlSlug: String) = 
+  def getAuthorityBySnacCode(snacCode: String) =
     throw new Exception("Not Implemented")
 
-  def getAuthorityLicenceInformationByAuthorityAndLicence(authorityUrlSlugWithArea: String, licenceUrlSlug: String) =
-    throw new Exception("Not Implemented")
-
-  def getAuthorityBySnacCode(snacCode: String) = 
-    throw new Exception("Not Implemented")
-
-  def getAuthorityLicenceInformationBySnacCodeAndLegalRefNbr(snacCode: String, legalRefNbr: Int) = 
-    throw new Exception("Not Implemented")
-
-  def getLicenceInformationByUrlSlugAndLegalRefNbr(urlSlug: String, legalReferenceNumber: Int) = 
-    throw new Exception("Not Implemented")
-
-  def getLicenceInformationByLegalReferenceNumber(legalReferenceNumber: Int) = 
-    throw new Exception("Not Implemented")
-
-  def getAllAuthorities() = 
-    throw new Exception("Not Implemented")
-
-  def getAuthorityLicenceInformationListByAuthorityUrlSlug(authorityUrlSlug: String) =
-    throw new Exception("Not Implemented")
-
-  def getAllLicences() = 
-    throw new Exception("Not Implemented")
-
-  def getCompetentAuthoritiesByPostcodeAndLicenceUrlSlug(postcode: String, licenceUrlSlug: String) = 
-    throw new Exception("Not Implemented")
-
-  def getLicenceInteractionsByPdfName(pdfName: String) =
-    throw new Exception("Not Implemented")
-
-  def getLicencesProvidedByAuthority(authorityUrlSlug: String) =
-    throw new Exception("Not Implemented")
+//  def getAuthorityByUrlSlug(urlSlug: String) =
+//    throw new Exception("Not Implemented")
+//
+//  def getAuthorityLicenceInformationByAuthorityAndLicence(authorityUrlSlugWithArea: String, licenceUrlSlug: String) =
+//    throw new Exception("Not Implemented")
+//
+//  def getAllAuthorities() =
+//    throw new Exception("Not Implemented")
 
   def getAddresses(postcode: String, lineOne: Option[String]): List[Address] = {
     mockAddressList.foreach {
@@ -109,9 +85,9 @@ object MockPlacesApiClient extends PlacesApiClient {
     )
   )
 
-  def getInteractionDetails(authorityUrlSlug: String, serviceId: Service): Option[Map[String, String]] =
-  Option(Map("licenceName"-> "Animal boarding establishment lic.",
-  "lgslId"-> "374",
-  "interactionName"-> "Application to renew an animal boarding establishment lic."
-  ))
+//  def getInteractionDetails(authorityUrlSlug: String, serviceId: Service): Option[Map[String, String]] =
+//  Option(Map("licenceName"-> "Animal boarding establishment lic.",
+//  "lgslId"-> "374",
+//  "interactionName"-> "Application to renew an animal boarding establishment lic."
+//  ))
 }

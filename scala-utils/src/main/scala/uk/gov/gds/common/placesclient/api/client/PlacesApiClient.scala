@@ -17,31 +17,31 @@ trait PlacesApiClient {
 
   def getLocalAuthorityBySnac(snac: String): Option[LocalAuthority]
 
-  def getAuthorityByUrlSlug(urlSlug: String): Option[Authority]
-
-  def getAuthorityBySnacCode(snacCode: String): Option[Authority]
-
-  def getAuthorityLicenceInformationByAuthorityAndLicence(authorityUrlSlugWithArea: String, licenceUrlSlug: String): Option[AuthorityLicenceInformation]
-
-  def getAuthorityLicenceInformationBySnacCodeAndLegalRefNbr(snacCode: String, legalRefNbr: Int): Option[AuthorityLicenceInformation]
-
-  def getAuthorityLicenceInformationListByAuthorityUrlSlug(authorityUrlSlug: String): Option[List[AuthorityLicenceInformation]]
-
-  def getLicenceInformationByUrlSlugAndLegalRefNbr(urlSlug: String, legalReferenceNumber: Int): Option[ElmsLicenceInformation]
-
-  def getLicenceInformationByLegalReferenceNumber(legalReferenceNumber: Int): Option[ElmsLicenceInformation]
-
-  def getAllAuthorities(): Option[List[Authority]]
-
-  def getAllLicences(): Option[List[ElmsLicence]]
-
-  def getCompetentAuthoritiesByPostcodeAndLicenceUrlSlug(postcode: String, licenceUrlSlug: String): Option[List[AuthorityLicenceInformation]]
-
-  def getLicenceInteractionsByPdfName(pdfName: String): Option[List[LicenceInteraction]]
-
-  def getLicencesProvidedByAuthority(authorityUrlSlug: String): Option[List[ElmsLicence]]
-
-  def getInteractionDetails(authorityUrlSlug: String, serviceId: Service): Option[Map[String, String]]
+//  def getAuthorityByUrlSlug(urlSlug: String): Option[Authority]
+//
+//  def getAuthorityBySnacCode(snacCode: String): Option[Authority]
+//
+//  def getAllAuthorities(): Option[List[Authority]]
+//
+//  def getAuthorityLicenceInformationByAuthorityAndLicence(authorityUrlSlugWithArea: String, licenceUrlSlug: String): Option[AuthorityLicenceInformation]
+//
+//  def getAuthorityLicenceInformationBySnacCodeAndLegalRefNbr(snacCode: String, legalRefNbr: Int): Option[AuthorityLicenceInformation]
+//
+//  def getAuthorityLicenceInformationListByAuthorityUrlSlug(authorityUrlSlug: String): Option[List[AuthorityLicenceInformation]]
+//
+//  def getLicenceInformationByUrlSlugAndLegalRefNbr(urlSlug: String, legalReferenceNumber: Int): Option[ElmsLicenceInformation]
+//
+//  def getLicenceInformationByLegalReferenceNumber(legalReferenceNumber: Int): Option[ElmsLicenceInformation]
+//
+//  def getAllLicences(): Option[List[ElmsLicence]]
+//
+//  def getCompetentAuthoritiesByPostcodeAndLicenceUrlSlug(postcode: String, licenceUrlSlug: String): Option[List[AuthorityLicenceInformation]]
+//
+//  def getLicenceInteractionsByPdfName(pdfName: String): Option[List[LicenceInteraction]]
+//
+//  def getLicencesProvidedByAuthority(authorityUrlSlug: String): Option[List[ElmsLicence]]
+//
+//  def getInteractionDetails(authorityUrlSlug: String, serviceId: Service): Option[Map[String, String]]
 }
 
 object PlacesApiClient extends Logging {
@@ -68,35 +68,35 @@ object PlacesApiClient extends Logging {
 
   def getLocalAuthorityBySnac(snac: String) = client.getLocalAuthorityBySnac(snac)
 
-  def getAuthorityByUrlSlug(urlSlug: String) = client.getAuthorityByUrlSlug(urlSlug)
-
-  def getAuthorityBySnacCode(snacCode: String) = client.getAuthorityBySnacCode(snacCode)
-
-  def getAuthorityLicenceInformationByAuthorityAndLicence(authorityUrlSlug: String, licenceUrlSlug: String) =
-    client.getAuthorityLicenceInformationByAuthorityAndLicence(authorityUrlSlug, licenceUrlSlug)
-
-  def getAuthorityLicenceInformationBySnacCodeAndLegalRefNbr(snacCode: String, legalRefNbr: Int) =
-    client.getAuthorityLicenceInformationBySnacCodeAndLegalRefNbr(snacCode, legalRefNbr)
-
-  def getAuthorityLicenceInformationListByAuthorityUrlSlug(authorityUrlSlug: String) =
-    client.getAuthorityLicenceInformationListByAuthorityUrlSlug(authorityUrlSlug)
-
-  def getLicenceInformationByUrlSlugAndLegalRefNbr(urlSlug: String, legalReferenceNumber: Int) = client.getLicenceInformationByUrlSlugAndLegalRefNbr(urlSlug, legalReferenceNumber)
-
-  def getLicenceInformationByLegalReferenceNumber(legalReferenceNumber: Int) =
-    client.getLicenceInformationByLegalReferenceNumber(legalReferenceNumber)
-
-  def getAllAuthorities() = client.getAllAuthorities()
-
-  def getAllLicences() = client.getAllLicences()
-
-  def getCompetentAuthoritiesByPostcodeAndLicenceUrlSlug(postcode: String, licenceUrlSlug: String) = client.getCompetentAuthoritiesByPostcodeAndLicenceUrlSlug(postcode, licenceUrlSlug)
-
-  def getLicenceInteractionsByPdfName(pdfName: String) = client.getLicenceInteractionsByPdfName(pdfName)
-
-  def getLicencesProvidedByAuthority(authorityUrlSlug: String) = client.getLicencesProvidedByAuthority(authorityUrlSlug)
-
-  def getInteractionDetails(authorityUrlSlug: String, serviceId: Service) = client.getInteractionDetails(authorityUrlSlug, serviceId)
+//  def getAuthorityByUrlSlug(urlSlug: String) = client.getAuthorityByUrlSlug(urlSlug)
+//
+//  def getAuthorityBySnacCode(snacCode: String) = client.getAuthorityBySnacCode(snacCode)
+//
+//  def getAllAuthorities() = client.getAllAuthorities()
+//
+//  def getAuthorityLicenceInformationByAuthorityAndLicence(authorityUrlSlug: String, licenceUrlSlug: String) =
+//    client.getAuthorityLicenceInformationByAuthorityAndLicence(authorityUrlSlug, licenceUrlSlug)
+//
+//  def getAuthorityLicenceInformationBySnacCodeAndLegalRefNbr(snacCode: String, legalRefNbr: Int) =
+//    client.getAuthorityLicenceInformationBySnacCodeAndLegalRefNbr(snacCode, legalRefNbr)
+//
+//  def getAuthorityLicenceInformationListByAuthorityUrlSlug(authorityUrlSlug: String) =
+//    client.getAuthorityLicenceInformationListByAuthorityUrlSlug(authorityUrlSlug)
+//
+//  def getLicenceInformationByUrlSlugAndLegalRefNbr(urlSlug: String, legalReferenceNumber: Int) = client.getLicenceInformationByUrlSlugAndLegalRefNbr(urlSlug, legalReferenceNumber)
+//
+//  def getLicenceInformationByLegalReferenceNumber(legalReferenceNumber: Int) =
+//    client.getLicenceInformationByLegalReferenceNumber(legalReferenceNumber)
+//
+//  def getAllLicences() = client.getAllLicences()
+//
+//  def getCompetentAuthoritiesByPostcodeAndLicenceUrlSlug(postcode: String, licenceUrlSlug: String) = client.getCompetentAuthoritiesByPostcodeAndLicenceUrlSlug(postcode, licenceUrlSlug)
+//
+//  def getLicenceInteractionsByPdfName(pdfName: String) = client.getLicenceInteractionsByPdfName(pdfName)
+//
+//  def getLicencesProvidedByAuthority(authorityUrlSlug: String) = client.getLicencesProvidedByAuthority(authorityUrlSlug)
+//
+//  def getInteractionDetails(authorityUrlSlug: String, serviceId: Service) = client.getInteractionDetails(authorityUrlSlug, serviceId)
 }
 
 case class ApiResponseException(statusCode: Int, message: String) extends Exception(message)

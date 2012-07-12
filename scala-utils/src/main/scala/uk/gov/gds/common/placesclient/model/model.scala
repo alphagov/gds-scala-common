@@ -20,10 +20,10 @@ case class LocalAuthority(name: String = "",
                           ero: Ero = Ero(),
                           opcsId: String) extends HasIdentity {
   def id = opcsId
-
-  def this(la: Authority) = this(name = la.name,
-    ero = Ero(telephoneNumber = ""),
-    opcsId = la.snacCode.get)
+//
+//  def this(la: Authority) = this(name = la.name,
+//    ero = Ero(telephoneNumber = ""),
+//    opcsId = la.snacCode.get)
 }
 
 case class GovUkAddress(lineOne: String = "",

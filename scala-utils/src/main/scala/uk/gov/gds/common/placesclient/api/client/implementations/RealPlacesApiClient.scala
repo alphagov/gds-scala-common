@@ -30,45 +30,13 @@ object RealPlacesApiClient extends PlacesApiClient {
   def getLocalAuthorityBySnac(snac: String) =
     PlacesHttpClient.getOptional("/authority/ertp/" + snac).flatMap(fromJson[Option[LocalAuthority]](_))
 
-  def getAuthorityByUrlSlug(urlSlug: String) =
-    PlacesHttpClient.getOptional("/authority/" + urlSlug).flatMap(fromJson[Option[Authority]](_))
-
-  def getAuthorityBySnacCode(snacCode: String) =
-    PlacesHttpClient.getOptional("/authority/" + snacCode).flatMap(fromJson[Option[Authority]](_))
-
-  def getAuthorityLicenceInformationByAuthorityAndLicence(authorityUrlSlugWithArea: String, licenceUrlSlug: String) =
-    PlacesHttpClient.getOptional("/elms-licence/" + authorityUrlSlugWithArea + "/" + licenceUrlSlug).flatMap(fromJson[Option[AuthorityLicenceInformation]](_))
-
-  def getAuthorityLicenceInformationBySnacCodeAndLegalRefNbr(snacCode: String, legalRefNbr: Int) =
-    PlacesHttpClient.getOptional("/elms-licence/" + legalRefNbr + "/" + snacCode).flatMap(fromJson[Option[AuthorityLicenceInformation]](_))
-
-  def getAuthorityLicenceInformationListByAuthorityUrlSlug(authorityUrlSlug: String) =
-    PlacesHttpClient.getOptional("/authority/" + authorityUrlSlug + "/licence-information").flatMap(fromJson[Option[List[AuthorityLicenceInformation]]](_))
-
-  def getLicenceInformationByUrlSlugAndLegalRefNbr(urlSlug: String, legalReferenceNumber: Int) =
-    PlacesHttpClient.getOptional("/elms-licence/" + urlSlug + "/" + legalReferenceNumber).flatMap(fromJson[Option[ElmsLicenceInformation]](_))
-
-  def getLicenceInformationByLegalReferenceNumber(legalReferenceNumber: Int) =
-    PlacesHttpClient.getOptional("/elms-licence/" + legalReferenceNumber).flatMap(fromJson[Option[ElmsLicenceInformation]](_))
-
-  def getAllAuthorities() =
-    PlacesHttpClient.getOptional("/authorities").flatMap(fromJson[Option[List[Authority]]](_))
-
-  def getAllLicences() =
-    PlacesHttpClient.getOptional("/elms-licences").flatMap(fromJson[Option[List[ElmsLicence]]](_))
-
-  def getCompetentAuthoritiesByPostcodeAndLicenceUrlSlug(postcode: String, licenceUrlSlug: String) =
-    PlacesHttpClient.getOptional("/competent-authority/" + postcode.replace(" ", "") + "/" + licenceUrlSlug).flatMap(fromJson[Option[List[AuthorityLicenceInformation]]](_))
-
-  def getLicenceInteractionsByPdfName(pdfName: String) =
-    PlacesHttpClient.getOptional("/elms-licence/form/" + pdfName).flatMap(fromJson[Option[List[LicenceInteraction]]](_))
-
-  def getLicencesProvidedByAuthority(authorityUrlSlug: String) =
-    PlacesHttpClient.getOptional("/elms-licences/" + authorityUrlSlug).flatMap(fromJson[Option[List[ElmsLicence]]](_))
-
-  def getInteractionDetails(authorityUrlSlug: String, serviceId: Service) = {
-    Option(fromJson[Map[String, String]](PlacesHttpClient.get("/service/" + authorityUrlSlug + "/" + serviceId.toString)))
-  }
-
+//  def getAuthorityByUrlSlug(urlSlug: String) =
+//    PlacesHttpClient.getOptional("/authority/" + urlSlug).flatMap(fromJson[Option[Authority]](_))
+//
+//  def getAuthorityBySnacCode(snacCode: String) =
+//    PlacesHttpClient.getOptional("/authority/" + snacCode).flatMap(fromJson[Option[Authority]](_))
+//
+//  def getAllAuthorities() =
+//    PlacesHttpClient.getOptional("/authorities").flatMap(fromJson[Option[List[Authority]]](_))
 }
 
