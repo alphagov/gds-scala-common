@@ -14,6 +14,11 @@ object Config extends Logging {
 
   private lazy val properties = loadConfig(configFileAsStream())
 
+  modeSystemProperty match {
+    case Some(mode) => logger.info("System mode is " + mode)
+    case _ => logger.info("Production mode")
+  }
+
   def apply(name: String, default: String = null) = prop(name).getOrElse(Option(default).getOrElse(throw new Exception("Can't find setting: " + name)))
 
   private def prop(name: String) = Option(properties.get(name).asInstanceOf[String])
