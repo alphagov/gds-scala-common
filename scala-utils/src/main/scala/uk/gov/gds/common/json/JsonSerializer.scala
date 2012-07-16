@@ -19,7 +19,7 @@ object JsonSerializer extends Logging {
   }
   catch {
     case e: Exception =>
-      logger.error("Could not serialize FROM json: " + json, e)
+      logger.error("Could not deserialize FROM json: " + json, e)
       throw e
   }
 }

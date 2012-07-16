@@ -10,25 +10,29 @@ object MockPlacesApiClient extends PlacesApiClient {
 
   val camdenBoroughCouncil = LocalAuthority(name = "Camden Borough Council", opcsId = "00AG")
   val wandsworthBoroughCouncil = LocalAuthority(name = "Wandsworth Borough Council", opcsId = "00BJ")
+  val buryBoroughCouncil = LocalAuthority(name = "bury", opcsId = "00BM")
+  val belfastCityCouncil = LocalAuthority("Belfast City Council", opcsId = "95Z")
 
-  private def isCamdenCouncil(postcode: String) = postcode.replace(" ", "").equalsIgnoreCase("WC2B6SE")
+  val codeToAuthority = Map(
+    camdenBoroughCouncil.opcsId -> camdenBoroughCouncil,
+    wandsworthBoroughCouncil.opcsId -> wandsworthBoroughCouncil,
+    buryBoroughCouncil.opcsId -> buryBoroughCouncil,
+    belfastCityCouncil.opcsId -> belfastCityCouncil
+  )
 
-  private def isWandsworthBoroughCouncil(postcode: String) = postcode.replace(" ", "").equalsIgnoreCase("SW112DR")
+  val postCodesToAuthorities = Map(
+    "WC2B6SE" -> camdenBoroughCouncil,
+    "SW112DR" -> wandsworthBoroughCouncil,
+    "M264LJ" -> buryBoroughCouncil,
+    "BT71NT" -> belfastCityCouncil
+  )
 
-  def getLocalAuthority(address: Address) =
-    if (isCamdenCouncil(address.postcode)) Some(camdenBoroughCouncil)
-    else if (isWandsworthBoroughCouncil(address.postcode)) Some(wandsworthBoroughCouncil)
-    else None
+  def getLocalAuthority(address: Address) = postCodesToAuthorities.get(address.postcode.replace(" ", "").toUpperCase)
 
-  def getLocalAuthority(postcode: String) =
-    if (isCamdenCouncil(postcode)) Some(camdenBoroughCouncil)
-    else if (isWandsworthBoroughCouncil(postcode)) Some(wandsworthBoroughCouncil)
-    else None
+  def getLocalAuthority(postcode: String) = postCodesToAuthorities.get(postcode.replace(" ", "").toUpperCase)
 
   def getLocalAuthorityBySnac(snac: String) =
-    if (snac == "00AG") Some(camdenBoroughCouncil)
-    else if (snac == "00BJ") Some(wandsworthBoroughCouncil)
-    else throw new ApiResponseException(404, "local authority details not found")
+    codeToAuthority.get(snac).map(Some(_)).getOrElse(throw new ApiResponseException(404, "local authority details not found"))
 
   def addressExists(postcode: String, lineOne: Option[String]) = getAddresses(postcode, lineOne).nonEmpty
 
