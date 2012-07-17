@@ -12,19 +12,22 @@ object MockPlacesApiClient extends PlacesApiClient {
   val wandsworthBoroughCouncil = LocalAuthority(name = "Wandsworth Borough Council", opcsId = "00BJ")
   val buryBoroughCouncil = LocalAuthority(name = "bury", opcsId = "00BM")
   val belfastCityCouncil = LocalAuthority("Belfast City Council", opcsId = "95Z")
+  val liverpoolCityCouncil = LocalAuthority("Liverpool City Council", opcsId = "00BY")
 
   val codeToAuthority = Map(
     camdenBoroughCouncil.opcsId -> camdenBoroughCouncil,
     wandsworthBoroughCouncil.opcsId -> wandsworthBoroughCouncil,
     buryBoroughCouncil.opcsId -> buryBoroughCouncil,
-    belfastCityCouncil.opcsId -> belfastCityCouncil
+    belfastCityCouncil.opcsId -> belfastCityCouncil,
+    liverpoolCityCouncil.opcsId -> liverpoolCityCouncil
   )
 
   val postCodesToAuthorities = Map(
     "WC2B6SE" -> camdenBoroughCouncil,
     "SW112DR" -> wandsworthBoroughCouncil,
     "M264LJ" -> buryBoroughCouncil,
-    "BT71NT" -> belfastCityCouncil
+    "BT71NT" -> belfastCityCouncil,
+    "L40TH" -> liverpoolCityCouncil
   )
 
   def getLocalAuthority(address: Address) = postCodesToAuthorities.get(address.postcode.replace(" ", "").toUpperCase)
@@ -41,14 +44,14 @@ object MockPlacesApiClient extends PlacesApiClient {
   def getAuthorityBySnacCode(snacCode: String) =
     throw new Exception("Not Implemented")
 
-//  def getAuthorityByUrlSlug(urlSlug: String) =
-//    throw new Exception("Not Implemented")
-//
-//  def getAuthorityLicenceInformationByAuthorityAndLicence(authorityUrlSlugWithArea: String, licenceUrlSlug: String) =
-//    throw new Exception("Not Implemented")
-//
-//  def getAllAuthorities() =
-//    throw new Exception("Not Implemented")
+  //  def getAuthorityByUrlSlug(urlSlug: String) =
+  //    throw new Exception("Not Implemented")
+  //
+  //  def getAuthorityLicenceInformationByAuthorityAndLicence(authorityUrlSlugWithArea: String, licenceUrlSlug: String) =
+  //    throw new Exception("Not Implemented")
+  //
+  //  def getAllAuthorities() =
+  //    throw new Exception("Not Implemented")
 
   def getAddresses(postcode: String, lineOne: Option[String]): List[Address] = {
     mockAddressList.foreach {
@@ -89,9 +92,9 @@ object MockPlacesApiClient extends PlacesApiClient {
     )
   )
 
-//  def getInteractionDetails(authorityUrlSlug: String, serviceId: Service): Option[Map[String, String]] =
-//  Option(Map("licenceName"-> "Animal boarding establishment lic.",
-//  "lgslId"-> "374",
-//  "interactionName"-> "Application to renew an animal boarding establishment lic."
-//  ))
+  //  def getInteractionDetails(authorityUrlSlug: String, serviceId: Service): Option[Map[String, String]] =
+  //  Option(Map("licenceName"-> "Animal boarding establishment lic.",
+  //  "lgslId"-> "374",
+  //  "interactionName"-> "Application to renew an animal boarding establishment lic."
+  //  ))
 }
