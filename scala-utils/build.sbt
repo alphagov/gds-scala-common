@@ -2,7 +2,7 @@ organization := "uk.gov.gds"
 
 name := "gds-scala-utils"
 
-version := "0.6.1-SNAPSHOT"
+version := "0.6.2-SNAPSHOT"
 
 libraryDependencies ++= Seq(
         "play" %% "play" % "2.0.1",
