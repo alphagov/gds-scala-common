@@ -21,6 +21,16 @@ object Config extends Logging {
 
   def apply(name: String, default: String = null) = prop(name).getOrElse(Option(default).getOrElse(throw new Exception("Can't find setting: " + name)))
 
+  def apply(name: String, default: Int): Int = prop(name) match {
+    case Some(value) => value.toInt
+    case None => Option(default).getOrElse(throw new Exception("Can't find setting: " + name))
+  }
+
+  def apply(name: String, default: Boolean): Boolean = prop(name) match {
+    case Some(value) => value.toBoolean
+    case None => Option(default).getOrElse(throw new Exception("Can't find setting: " + name))
+  }
+
   private def prop(name: String) = Option(properties.get(name).asInstanceOf[String])
 
   private def configFileAsStream() = if (new File(productionConfigFile).exists()) {
