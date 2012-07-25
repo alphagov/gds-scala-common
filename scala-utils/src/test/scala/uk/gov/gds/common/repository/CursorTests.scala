@@ -355,11 +355,9 @@ private[repository] object TestData extends SimpleMongoRepository[Data] {
 }
 
 private[repository] case class DataWithTimestampField(name: String, dateOfBirth: DateTime) extends HasTimestamp {
-  override val timeStampProperty = "dateOfBirth"
 }
 
 private[repository] case class DataWithTimestampFieldAndSecondColumn(name: String, otherName: String, dateOfBirth: DateTime) extends HasTimestamp {
-  override val timeStampProperty = "dateOfBirth"
 }
 
 private[repository] object TestDateData extends TimestampBasedMongoRepository[DataWithTimestampField] {

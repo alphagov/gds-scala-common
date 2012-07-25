@@ -2,6 +2,7 @@ package uk.gov.gds.common.mongo.repository
 
 import com.novus.salat._
 import com.mongodb.casbah.Imports._
+import play.api.Logger
 
 abstract class SimpleMongoRepository[A <: CaseClass](implicit m: Manifest[A]) extends MongoRepositoryBase[A] {
 

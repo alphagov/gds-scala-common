@@ -77,7 +77,7 @@ abstract class MongoDatabaseManager extends ContainerEventListener with Logging 
     logger.info("All repositories initialised")
   }
 
-  private def withWriteConcern(writeConcern: WriteConcern)(block: => Unit) {
+  def withWriteConcern(writeConcern: WriteConcern)(block: => Unit) = {
     val currentWriteConcern = database.getWriteConcern()
 
     try {
