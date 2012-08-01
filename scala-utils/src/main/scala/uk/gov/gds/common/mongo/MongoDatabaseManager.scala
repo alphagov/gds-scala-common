@@ -12,7 +12,7 @@ import com.mongodb.WriteConcern.{NORMAL, SAFE}
 abstract class MongoDatabaseManager extends ContainerEventListener with Logging {
 
   lazy val database: MongoDB = {
-    logger.info("Connection to database: "+databaseName)
+    logger.info("Connection to database: " + databaseName)
     mongoConnection(databaseName)
   }
   val changeLogRepository = new ChangeLogRepository(this)
@@ -20,7 +20,7 @@ abstract class MongoDatabaseManager extends ContainerEventListener with Logging 
 
   private lazy val databaseHosts = {
     val databaseHostString = Config("mongo.database.hosts")
-    logger.info("Mongo Database Hosts: "+databaseHostString)
+    logger.info("Mongo Database Hosts: " + databaseHostString)
     databaseHostString.split(",").toList
   }
 

@@ -27,7 +27,7 @@ abstract class MongoRepositoryBase[A <: CaseClass](implicit m: Manifest[A])
 
   protected implicit def mongoOptObj2DomainObj(o: Option[collection.T]) = o.map(grater[A].asObject(_))
 
-  protected implicit def mongoObj2DomianObj(o: collection.T) = grater[A].asObject(o)
+  protected implicit def mongoObj2DomainObj(o: collection.T) = grater[A].asObject(o)
 
   protected implicit def cursorOfMongoObject2listOfDomainObjects(c: collection.CursorType) = c.map(grater[A].asObject(_)).toList
 

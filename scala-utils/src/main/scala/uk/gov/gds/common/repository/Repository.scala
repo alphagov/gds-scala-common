@@ -1,8 +1,12 @@
 package uk.gov.gds.common.repository
 
+import com.mongodb.casbah.Imports._
+
 trait Repository[A] {
 
   def store(obj: A): A
+
+  def findOne(filter: DBObject): Option[A]
 
   def load(id: String): Option[A]
 

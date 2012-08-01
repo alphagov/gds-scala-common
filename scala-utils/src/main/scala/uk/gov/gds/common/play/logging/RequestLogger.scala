@@ -14,9 +14,9 @@ trait RequestLogging {
     def apply[A](bodyParser: BodyParser[A])(block: Request[A] => Result): Action[A] = new Action[A] {
       def parser = bodyParser
       def apply(ctx: Request[A]) = {
-        val start = new DateTime();
+        val start = new DateTime()
         val response = block(ctx)
-        val end = new DateTime();
+        val end = new DateTime()
         Logger.info(
           "Time taken to " + ctx.method +
             " params " + ctx.body +
