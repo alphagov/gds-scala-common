@@ -42,7 +42,8 @@ abstract class MongoRepositoryBase[A <: CaseClass](implicit m: Manifest[A])
 
   protected def addIndex(index: DBObject,
                          unique: Boolean = Enforced,
-                         sparse: Boolean = Sparse) {
+                         sparse: Boolean = Sparse,
+                         duplicate: Boolean = Keep ) {
     logger.info("Adding index " + index)
 
     try {
@@ -51,7 +52,10 @@ abstract class MongoRepositoryBase[A <: CaseClass](implicit m: Manifest[A])
         query(
           "unique" -> unique,
           "background" -> false,
-          "sparse" -> sparse))
+          "sparse" -> sparse,
+          "dropDups" -> duplicate
+        )
+      )
     }
     catch {
       case e: Exception =>

@@ -21,6 +21,12 @@ case object Enforced extends Uniqueness(true)
 
 case object Unenforced extends Uniqueness(false)
 
+sealed abstract class Duplicate(val duplicate: Boolean)
+
+case object Drop extends Duplicate(true)
+
+case object Keep extends Duplicate(false)
+
 
 
 trait SyntacticSugarForMongoQueries {
@@ -31,6 +37,8 @@ trait SyntacticSugarForMongoQueries {
   protected implicit def indexType2bool(i: IndexType) = i.index
 
   protected implicit def uniqueness2bool(u: Uniqueness) = u.uniqueness
+
+  protected implicit def duplicates2bool(d: Duplicate) = d.duplicate
 
   @inline protected def where[A <: String, B <: Any](t: (A, B)*) = (build[A, B] ++= t).result
 
