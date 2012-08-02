@@ -21,7 +21,7 @@ abstract class SimpleMongoRepository[A <: CaseClass](implicit m: Manifest[A]) ex
 
   private def insert(obj: A, writeConcern: WriteConcern) = {
     val query = domainObj2mongoObj(obj)
-    collection.insert(obj, writeConcern)
+    collection.insert(query, writeConcern)
     grater[A].asObject(query)
   }
 
