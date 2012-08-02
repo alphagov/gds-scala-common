@@ -103,9 +103,6 @@ class CursorTests
     given("A collection with twice the items as the default page size")
     TestDataRepository.createItems(defaultPageSize * 2)
 
-    // Wait a sec for all that data to get settled
-    Thread.sleep(1000)
-
     when("we load the items from the repository")
     val cursor = TestDataRepository.sorted
 

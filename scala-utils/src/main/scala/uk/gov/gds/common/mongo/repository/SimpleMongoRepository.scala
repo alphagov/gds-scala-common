@@ -6,24 +6,24 @@ import com.mongodb.WriteConcern
 
 abstract class SimpleMongoRepository[A <: CaseClass](implicit m: Manifest[A]) extends MongoRepositoryBase[A] {
 
-  def safeInsert(obj: A) = {
+  private def insert(obj: A, writeConcern: WriteConcern) = {
     val query = domainObj2mongoObj(obj)
+    collection.insert(obj, writeConcern)
+    grater[A].asObject(query)
+  }
+
+  def safeInsert(obj: A) = {
     try {
-      collection.insert(obj, WriteConcern.MAJORITY)
+      insert(obj, WriteConcern.MAJORITY)
     } catch {
       case e: Exception => {
         logger.error(e.getMessage)
         throw e
       }
     }
-    grater[A].asObject(query)
   }
 
-  def unsafeInsert(obj: A) = {
-    val query = domainObj2mongoObj(obj)
-    collection.insert(obj, WriteConcern.NORMAL)
-    grater[A].asObject(query)
-  }
+  def unsafeInsert(obj: A) = insert(obj, WriteConcern.NORMAL)
 
   def findOne(filter: DBObject) = collection.findOne(filter)
 
