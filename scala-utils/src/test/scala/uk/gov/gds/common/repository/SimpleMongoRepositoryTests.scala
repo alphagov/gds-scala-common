@@ -28,7 +28,7 @@ with SyntacticSugarForMongoQueries {
       SimpleTestDataRepository.safeInsert(SimpleTestData(key = 2, value = "test-2"))
     }
 
-    caught.getMessage should include("E11000 duplicate key error index: gds-scala-common-test.testFindData.$value_1")
+    caught.getMessage should include("E11000 duplicate key error index: gdsScalaCommonTest.testFindData.$value_1")
   }
 
   test("Should be able to save an object in a fire and forget manner - not waiting for errors") {

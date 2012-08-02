@@ -5,7 +5,7 @@ import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.GivenWhenThen
 import uk.gov.gds.common.testutil.MongoDatabaseBackedTest
 import uk.gov.gds.common.pagination.PaginationSupport
-import uk.gov.gds.common.mongo.MongoDatabaseManagerForTests
+import uk.gov.gds.common.mongo.{MongoDatabaseManager, MongoDatabaseManagerForTests}
 import org.joda.time.DateTime
 import uk.gov.gds.common.mongo.repository._
 
@@ -17,14 +17,14 @@ class CursorTests
   with PaginationSupport
   with SyntacticSugarForMongoQueries{
 
-  protected def databaseManager = MongoDatabaseManagerForTests
+  protected def databaseManager = SimpleTestDataManagerForCursorTests
 
   test("A cursor with fewer items than the page size returns the correct number of results") {
     given("A collection containing 5 items")
-    val items = TestData.createItems(5)
+    val items = TestDataRepository.createItems(5)
 
     when("we load the items from the repository")
-    val cursor = TestData.all
+    val cursor = TestDataRepository.sorted
 
     then("we should have a cursor with 5 items in it on the first page")
     cursor.total should be(5)
@@ -40,7 +40,7 @@ class CursorTests
 
   test("A cursor with no results functions correctly") {
     given("a cursor with no items")
-    val cursor = TestData.all
+    val cursor = TestDataRepository.sorted
 
     then("the page size and total should both be zero")
     cursor.total should be(0)
@@ -53,10 +53,14 @@ class CursorTests
   test("A cursor with exactly the same amount of results as the page size works correctly") {
     given("a collection with the same amount of results as the page size")
 
-    val items = TestData.createItems(defaultPageSize)
+    val items = TestDataRepository.createItems(defaultPageSize)
+
+    Thread.sleep(1000)
 
     when("we load the items from the repository")
-    val cursor = TestData.all
+    val cursor = TestDataRepository.sorted
+
+    println(cursor.pageOfData)
 
     then("we should have a cursor with as single full page of items")
     cursor.total should be(defaultPageSize)
@@ -73,10 +77,10 @@ class CursorTests
 
   test("Cursors with sizes greater than the default page size") {
     given("A collection with more items than the default page size")
-    TestData.createItems(defaultPageSize + 10)
+    TestDataRepository.createItems(defaultPageSize + 10)
 
     when("we load the items from the repository")
-    val cursor = TestData.all
+    val cursor = TestDataRepository.sorted
 
     then("we should have a cursor with less items than the total")
     cursor.total should be(defaultPageSize + 10)
@@ -97,10 +101,13 @@ class CursorTests
 
   test("SimpleMongoCursor with twice the page size functions correctly") {
     given("A collection with twice the items as the default page size")
-    TestData.createItems(defaultPageSize * 2)
+    TestDataRepository.createItems(defaultPageSize * 2)
+
+    // Wait a sec for all that data to get settled
+    Thread.sleep(1000)
 
     when("we load the items from the repository")
-    val cursor = TestData.all
+    val cursor = TestDataRepository.sorted
 
     then("We should have 2 pages in the result set")
     cursor.total should be(defaultPageSize * 2)
@@ -121,10 +128,10 @@ class CursorTests
 
   test("We can select the second page in the result set") {
     given("A collection with twice the items as the default page size")
-    val testData = TestData.createItems(defaultPageSize * 2)
+    val testData = TestDataRepository.createItems(defaultPageSize * 2)
 
     when("we load the items from the repository")
-    val cursor = TestData.all
+    val cursor = TestDataRepository.sorted
 
     then("we should be able to select the second page")
     cursor.gotoNextPage
@@ -141,10 +148,10 @@ class CursorTests
 
   test("We can iterate across all results in a single page cursor with a result size that matches the page size") {
     given("A collection with the default page size")
-    TestData.createItems(defaultPageSize)
+    TestDataRepository.createItems(defaultPageSize)
 
     when("we load the items from the repository")
-    val cursor = TestData.all
+    val cursor = TestDataRepository.sorted
 
     then("we should be able to foreach over the total resultset for the cursor")
 
@@ -155,10 +162,10 @@ class CursorTests
 
   test("We can iterate across all results in a single page cursor with fewer results than the default page size") {
     given("A collection fewer items than the default page size")
-    TestData.createItems(defaultPageSize - 70)
+    TestDataRepository.createItems(defaultPageSize - 70)
 
     when("we load the items from the repository")
-    val cursor = TestData.all
+    val cursor = TestDataRepository.sorted
 
     then("we should be able to foreach over the total resultset for the cursor")
 
@@ -169,10 +176,10 @@ class CursorTests
 
   test("We can iterate across all results in a multi page cursor with a non-exact multiple of page size") {
     given("A collection with thrice the items as the default page size")
-    TestData.createItems((defaultPageSize * 3) + 50)
+    TestDataRepository.createItems((defaultPageSize * 3) + 50)
 
     when("we load the items from the repository")
-    val cursor = TestData.all
+    val cursor = TestDataRepository.sorted
 
     then("we should be able to foreach over the total resultset for the cursor")
 
@@ -183,10 +190,10 @@ class CursorTests
 
   test("We can iterate across all results in a multi page cursor with an exact multiple of page size") {
     given("A collection with thrice the items as the default page size")
-    TestData.createItems(defaultPageSize * 3)
+    TestDataRepository.createItems(defaultPageSize * 3)
 
     when("we load the items from the repository")
-    val cursor = TestData.all
+    val cursor = TestDataRepository.sorted
 
     then("we should be able to foreach over the total resultset for the cursor")
 
@@ -197,10 +204,10 @@ class CursorTests
 
   test("We can map over all results in a single page cursor with a single page") {
     given("A collection with the same number of items as the default page size")
-    val items = TestData.createItems(defaultPageSize)
+    val items = TestDataRepository.createItems(defaultPageSize)
 
     when("we load the items from the repository")
-    val cursor = TestData.all
+    val cursor = TestDataRepository.sorted
 
     then("we should be able to map over the total resultset for the cursor")
 
@@ -214,10 +221,10 @@ class CursorTests
 
   test("We can map over all results in a multi page cursor") {
     given("A collection with the same number of items as the default page size")
-    val items = TestData.createItems(defaultPageSize * 3 + 50)
+    val items = TestDataRepository.createItems(defaultPageSize * 3 + 50)
 
     when("we load the items from the repository")
-    val cursor = TestData.all
+    val cursor = TestDataRepository.sorted
 
     then("we should be able to map over the total resultset for the cursor")
 
@@ -231,10 +238,10 @@ class CursorTests
 
   test("we can retreive a cursor of data with a date based query") {
     given("some test data that has a date component")
-    TestDateData.createItems(5)
+    TestDateDataRepository.createItems(5)
 
     when("we load them back using a date based query")
-    val cursor = TestDateData.load(filter = where("name" -> in(TestDateData.keys)), timeQuery = TestDateData.lt(new DateTime))
+    val cursor = TestDateDataRepository.load(filter = where("name" -> in(TestDateDataRepository.keys)), timeQuery = TestDateDataRepository.lt(new DateTime))
     val data = cursor.map(item => item)
 
     then("we should have a data set of the correct size and content in the correct order")
@@ -249,10 +256,10 @@ class CursorTests
   test("we can retreive a cursor of data with a date based query - with order reveresed") {
     
     given("some test data that has a date component")
-    TestDateData.createItems(5)
+    TestDateDataRepository.createItems(5)
 
     when("we load them back using a date based query")
-    val cursor = TestDateData.load(filter = where("name" -> in(TestDateData.keys)), timeQuery = TestDateData.lt(new DateTime), sort = Ascending)
+    val cursor = TestDateDataRepository.load(filter = where("name" -> in(TestDateDataRepository.keys)), timeQuery = TestDateDataRepository.lt(new DateTime), sort = Ascending)
     val data = cursor.map(item => item)
 
     then("we should have a data set of the correct size and content in the correct (revered) order")
@@ -267,10 +274,10 @@ class CursorTests
   test("we can retreive a cursor of data with a date based query - with query direction of greater than given date") {
 
     given("some test data that has a date component")
-    TestDateData.createItems(5)
+    TestDateDataRepository.createItems(5)
 
     when("we load them back using a date based query")
-    val cursor = TestDateData.load(filter = where("name" -> in(TestDateData.keys)), timeQuery = TestDateData.gt((new DateTime).minusHours(36)))
+    val cursor = TestDateDataRepository.load(filter = where("name" -> in(TestDateDataRepository.keys)), timeQuery = TestDateDataRepository.gt((new DateTime).minusHours(36)))
     val data = cursor.map(item => item)
 
     then("we should have a data set of the correct size and content in the correct (revered) order")
@@ -281,10 +288,10 @@ class CursorTests
   test("we can retreive a cursor of data with a date based query - with query direction of less than given date") {
 
     given("some test data that has a date component")
-    TestDateData.createItems(5)
+    TestDateDataRepository.createItems(5)
 
     when("we load them back using a date based query")
-    val cursor = TestDateData.load(filter = where("name" -> in(TestDateData.keys)), timeQuery = TestDateData.lt((new DateTime).minusHours(36)))
+    val cursor = TestDateDataRepository.load(filter = where("name" -> in(TestDateDataRepository.keys)), timeQuery = TestDateDataRepository.lt((new DateTime).minusHours(36)))
     val data = cursor.map(item => item)
 
     then("we should have a data set of the correct size and content in the correct (revered) order")
@@ -298,10 +305,10 @@ class CursorTests
   test("we can retreive a cursor of data with a date based query filtered by a field") {
 
     given("some test data that has a date component")
-    TestDateData.createItems(5)
+    TestDateDataRepository.createItems(5)
 
     when("we load them back using a date based query")
-    val cursor = TestDateData.load(where("name" -> "5"), TestDateData.lt(new DateTime))
+    val cursor = TestDateDataRepository.load(where("name" -> "5"), TestDateDataRepository.lt(new DateTime))
     val data = cursor.map(item => item)
 
     then("we should have a data set of the correct size and content in the correct (revered) order")
@@ -312,10 +319,10 @@ class CursorTests
   test("we can retreive a cursor of data with a date based query - with page size altered") {
 
     given("some test data that has a date component")
-    TestDateData.createItems(5)
+    TestDateDataRepository.createItems(5)
 
     when("we load them back using a date based query")
-    val cursor = TestDateData.load(filter = where("name" -> in(TestDateData.keys)), timeQuery = TestDateData.lt((new DateTime).minusHours(36)), pageSize = 1)
+    val cursor = TestDateDataRepository.load(filter = where("name" -> in(TestDateDataRepository.keys)), timeQuery = TestDateDataRepository.lt((new DateTime).minusHours(36)), pageSize = 1)
     val data = cursor.map(item => item)
 
     then("we should have a data set of the correct size and content in the correct (revered) order")
@@ -327,10 +334,10 @@ class CursorTests
   test("we can retreive a cursor of data with a date based query - with 2 colums filtered") {
 
     given("some test data that has a date component")
-    Test2ColumnDateData.createItemsWithTwoFilterColumns(5)
+    Test2ColumnDateDataRepository.createItemsWithTwoFilterColumns(5)
 
     when("we load them back using a date based query")
-    val cursor = Test2ColumnDateData.load(filter = where("name" -> "1", "otherName" -> "11"), timeQuery = TestDateData.lt(new DateTime), pageSize = 1)
+    val cursor = Test2ColumnDateDataRepository.load(filter = where("name" -> "1", "otherName" -> "11"), timeQuery = TestDateDataRepository.lt(new DateTime), pageSize = 1)
     val data = cursor.map(item => item)
 
     then("we should have a data set of the correct size and content in the correct) order")
@@ -342,25 +349,29 @@ class CursorTests
 
 }
 
+object SimpleTestDataManagerForCursorTests extends MongoDatabaseManager {
+  protected val repositoriesToInitialiseOnStartup = List(TestDataRepository,TestDateDataRepository, Test2ColumnDateDataRepository)
+}
+
 private[repository] case class Data(key: Int, value: String)
 
-private[repository] object TestData extends SimpleMongoRepository[Data] {
+private[repository] object TestDataRepository extends SimpleMongoRepository[Data] {
 
-  lazy val collection = MongoDatabaseManagerForTests("test-data")
+  lazy val collection = MongoDatabaseManagerForTests("testData")
+
+  def sorted = SimpleMongoCursor(emptyQuery, order("key" -> Ascending.order))
 
   def createItems(numberOfItems: Int) = 1.to(numberOfItems).map {
     i =>
-      unsafeInsert(Data(key = i, value = "test"))
+      safeInsert(Data(key = i, value = "test"))
   }
 }
 
-private[repository] case class DataWithTimestampField(name: String, dateOfBirth: DateTime) extends HasTimestamp {
-}
+private[repository] case class DataWithTimestampField(name: String, dateOfBirth: DateTime) extends HasTimestamp
 
-private[repository] case class DataWithTimestampFieldAndSecondColumn(name: String, otherName: String, dateOfBirth: DateTime) extends HasTimestamp {
-}
+private[repository] case class DataWithTimestampFieldAndSecondColumn(name: String, otherName: String, dateOfBirth: DateTime) extends HasTimestamp
 
-private[repository] object TestDateData extends TimestampBasedMongoRepository[DataWithTimestampField] {
+private[repository] object TestDateDataRepository extends TimestampBasedMongoRepository[DataWithTimestampField] {
   lazy val collection = MongoDatabaseManagerForTests("testDateData")
   lazy val now = new DateTime
   val databaseTimeStampProperty = "dateOfBirth"
@@ -368,12 +379,12 @@ private[repository] object TestDateData extends TimestampBasedMongoRepository[Da
   lazy val keys = List("1","2","3","4","5")
 
   def createItems(numberOfItems: Int) = 1.to(numberOfItems).map {
-    i => unsafeInsert(DataWithTimestampField(name = i.toString, dateOfBirth = now.minusDays(i)))
+    i => safeInsert(DataWithTimestampField(name = i.toString, dateOfBirth = now.minusDays(i)))
   }
 
 }
 
-private[repository] object Test2ColumnDateData extends TimestampBasedMongoRepository[DataWithTimestampFieldAndSecondColumn] {
+private[repository] object Test2ColumnDateDataRepository extends TimestampBasedMongoRepository[DataWithTimestampFieldAndSecondColumn] {
   lazy val collection = MongoDatabaseManagerForTests("testDateDataTwoColumn")
   lazy val now = new DateTime
   val databaseTimeStampProperty = "dateOfBirth"
@@ -381,7 +392,7 @@ private[repository] object Test2ColumnDateData extends TimestampBasedMongoReposi
   lazy val keys = List("1","2","3","4","5")
 
   def createItemsWithTwoFilterColumns(numberOfItems: Int) = 1.to(numberOfItems).map {
-    i => unsafeInsert(DataWithTimestampFieldAndSecondColumn(name = i.toString, otherName = (i +10).toString, dateOfBirth = now.minusDays(i)))
+    i => safeInsert(DataWithTimestampFieldAndSecondColumn(name = i.toString, otherName = (i +10).toString, dateOfBirth = now.minusDays(i)))
   }
 
 }

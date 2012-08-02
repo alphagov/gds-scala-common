@@ -21,3 +21,14 @@ trait MongoDatabaseBackedTest extends BeforeAndAfterEach with Logging {
     IntegrationTestMutex.unlock()
   }
 }
+
+trait MongoDatabaseBackedTestThatDropsDatabase extends MongoDatabaseBackedTest {
+  self: BeforeAndAfterEach with Suite =>
+
+  override protected def beforeEach() {
+    IntegrationTestMutex.lock()
+    super.beforeEach()
+    databaseManager.emptyDatabase()
+    databaseManager.initializeDatabase()
+  }
+}
