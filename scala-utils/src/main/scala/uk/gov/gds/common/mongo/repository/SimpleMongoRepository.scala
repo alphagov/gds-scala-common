@@ -6,12 +6,6 @@ import com.mongodb.WriteConcern
 
 abstract class SimpleMongoRepository[A <: CaseClass](implicit m: Manifest[A]) extends MongoRepositoryBase[A] {
 
-  private def insert(obj: A, writeConcern: WriteConcern) = {
-    val query = domainObj2mongoObj(obj)
-    collection.insert(obj, writeConcern)
-    grater[A].asObject(query)
-  }
-
   def safeInsert(obj: A) = {
     try {
       insert(obj, WriteConcern.MAJORITY)
@@ -24,6 +18,27 @@ abstract class SimpleMongoRepository[A <: CaseClass](implicit m: Manifest[A]) ex
   }
 
   def unsafeInsert(obj: A) = insert(obj, WriteConcern.NORMAL)
+
+  private def insert(obj: A, writeConcern: WriteConcern) = {
+    val query = domainObj2mongoObj(obj)
+    collection.insert(obj, writeConcern)
+    grater[A].asObject(query)
+  }
+
+  def safeUpdate(query: DBObject, obj: DBObject, upsert: Boolean = true, multi: Boolean = false) = {
+    try {
+      collection.update(query, obj, upsert, multi, WriteConcern.MAJORITY)
+    } catch {
+      case e: Exception => {
+        logger.error(e.getMessage)
+        throw e
+      }
+    }
+  }
+
+  def unSafeUpdate(query: DBObject, obj: DBObject, upsert: Boolean = true, multi: Boolean = false) = collection.update(query, obj, upsert, multi, WriteConcern.NORMAL)
+
+  private def update(query: DBObject, obj: DBObject, upsert: Boolean = true, multi: Boolean = false, writeConcern: WriteConcern) = collection.update(query, obj, upsert, multi, writeConcern)
 
   def findOne(filter: DBObject) = collection.findOne(filter)
 

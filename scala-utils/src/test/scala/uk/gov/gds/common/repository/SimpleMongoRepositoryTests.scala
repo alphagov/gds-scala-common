@@ -8,6 +8,7 @@ import uk.gov.gds.common.testutil.MongoDatabaseBackedTest
 import com.novus.salat.annotations._
 import org.bson.types.ObjectId
 import com.mongodb.MongoException
+import com.mongodb.casbah.Imports._
 
 class SimpleMongoRepositoryTests extends FunSuite
 with ShouldMatchers
@@ -41,6 +42,26 @@ with SyntacticSugarForMongoQueries {
     SimpleTestDataRepository.findOne(where("key" -> 1)).get.value should be("this-3")
     SimpleTestDataRepository.findOne(where("key" -> 2)) should be(None)
   }
+
+  test("Should be able to update an existing object") {
+    SimpleTestDataRepository.safeInsert(SimpleTestData(key = 1, value = "update-test"))
+    val Some(results) = SimpleTestDataRepository.findOne(where("value" -> "update-test"))
+    results.value should be("update-test")
+    SimpleTestDataRepository.safeUpdate(where("value" -> "update-test"), $set("value" -> "new-update-test"))
+    val Some(updatedResults) = SimpleTestDataRepository.findOne(where("value" -> "new-update-test"))
+    updatedResults.value should be("new-update-test")
+  }
+
+  test("Should throw an exception on safe update when an error happens") {
+    SimpleTestDataRepository.safeInsert(SimpleTestData(key = 1, value = "update-test-1"))
+    SimpleTestDataRepository.safeInsert(SimpleTestData(key = 2, value = "update-test-2"))
+
+    val caught = intercept[MongoException]{
+      SimpleTestDataRepository.safeUpdate(where("key" -> 2), $set("value" -> "update-test-1"))
+    }
+    caught.getMessage should include("E11000 duplicate key error index: gdsScalaCommonTest.testFindData.$value_1")
+  }
+
 }
 
 object SimpleTestDataManagerForTests extends MongoDatabaseManager {
