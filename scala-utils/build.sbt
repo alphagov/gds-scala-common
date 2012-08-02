@@ -2,7 +2,7 @@ organization := "uk.gov.gds"
 
 name := "gds-scala-utils"
 
-version := "0.6.11-SNAPSHOT"
+version := "0.6.12-SNAPSHOT"
 
 libraryDependencies ++= Seq(
         "play" %% "play" % "2.0.2",
@@ -29,7 +29,6 @@ resolvers ++= Seq(
     "Sonatype OSS Snapshots" at "http://oss.sonatype.org/content/repositories/snapshots/",
     "repo scalatools releases" at "https://oss.sonatype.org/content/groups/scala-tools/"
 )
-
 
 publishArtifact in (Test, packageBin) := true
 

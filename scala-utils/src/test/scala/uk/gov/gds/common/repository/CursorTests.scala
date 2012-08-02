@@ -350,7 +350,7 @@ private[repository] object TestData extends SimpleMongoRepository[Data] {
 
   def createItems(numberOfItems: Int) = 1.to(numberOfItems).map {
     i =>
-      store(Data(key = i, value = "test"))
+      unsafeInsert(Data(key = i, value = "test"))
   }
 }
 
@@ -368,7 +368,7 @@ private[repository] object TestDateData extends TimestampBasedMongoRepository[Da
   lazy val keys = List("1","2","3","4","5")
 
   def createItems(numberOfItems: Int) = 1.to(numberOfItems).map {
-    i => store(DataWithTimestampField(name = i.toString, dateOfBirth = now.minusDays(i)))
+    i => unsafeInsert(DataWithTimestampField(name = i.toString, dateOfBirth = now.minusDays(i)))
   }
 
 }
@@ -381,7 +381,7 @@ private[repository] object Test2ColumnDateData extends TimestampBasedMongoReposi
   lazy val keys = List("1","2","3","4","5")
 
   def createItemsWithTwoFilterColumns(numberOfItems: Int) = 1.to(numberOfItems).map {
-    i => store(DataWithTimestampFieldAndSecondColumn(name = i.toString, otherName = (i +10).toString, dateOfBirth = now.minusDays(i)))
+    i => unsafeInsert(DataWithTimestampFieldAndSecondColumn(name = i.toString, otherName = (i +10).toString, dateOfBirth = now.minusDays(i)))
   }
 
 }

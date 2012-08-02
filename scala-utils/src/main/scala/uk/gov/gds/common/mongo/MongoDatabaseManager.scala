@@ -16,7 +16,6 @@ abstract class MongoDatabaseManager extends ContainerEventListener with Logging 
     mongoConnection(databaseName)
   }
   val changeLogRepository = new ChangeLogRepository(this)
-  protected val repositoriesToInitialiseOnStartup: List[MongoRepositoryBase[_]]
 
   private lazy val databaseHosts = {
     val databaseHostString = Config("mongo.database.hosts")
@@ -26,7 +25,15 @@ abstract class MongoDatabaseManager extends ContainerEventListener with Logging 
 
   private lazy val mongoConnection = MongoConnection(databaseHosts.map(new ServerAddress(_)))
 
+  protected val repositoriesToInitialiseOnStartup: List[MongoRepositoryBase[_]]
+
   def databaseChangeScripts: List[ChangeScript] = Nil
+
+  def removeData() {
+    repositoriesToInitialiseOnStartup.foreach {
+      item => item.deleteAll()
+    }
+  }
 
   protected def databaseName = Config("mongo.database.name")
 
@@ -107,11 +114,11 @@ abstract class MongoDatabaseManager extends ContainerEventListener with Logging 
 
     try {
       changeScript.applyToDatabase()
-      changeLogRepository.store(SuccessfulChangeScriptAudit(changeScript))
+      changeLogRepository.safeInsert(SuccessfulChangeScriptAudit(changeScript))
     }
     catch {
       case e: Exception =>
-        changeLogRepository.store(FailedChangeScriptAudit(changeScript))
+        changeLogRepository.safeInsert(FailedChangeScriptAudit(changeScript))
         logger.error("Change script failed to apply " + changeScript.shortName, e)
 
         throw new ChangeScriptFailedException(

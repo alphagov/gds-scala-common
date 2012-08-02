@@ -2,13 +2,26 @@ package uk.gov.gds.common.mongo.repository
 
 import com.novus.salat._
 import com.mongodb.casbah.Imports._
-import play.api.Logger
+import com.mongodb.WriteConcern
 
 abstract class SimpleMongoRepository[A <: CaseClass](implicit m: Manifest[A]) extends MongoRepositoryBase[A] {
 
-  def store(obj: A) = {
+  def safeInsert(obj: A) = {
     val query = domainObj2mongoObj(obj)
-    collection += query
+    try {
+      collection.insert(obj, WriteConcern.MAJORITY)
+    } catch {
+      case e: Exception => {
+        logger.error(e.getMessage)
+        throw e
+      }
+    }
+    grater[A].asObject(query)
+  }
+
+  def unsafeInsert(obj: A) = {
+    val query = domainObj2mongoObj(obj)
+    collection.insert(obj, WriteConcern.NORMAL)
     grater[A].asObject(query)
   }
 

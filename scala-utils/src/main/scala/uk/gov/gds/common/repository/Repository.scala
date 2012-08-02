@@ -4,7 +4,9 @@ import com.mongodb.casbah.Imports._
 
 trait Repository[A] {
 
-  def store(obj: A): A
+  def safeInsert(obj: A): A
+
+  def unsafeInsert(obj: A): A
 
   def findOne(filter: DBObject): Option[A]
 
