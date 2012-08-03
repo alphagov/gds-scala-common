@@ -6,7 +6,7 @@ import uk.gov.gds.common.logging.Logging
 import uk.gov.gds.common.j2ee.ContainerEventListener
 import uk.gov.gds.common.config.Config
 import com.mongodb.casbah.{MongoDB, MongoConnection}
-import com.mongodb.{WriteConcern, ServerAddress}
+import com.mongodb.{Bytes, WriteConcern, ServerAddress}
 import com.mongodb.WriteConcern.{NORMAL, SAFE}
 
 abstract class MongoDatabaseManager extends ContainerEventListener with Logging {
@@ -24,6 +24,15 @@ abstract class MongoDatabaseManager extends ContainerEventListener with Logging 
   }
 
   private lazy val mongoConnection = MongoConnection(databaseHosts.map(new ServerAddress(_)))
+
+  if (MongoConfig.slaveOk) {
+    logger.info("Setting database to slaveOk mode. Will read from slaves")
+    database.slaveOk()
+  }
+  else {
+    logger.info("Not Setting database to slaveOk mode. Will only read & write from master")
+    database.underlying.setOptions(database.getOptions() & (~Bytes.QUERYOPTION_SLAVEOK))
+  }
 
   protected val repositoriesToInitialiseOnStartup: List[MongoRepositoryBase[_]]
 
@@ -43,11 +52,7 @@ abstract class MongoDatabaseManager extends ContainerEventListener with Logging 
 
   def apply(collectionName: String) = collection(collectionName)
 
-  def collection(collectionName: String) = {
-    val collection = database(collectionName)
-    collection.slaveOk()
-    collection
-  }
+  def collection(collectionName: String) =  database(collectionName)
 
   def initializeDatabase(writeConcern: WriteConcern = SAFE) {
     synchronized {
