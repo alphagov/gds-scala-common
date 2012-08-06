@@ -1,9 +1,12 @@
 package uk.gov.gds.common.placesclient.model
 
 import uk.gov.gds.common.repository.HasIdentity
+import uk.gov.gds.common.localauth.Authority
 
 // TODO: flatten model together. There should not be an ELMS model and a default model
 // TODO: Standardise on one type of address. There should not be an Address and a GovUkAddress
+// TODO: kill the ERO class, we're not using it
+
 
 case class OpcsId(value: String)
 
@@ -20,10 +23,10 @@ case class LocalAuthority(name: String = "",
                           ero: Ero = Ero(),
                           opcsId: String) extends HasIdentity {
   def id = opcsId
-//
-//  def this(la: Authority) = this(name = la.name,
-//    ero = Ero(telephoneNumber = ""),
-//    opcsId = la.snacCode.get)
+}
+
+object LocalAuthority {
+  def apply(a: Authority) = new LocalAuthority(name = a.name, ero = Ero(), opcsId = a.snacCode.get)
 }
 
 case class GovUkAddress(lineOne: String = "",
