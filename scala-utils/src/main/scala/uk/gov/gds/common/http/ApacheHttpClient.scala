@@ -23,12 +23,13 @@ import org.apache.http.impl.auth.BasicScheme
 
 abstract class ApacheHttpClient extends UrlEncoding with Logging {
 
-  startupConnectionCleanerThread()
 
   private lazy val schemeRegistry = new SchemeRegistry
   private lazy val connectionManager = new ThreadSafeClientConnManager(schemeRegistry)
   private lazy val httpClient = configureHttpClient()
   private lazy val cleanupThread = Executors.newScheduledThreadPool(1)
+
+  startupConnectionCleanerThread()
 
   protected def targetUrl(path: String): String
 
