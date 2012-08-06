@@ -3,7 +3,7 @@ package uk.gov.gds.common.localauth
 import javassist.NotFoundException
 import uk.gov.gds.common.mongo.repository.{Ascending, IdentityBasedMongoRepository}
 
-abstract class AuthorityRepository extends IdentityBasedMongoRepository[Authority] {
+abstract class AuthorityRepositoryBase extends IdentityBasedMongoRepository[Authority] {
 
   protected val databaseIdProperty = "urlSlug"
 
