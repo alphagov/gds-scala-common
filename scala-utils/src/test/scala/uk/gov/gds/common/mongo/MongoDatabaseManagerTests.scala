@@ -2,14 +2,14 @@ package uk.gov.gds.common.mongo
 
 import migration.{ChangeScriptFailedException, ChangeScript, ChangeScriptStatus}
 import org.scalatest.matchers.ShouldMatchers
-import uk.gov.gds.common.testutil.{MongoDatabaseBackedTestThatDropsDatabase}
+import uk.gov.gds.common.testutil.MongoDatabaseBackedTest
 import org.scalatest.{GivenWhenThen, FunSuite}
 
 class MongoDatabaseManagerTests
   extends FunSuite
   with ShouldMatchers
   with GivenWhenThen
-  with MongoDatabaseBackedTestThatDropsDatabase {
+  with MongoDatabaseBackedTest {
 
   protected def databaseManager = MongoDatabaseManagerForTests
 
