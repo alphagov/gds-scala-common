@@ -1,6 +1,5 @@
 package uk.gov.gds.common.http
 
-import uk.gov.gds.common.j2ee.ContainerEventListener
 import org.apache.http.conn.scheme.SchemeRegistry
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager
 import org.apache.http.client.methods.{HttpRequestBase, HttpGet, HttpPost, HttpUriRequest}
@@ -22,7 +21,9 @@ import uk.gov.gds.common.json.JsonSerializer._
 import org.apache.http.auth.UsernamePasswordCredentials
 import org.apache.http.impl.auth.BasicScheme
 
-abstract class ApacheHttpClient extends ContainerEventListener with UrlEncoding with Logging {
+abstract class ApacheHttpClient extends UrlEncoding with Logging {
+
+  startupConnectionCleanerThread()
 
   private lazy val schemeRegistry = new SchemeRegistry
   private lazy val connectionManager = new ThreadSafeClientConnManager(schemeRegistry)
@@ -56,7 +57,9 @@ abstract class ApacheHttpClient extends ContainerEventListener with UrlEncoding 
     val postRequest = new HttpPost(targetUrl(path))
 
     postRequest.setEntity(
-      new UrlEncodedFormEntity(params.map {case (k,v) => new BasicNameValuePair(k,v)}.toList, "UTF-8")
+      new UrlEncodedFormEntity(params.map {
+        case (k, v) => new BasicNameValuePair(k, v)
+      }.toList, "UTF-8")
     )
     execute(postRequest)
   }
@@ -65,7 +68,9 @@ abstract class ApacheHttpClient extends ContainerEventListener with UrlEncoding 
     val postRequest = new HttpPost(targetUrl(path))
 
     postRequest.setEntity(
-      new UrlEncodedFormEntity(params.map {case (k,v) => new BasicNameValuePair(k,v)}.toList, "UTF-8")
+      new UrlEncodedFormEntity(params.map {
+        case (k, v) => new BasicNameValuePair(k, v)
+      }.toList, "UTF-8")
     )
     setAuthHeader(postRequest, username, password)
     execute(postRequest)
@@ -107,7 +112,7 @@ abstract class ApacheHttpClient extends ContainerEventListener with UrlEncoding 
     request.addHeader(new BasicScheme().authenticate(credentials, request))
   }
 
-  override def startup() {
+  private def startupConnectionCleanerThread() {
     logger.info("Starting dead connection cleaner")
 
     cleanupThread.scheduleAtFixedRate(new Runnable {
@@ -117,13 +122,6 @@ abstract class ApacheHttpClient extends ContainerEventListener with UrlEncoding 
         connectionManager.closeIdleConnections(10, TimeUnit.SECONDS)
       }
     }, 10, 10, TimeUnit.SECONDS)
-  }
-
-  override def shutdown() {
-    if (!cleanupThread.isShutdown) {
-      logger.info("Closing down dead connection cleaner")
-      cleanupThread.shutdown()
-    }
   }
 
   private def paramsToUrlParams(params: Map[String, Any]) = params.map {
@@ -152,7 +150,7 @@ abstract class ApacheHttpClient extends ContainerEventListener with UrlEncoding 
     }
   }
 
-  private def executeEither(request: HttpUriRequest):Either[String, ApiResponseException] = {
+  private def executeEither(request: HttpUriRequest): Either[String, ApiResponseException] = {
     logger.trace("About to query: " + request.getMethod + " " + request.getURI)
 
     val response = httpClient.execute(request)

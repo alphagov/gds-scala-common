@@ -6,14 +6,12 @@ import com.mongodb.casbah.Imports._
 import com.mongodb.casbah.commons.conversions.scala.RegisterJodaTimeConversionHelpers
 import com.mongodb.casbah.MongoCollection
 import uk.gov.gds.common.logging.Logging
-import uk.gov.gds.common.j2ee.ContainerEventListener
 import uk.gov.gds.common.pagination.PaginationSupport
 import uk.gov.gds.common.repository.{CursorBase, Repository}
 
 abstract class MongoRepositoryBase[A <: CaseClass](implicit m: Manifest[A])
   extends Repository[A]
   with Logging
-  with ContainerEventListener
   with SyntacticSugarForMongoQueries
   with PaginationSupport {
 
@@ -35,7 +33,7 @@ abstract class MongoRepositoryBase[A <: CaseClass](implicit m: Manifest[A])
 
   protected def createReferenceData() {}
 
-  override def startup() {
+  def startup() {
     createIndexes()
     createReferenceData()
   }
@@ -43,7 +41,7 @@ abstract class MongoRepositoryBase[A <: CaseClass](implicit m: Manifest[A])
   protected def addIndex(index: DBObject,
                          unique: Boolean = Enforced,
                          sparse: Boolean = Sparse,
-                         duplicate: Boolean = Keep ) {
+                         duplicate: Boolean = Keep) {
     logger.info("Adding index " + index)
 
     try {

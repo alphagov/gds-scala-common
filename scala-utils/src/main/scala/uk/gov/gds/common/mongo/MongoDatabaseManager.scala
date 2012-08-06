@@ -3,18 +3,18 @@ package uk.gov.gds.common.mongo
 import migration._
 import repository.{IdentityBasedMongoRepository, MongoRepositoryBase}
 import uk.gov.gds.common.logging.Logging
-import uk.gov.gds.common.j2ee.ContainerEventListener
 import uk.gov.gds.common.config.Config
 import com.mongodb.casbah.{MongoDB, MongoConnection}
 import com.mongodb.{Bytes, WriteConcern, ServerAddress}
 import com.mongodb.WriteConcern.{NORMAL, SAFE}
 
-abstract class MongoDatabaseManager extends ContainerEventListener with Logging {
+abstract class MongoDatabaseManager extends Logging {
 
   lazy val database: MongoDB = {
     logger.info("Connection to database: " + databaseName)
     mongoConnection(databaseName)
   }
+
   val changeLogRepository = new ChangeLogRepository(this)
 
   private lazy val databaseHosts = {
@@ -38,27 +38,17 @@ abstract class MongoDatabaseManager extends ContainerEventListener with Logging 
 
   def databaseChangeScripts: List[ChangeScript] = Nil
 
-  def removeData() {
-    repositoriesToInitialiseOnStartup.foreach {
-      item => item.deleteAll()
-    }
-  }
-
   protected def databaseName = Config("mongo.database.name")
-
-  override def startup() {
-    initializeDatabase()
-  }
 
   def apply(collectionName: String) = collection(collectionName)
 
-  def collection(collectionName: String) =  database(collectionName)
+  def collection(collectionName: String) = database(collectionName)
 
   def initializeDatabase(writeConcern: WriteConcern = SAFE) {
     synchronized {
       withWriteConcern(writeConcern) {
         initialiseRepositories()
-        applyDatabaseChangeScripts()
+        databaseChangeScripts.foreach(applyChangeScript(_))
       }
     }
   }
@@ -66,7 +56,9 @@ abstract class MongoDatabaseManager extends ContainerEventListener with Logging 
   def emptyDatabase(writeConcern: WriteConcern = NORMAL) {
     synchronized {
       withWriteConcern(writeConcern) {
-        database.dropDatabase()
+        repositoriesToInitialiseOnStartup.foreach(_.deleteAll())
+        changeLogRepository.deleteAll()
+        initializeDatabase()
       }
     }
   }
@@ -85,11 +77,9 @@ abstract class MongoDatabaseManager extends ContainerEventListener with Logging 
         logger.info("Initialising repository " + repository.getClass.getSimpleName)
         repository.startup()
     }
-
-    logger.info("All repositories initialised")
   }
 
-  def withWriteConcern(writeConcern: WriteConcern)(block: => Unit) = {
+  private def withWriteConcern(writeConcern: WriteConcern)(block: => Unit) = {
     val currentWriteConcern = database.getWriteConcern()
 
     try {
@@ -101,33 +91,27 @@ abstract class MongoDatabaseManager extends ContainerEventListener with Logging 
     }
   }
 
-  private def applyDatabaseChangeScripts() {
-    databaseChangeScripts.foreach(applyChangeScript(_))
-  }
-
   private def applyChangeScript(changeScript: ChangeScript) {
     changeScriptAuditFor(changeScript) match {
       case Some(audit) if (ChangeScriptStatus.ok.equals(audit.status)) =>
         logger.debug("Change script " + changeScript.name + " has already been applied")
 
-      case _ => commitChangeScript(changeScript)
-    }
-  }
+      case _ => {
+        logger.info("Applying change script " + changeScript.name)
 
-  private def commitChangeScript(changeScript: ChangeScript) {
-    logger.info("Applying change script " + changeScript.name)
+        try {
+          changeScript.applyToDatabase()
+          changeLogRepository.safeInsert(SuccessfulChangeScriptAudit(changeScript))
+        }
+        catch {
+          case e: Exception =>
+            changeLogRepository.safeInsert(FailedChangeScriptAudit(changeScript))
+            logger.error("Change script failed to apply " + changeScript.shortName, e)
 
-    try {
-      changeScript.applyToDatabase()
-      changeLogRepository.safeInsert(SuccessfulChangeScriptAudit(changeScript))
-    }
-    catch {
-      case e: Exception =>
-        changeLogRepository.safeInsert(FailedChangeScriptAudit(changeScript))
-        logger.error("Change script failed to apply " + changeScript.shortName, e)
-
-        throw new ChangeScriptFailedException(
-          "Change script failed to apply " + changeScript.shortName + " [" + e.getMessage + "]", e)
+            throw new ChangeScriptFailedException(
+              "Change script failed to apply " + changeScript.shortName + " [" + e.getMessage + "]", e)
+        }
+      }
     }
   }
 
@@ -135,7 +119,7 @@ abstract class MongoDatabaseManager extends ContainerEventListener with Logging 
     extends IdentityBasedMongoRepository[ChangeScriptAudit]
     with Logging {
 
-    protected val collection = databaseManager.apply("changelog")
+    protected val collection = databaseManager("changelog")
     protected val databaseIdProperty = "name"
 
     override def deleteAll() {
