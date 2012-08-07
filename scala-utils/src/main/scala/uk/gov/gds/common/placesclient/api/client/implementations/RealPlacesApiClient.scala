@@ -29,14 +29,5 @@ object RealPlacesApiClient extends PlacesApiClient {
 
   def getLocalAuthorityBySnac(snac: String) =
     PlacesHttpClient.getOptional("/authority/ertp/" + snac).flatMap(fromJson[Option[LocalAuthority]](_))
-
-//  def getAuthorityByUrlSlug(urlSlug: String) =
-//    PlacesHttpClient.getOptional("/authority/" + urlSlug).flatMap(fromJson[Option[Authority]](_))
-//
-//  def getAuthorityBySnacCode(snacCode: String) =
-//    PlacesHttpClient.getOptional("/authority/" + snacCode).flatMap(fromJson[Option[Authority]](_))
-//
-//  def getAllAuthorities() =
-//    PlacesHttpClient.getOptional("/authorities").flatMap(fromJson[Option[List[Authority]]](_))
 }
 
