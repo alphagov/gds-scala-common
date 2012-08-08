@@ -2,11 +2,11 @@ organization := "uk.gov.gds"
 
 name := "gds-scala-utils"
 
-version := "0.6.13-SNAPSHOT"
+version := "0.6.14-SNAPSHOT"
 
 libraryDependencies ++= Seq(
         "play" %% "play" % "2.0.2",
-        "play" %% "play-test" % "2.0.2" % "test",
+        "play" %% "play-test" % "2.0.3" % "test",
         "com.mongodb.casbah" %% "casbah" % "2.1.5-1",
         "javax.servlet" % "servlet-api" % "2.5" % "provided",
         "org.scalatest" %% "scalatest" % "1.7.2",
