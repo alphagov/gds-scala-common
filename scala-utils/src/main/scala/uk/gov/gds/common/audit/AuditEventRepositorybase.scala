@@ -7,9 +7,9 @@ import com.mongodb.casbah.commons.MongoDBObject
 
 abstract class AuditEventRepositoryBase extends SimpleMongoRepository[AuditEvent] {
 
-  def apply(event: AuditEvent) {
+  def audit(event: AuditEvent) {
     logger.info(event.toString)
-    super.unsafeInsert(event)
+    unsafeInsert(event)
   }
 
   override protected def createIndexes() {
