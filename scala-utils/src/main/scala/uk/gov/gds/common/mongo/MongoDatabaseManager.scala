@@ -7,8 +7,11 @@ import uk.gov.gds.common.config.Config
 import com.mongodb.casbah.{MongoDB, MongoConnection}
 import com.mongodb.{Bytes, WriteConcern, ServerAddress}
 import com.mongodb.WriteConcern.{NORMAL, SAFE}
+import util.DynamicVariable
 
 abstract class MongoDatabaseManager extends Logging {
+
+  private lazy val inOperation = new DynamicVariable[Boolean](false)
 
   lazy val database: MongoDB = {
     logger.info("Connection to database: " + databaseName)
