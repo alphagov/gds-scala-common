@@ -5,8 +5,8 @@ import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager
 import org.apache.http.client.methods.{HttpRequestBase, HttpGet, HttpPost, HttpUriRequest}
 import org.apache.http.entity.StringEntity
 import org.apache.http.client.entity.UrlEncodedFormEntity
-import org.apache.http.message.BasicNameValuePair
-import org.apache.http.util.EntityUtils
+import org.apache.http.message.{BasicHeader, BasicNameValuePair}
+import org.apache.http.util.{CharArrayBuffer, EntityUtils}
 import org.apache.http.impl.client.{DefaultHttpClient, DefaultHttpRequestRetryHandler}
 import org.apache.http.params.{BasicHttpParams, HttpConnectionParams}
 import org.apache.http.client.params.HttpClientParams
@@ -40,6 +40,12 @@ abstract class ApacheHttpClient extends UrlEncoding with Logging {
 
   def get(path: String, params: Map[String, Any] = Map.empty) = {
     execute(new HttpGet(targetUrl(path, paramsToUrlParams(params))))
+  }
+
+  def getWithBearerToken(path: String, params: Map[String, Any] = Map.empty, token: String) = {
+    val getRequest = new HttpGet(targetUrl(path, paramsToUrlParams(params)))
+    getRequest.addHeader("Authorization", "Bearer " + token)
+    execute(getRequest)
   }
 
   def getWithAuthHeader(path: String, params: Map[String, Any] = Map.empty, username: String, password: String) = {
@@ -152,9 +158,10 @@ abstract class ApacheHttpClient extends UrlEncoding with Logging {
   }
 
   private def executeEither(request: HttpUriRequest): Either[String, ApiResponseException] = {
-    logger.trace("About to query: " + request.getMethod + " " + request.getURI)
+    logger.info("About to query: " + request.getMethod + " " + request.getURI)
 
     val response = httpClient.execute(request)
+
     val statusCode = response.getStatusLine.getStatusCode
 
     logger.info(request.getMethod + " " + request.getURI + " => " + statusCode)
