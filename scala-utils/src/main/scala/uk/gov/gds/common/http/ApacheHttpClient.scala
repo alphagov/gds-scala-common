@@ -88,7 +88,12 @@ abstract class ApacheHttpClient extends UrlEncoding with Logging {
     execute(setAuthorizationHeader(postRequest, token))
   }
 
-  def postPlainJsonWithBearerToken(path: String, json: String, token: String) = {
+  def postPlainJson(path: String, json: String) = execute(createPlainJsonPostRequest(path, json))
+
+  def postPlainJsonWithBearerToken(path: String, json: String, token: String) =
+    execute(setAuthorizationHeader(createPlainJsonPostRequest(path, json), token))
+
+  private def createPlainJsonPostRequest(path: String, json: String) = {
     val postRequest = new HttpPost(targetUrl(path))
 
     val jsonEntity = new StringEntity(json)
@@ -96,8 +101,7 @@ abstract class ApacheHttpClient extends UrlEncoding with Logging {
 
     postRequest.setEntity(jsonEntity)
     postRequest.setHeader("Content-Type", "application/json")
-
-    execute(setAuthorizationHeader(postRequest, token))
+    postRequest
   }
 
   protected def targetUrl(path: String): String
