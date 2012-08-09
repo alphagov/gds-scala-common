@@ -20,9 +20,9 @@ import scala.collection.JavaConversions._
 import uk.gov.gds.common.json.JsonSerializer._
 import org.apache.http.auth.UsernamePasswordCredentials
 import org.apache.http.impl.auth.BasicScheme
+import org.apache.commons.codec.binary.Base64
 
 abstract class ApacheHttpClient extends UrlEncoding with Logging {
-
 
   private lazy val schemeRegistry = new SchemeRegistry
   private lazy val connectionManager = new ThreadSafeClientConnManager(schemeRegistry)
@@ -31,32 +31,23 @@ abstract class ApacheHttpClient extends UrlEncoding with Logging {
 
   startupConnectionCleanerThread()
 
-  protected def targetUrl(path: String): String
-
-  protected def targetUrl(path: String, paramsAsString: String): String = {
-    if (paramsAsString.nonEmpty) targetUrl(path + "?" + paramsAsString)
-    else targetUrl(path)
-  }
 
   def get(path: String, params: Map[String, Any] = Map.empty) = {
     execute(new HttpGet(targetUrl(path, paramsToUrlParams(params))))
   }
 
-  def getWithBearerToken(path: String, params: Map[String, Any] = Map.empty, token: String) = {
-    val getRequest = new HttpGet(targetUrl(path, paramsToUrlParams(params)))
-    getRequest.addHeader("Authorization", "Bearer " + token)
-    execute(getRequest)
-  }
+  def getWithBearerToken(path: String, params: Map[String, Any] = Map.empty, token: String) =
+    execute(setAuthorizationHeader(new HttpGet(targetUrl(path, paramsToUrlParams(params))), token))
 
-  def getWithAuthHeader(path: String, params: Map[String, Any] = Map.empty, username: String, password: String) = {
-    val getRequest = new HttpGet(targetUrl(path, paramsToUrlParams(params)))
-    setAuthHeader(getRequest, username, password)
-    execute(getRequest)
-  }
 
   def getOptional(path: String, params: Map[String, Any] = Map.empty) = {
     executeOptional(new HttpGet(targetUrl(path, paramsToUrlParams(params))))
   }
+
+  def getFromJson[A](url: String, params: String*)(implicit m: Manifest[A]) =
+    fromJson[A](get(String.format(url, params.map(urlEncode(_)): _*)))
+
+  def getWithJson(url: String, params: String*) = get(String.format(url, params.map(urlEncode(_)): _*))
 
   def post(path: String) = execute(new HttpPost(targetUrl(path)))
 
@@ -70,23 +61,6 @@ abstract class ApacheHttpClient extends UrlEncoding with Logging {
     )
     execute(postRequest)
   }
-
-  def postWithAuthHeader(path: String, params: Map[String, String], username: String, password: String) = {
-    val postRequest = new HttpPost(targetUrl(path))
-
-    postRequest.setEntity(
-      new UrlEncodedFormEntity(params.map {
-        case (k, v) => new BasicNameValuePair(k, v)
-      }.toList, "UTF-8")
-    )
-    setAuthHeader(postRequest, username, password)
-    execute(postRequest)
-  }
-
-  def getFromJson[A](url: String, params: String*)(implicit m: Manifest[A]) =
-    fromJson[A](get(String.format(url, params.map(urlEncode(_)): _*)))
-
-  def getWithJson(url: String, params: String*) = get(String.format(url, params.map(urlEncode(_)): _*))
 
   def postJson(path: String, json: String) = {
     val postRequest = new HttpPost(targetUrl(path))
@@ -102,7 +76,19 @@ abstract class ApacheHttpClient extends UrlEncoding with Logging {
     execute(postRequest)
   }
 
-  def postPlainJsonWithAuthHeader(path: String, json: String, username: String, password: String) = {
+  def postWithBearerToken(path: String, params: Map[String, String], token: String) = {
+    val postRequest = new HttpPost(targetUrl(path))
+
+    postRequest.setEntity(
+      new UrlEncodedFormEntity(params.map {
+        case (k, v) => new BasicNameValuePair(k, v)
+      }.toList, "UTF-8")
+    )
+
+    execute(setAuthorizationHeader(postRequest, token))
+  }
+
+  def postPlainJsonWithBearerToken(path: String, json: String, token: String) = {
     val postRequest = new HttpPost(targetUrl(path))
 
     val jsonEntity = new StringEntity(json)
@@ -110,13 +96,22 @@ abstract class ApacheHttpClient extends UrlEncoding with Logging {
 
     postRequest.setEntity(jsonEntity)
     postRequest.setHeader("Content-Type", "application/json")
-    setAuthHeader(postRequest, username, password)
-    execute(postRequest)
+
+    execute(setAuthorizationHeader(postRequest, token))
   }
 
-  private def setAuthHeader(request: HttpRequestBase, username: String, password: String) {
-    val credentials = new UsernamePasswordCredentials(username, password)
-    request.addHeader(new BasicScheme().authenticate(credentials, request))
+  protected def targetUrl(path: String): String
+
+  protected def targetUrl(path: String, paramsAsString: String): String = {
+    if (paramsAsString.nonEmpty) targetUrl(path + "?" + paramsAsString)
+    else targetUrl(path)
+  }
+
+  private def encodeBearerToken(token: String) = new String(Base64.encodeBase64(token.getBytes("UTF-8")))
+
+  private def setAuthorizationHeader(request: HttpRequestBase, token: String) = {
+    request.addHeader("Authorization", "Bearer " + encodeBearerToken(token))
+    request
   }
 
   private def startupConnectionCleanerThread() {
