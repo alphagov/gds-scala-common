@@ -17,7 +17,7 @@ class TestAuditEventRepositoryTest
   protected def databaseManager = MongoDatabaseManagerForTests
 
   test("Can store audit event") {
-    TestAuditEventRepository(
+    TestAuditEventRepository.audit(
       AuditEvent(
         auditType = "test",
         tags = Map("tag" -> "value"),
@@ -36,8 +36,8 @@ class TestAuditEventRepositoryTest
   }
 
   test("Can find audit event by type") {
-    TestAuditEventRepository(AuditEvent("foo"))
-    TestAuditEventRepository(AuditEvent("bar"))
+    TestAuditEventRepository.audit(AuditEvent("foo"))
+    TestAuditEventRepository.audit(AuditEvent("bar"))
 
     TestAuditEventRepository.all.total should be(2)
 
@@ -51,8 +51,8 @@ class TestAuditEventRepositoryTest
     val newest = AuditEvent("test")
     val oldest = AuditEvent(auditType = "test", timestamp = DateTime.now.minusDays(1))
 
-    TestAuditEventRepository(newest)
-    TestAuditEventRepository(oldest)
+    TestAuditEventRepository.audit(newest)
+    TestAuditEventRepository.audit(oldest)
 
     TestAuditEventRepository.all.total should be(2)
 
@@ -63,9 +63,9 @@ class TestAuditEventRepositoryTest
   }
 
   test("Can find audit events by type and tags") {
-    TestAuditEventRepository(AuditEvent("foo", Map("tag" -> "1"), Map("test data" -> "older event")))
-    TestAuditEventRepository(AuditEvent("foo", Map("tag" -> "1"), Map("test data" -> "recent event")))
-    TestAuditEventRepository(AuditEvent("bar", Map("anothertag" -> "2")))
+    TestAuditEventRepository.audit(AuditEvent("foo", Map("tag" -> "1"), Map("test data" -> "older event")))
+    TestAuditEventRepository.audit(AuditEvent("foo", Map("tag" -> "1"), Map("test data" -> "recent event")))
+    TestAuditEventRepository.audit(AuditEvent("bar", Map("anothertag" -> "2")))
 
     // These are unsafe fast inserts - worth hanging around a bit on the off chance we head a secondary
     Thread.sleep(1000)
