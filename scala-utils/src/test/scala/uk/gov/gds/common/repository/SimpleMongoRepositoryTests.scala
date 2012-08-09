@@ -81,6 +81,7 @@ object SimpleTestDataRepository extends SimpleMongoRepository[SimpleTestData] {
 
   override protected def createIndexes() {
     addIndex(index("value" -> Ascending), unique = Enforced, sparse = Complete)
+    addIndex(index("key" -> Ascending), unique = Enforced, sparse = Complete)
     super.createIndexes()
   }
 
