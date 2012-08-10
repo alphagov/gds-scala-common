@@ -1,10 +1,9 @@
 package uk.gov.gds.common.testutil
 
 import org.scalatest._
-import uk.gov.gds.common.logging.Logging
 import uk.gov.gds.common.mongo.MongoDatabaseManager
 
-trait MongoDatabaseBackedTest extends BeforeAndAfterEach with Logging {
+trait MongoDatabaseBackedTest extends BeforeAndAfterEach {
   self: BeforeAndAfterEach with Suite =>
 
   protected def databaseManager: MongoDatabaseManager
