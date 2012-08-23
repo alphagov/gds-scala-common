@@ -21,12 +21,13 @@ case class Ero(address: Option[GovUkAddress] = None, telephoneNumber: String = "
 
 case class LocalAuthority(name: String = "",
                           ero: Ero = Ero(),
-                          opcsId: String) extends HasIdentity {
+                          opcsId: String,
+                          gssId: String) extends HasIdentity {
   def id = opcsId
 }
 
 object LocalAuthority {
-  def apply(a: Authority) = new LocalAuthority(name = a.name, ero = Ero(), opcsId = a.snacCode.get)
+  def apply(a: Authority) = new LocalAuthority(name = a.name, ero = Ero(), opcsId = a.snacCode.get, gssId = "")
 }
 
 case class GovUkAddress(lineOne: String = "",

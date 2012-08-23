@@ -8,11 +8,11 @@ object MockPlacesApiClient extends PlacesApiClient {
 
   private case class MockAddressItem(postcode: String, addresses: List[Address])
 
-  val camdenBoroughCouncil = LocalAuthority(name = "Camden Borough Council", opcsId = "00AG")
-  val wandsworthBoroughCouncil = LocalAuthority(name = "Wandsworth Borough Council", opcsId = "00BJ")
-  val buryBoroughCouncil = LocalAuthority(name = "bury", opcsId = "00BM")
-  val belfastCityCouncil = LocalAuthority("Belfast City Council", opcsId = "95Z")
-  val liverpoolCityCouncil = LocalAuthority("Liverpool City Council", opcsId = "00BY")
+  val camdenBoroughCouncil = LocalAuthority(name = "Camden Borough Council", opcsId = "00AG", gssId = "E09000007")
+  val wandsworthBoroughCouncil = LocalAuthority(name = "Wandsworth Borough Council", opcsId = "00BJ", gssId = "E09000032")
+  val buryBoroughCouncil = LocalAuthority(name = "bury", opcsId = "00BM", gssId = "E08000002")
+  val belfastCityCouncil = LocalAuthority("Belfast City Council", opcsId = "95Z", gssId = "95Z")
+  val liverpoolCityCouncil = LocalAuthority("Liverpool City Council", opcsId = "00BY", gssId = "E08000012")
 
   val codeToAuthority = Map(
     camdenBoroughCouncil.opcsId -> camdenBoroughCouncil,
