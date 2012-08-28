@@ -1,0 +1,15 @@
+
+rm -rf .idea*
+./sbt idea
+
+echo "Cleaning up bad .iml IDEA files"
+
+for f in .idea_modules/*.iml
+do 
+	rm -f $f.bak
+	cp $f $f.bak
+	xsltproc scripts/remove-wrong-tags.xsl $f.bak > $f
+done
+echo "Done"
+exit
+
