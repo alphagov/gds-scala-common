@@ -1,9 +1,8 @@
-package uk.gov.gds.penicillin
+package uk.gov.gds.common.clamav
 
 import org.scalatest.FunSuite
 import org.scalatest.matchers.ShouldMatchers
 import java.io.{ByteArrayOutputStream, ByteArrayInputStream}
-import uk.gov.gds.common.clamav.{VirusDetectedException, ClamAntiVirus}
 
 class ClamAvTest extends FunSuite with ShouldMatchers {
 
