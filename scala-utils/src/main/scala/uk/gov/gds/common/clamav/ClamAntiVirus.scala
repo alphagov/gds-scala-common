@@ -1,29 +1,54 @@
 package uk.gov.gds.common.clamav
 
 import java.net.{InetSocketAddress, Socket}
-import java.io.{OutputStream, InputStream, DataOutputStream, IOException}
+import java.io._
 import play.api.Logger
-import com.google.common.io.NullOutputStream
 
 object ClamAntiVirus extends ClamAvConfig {
-
-  private val devNull = new NullOutputStream
 
   def pingClamServer = "PONG".equals(cmd(ping))
 
   def clamdStatus = cmd(status)
 
   def checkStreamForVirus(inputStream: InputStream,
-                          outputStream: OutputStream = devNull,
+                          streamCopyFunction: (InputStream) => Unit = devNull(_),
                           virusDetectedFunction: => Unit = ()) {
-    val virusInformation = onClamAvServer(_.scan(inputStream, outputStream))
+    val pipedInputStream = new PipedInputStream()
+    val pipedOutputStream = new PipedOutputStream(pipedInputStream)
 
-    if (!okResponse.equals(virusInformation)) {
-      virusDetectedFunction
-      Logger.error("Virus detected " + virusInformation)
-      throw new VirusDetectedException(virusInformation)
+    try {
+      val streamCopyThread = runStreamCopyThread(pipedInputStream, streamCopyFunction)
+      val virusInformation = onClamAvServer(_.scan(inputStream, pipedOutputStream))
+
+      if (!okResponse.equals(virusInformation)) {
+        streamCopyThread.interrupt()
+        virusDetectedFunction
+
+        Logger.error("Virus detected " + virusInformation)
+        throw new VirusDetectedException(virusInformation)
+      } else {
+        streamCopyThread.join()
+      }
+    }
+    finally {
+      inputStream.close()
+      pipedInputStream.close()
+      pipedOutputStream.close()
     }
   }
+
+  private def runStreamCopyThread(inputStream: PipedInputStream, block: (InputStream) => Unit) = {
+    val thread = new Thread(new Runnable() {
+      def run() {
+        block(inputStream)
+      }
+    })
+
+    thread.start()
+    thread
+  }
+
+  private def devNull(inputStream: InputStream) = Unit
 
   private def cmd(cmd: String) = onClamAvServer(_.execute(cmd))
 
@@ -73,7 +98,14 @@ object ClamAntiVirus extends ClamAvConfig {
 
     def scan(toScan: InputStream, copy: OutputStream) = {
       begin(instream)
-      streamFileToClamd(toScan, copy)
+
+      try {
+        streamFileToClamd(toScan, copy)
+      }
+      finally {
+        copy.close()
+      }
+
       responseFromClamd()
     }
 
@@ -83,14 +115,15 @@ object ClamAntiVirus extends ClamAvConfig {
         .grouped(chunkSize)
         .foreach {
         group =>
-          toClam.writeInt(group.length)
+          val bytes = group.map(_.toByte).toArray
 
-          group.foreach {
-            byte =>
-              toClam.write(byte)
-              copy.write(byte)
-          }
+          toClam.writeInt(bytes.length)
+          toClam.write(bytes)
+          copy.write(bytes)
+          toClam.flush()
+          copy.flush()
       }
+
       toClam.writeInt(0)
       toClam.flush()
     }

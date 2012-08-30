@@ -3,6 +3,7 @@ package uk.gov.gds.common.clamav
 import org.scalatest.FunSuite
 import org.scalatest.matchers.ShouldMatchers
 import java.io.{ByteArrayOutputStream, ByteArrayInputStream}
+import play.api.Logger
 
 class ClamAvTest extends FunSuite with ShouldMatchers {
 
@@ -17,7 +18,7 @@ class ClamAvTest extends FunSuite with ShouldMatchers {
   }
 
   test("Can scan stream without virus") {
-    ClamAntiVirus.checkStreamForVirus(inputStream = getBytes(payloadSize = 10000))
+    ClamAntiVirus.checkStreamForVirus(inputStream = getBytes(payloadSize = 1000))
   }
 
   test("Can detect a small stream with a virus at the beginning") {
@@ -40,14 +41,38 @@ class ClamAvTest extends FunSuite with ShouldMatchers {
     cleanupCalled should be(true)
   }
 
-  test("Copies input stream to output stream") {
+  test("Can pass in a function which copies input stream to output stream") {
     val outputStream = new ByteArrayOutputStream()
-    val payload = getPayload(1000)
-    val inputStream = getBytes(payload)
 
-    ClamAntiVirus.checkStreamForVirus(inputStream, outputStream)
+    try {
+      val payload = getPayload(1000)
+      val inputStream = getBytes(payload)
 
-    new String(outputStream.toByteArray) should be(payload)
+      ClamAntiVirus.checkStreamForVirus(
+        inputStream = inputStream,
+        streamCopyFunction = {
+          inputStream =>
+
+            Logger.info("Running thread")
+            Iterator.continually(inputStream.read())
+              .takeWhile(_ != -1)
+              .foreach {
+              byte =>
+                if (Thread.interrupted())
+                  throw new InterruptedException()
+
+                Logger.info("read: " + byte)
+
+                outputStream.write(byte)
+                outputStream.flush()
+            }
+        })
+
+      new String(outputStream.toByteArray) should be(payload)
+    }
+    finally {
+      outputStream.close()
+    }
   }
 
   private def getPayload(payloadSize: Int = 0, shouldInsertVirusAtPosition: Option[Int] = None) = {

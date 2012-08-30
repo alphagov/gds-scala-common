@@ -14,7 +14,7 @@ trait ClamAvConfig {
   * Size of chunks in bytes to read in / out of clamd
   */
 
-  val chunkSize = Config("clam.antivirus.chunksize", "65536").toInt
+  val chunkSize = Config("clam.antivirus.chunksize", "32768").toInt
 
   /*
   * IP address of clamd daemon
@@ -33,6 +33,12 @@ trait ClamAvConfig {
    */
 
   val timeout = Config("clam.antivirus.timeout", "5000").toInt
+
+  /**
+   * The number of threads to have in the pool to run antivirus conversion / copying
+   */
+
+  val threadPoolSize = Config("clam.antivirus.threadpool" , "20").toInt
 
   /**
    * Clam socket commands
