@@ -26,7 +26,7 @@ abstract class TimestampBasedMongoRepository[A <: CaseClass with HasTimestamp](i
 
   @inline override protected def createIndexes() {
     super.createIndexes()
-    addIndex(index(databaseTimeStampProperty -> Ascending))
+    addIndex(index(databaseTimeStampProperty -> Ascending), unique = Unenforced)
   }
 
 }
