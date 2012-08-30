@@ -61,8 +61,6 @@ class ClamAvTest extends FunSuite with ShouldMatchers {
                 if (Thread.interrupted())
                   throw new InterruptedException()
 
-                Logger.info("read: " + byte)
-
                 outputStream.write(byte)
                 outputStream.flush()
             }
