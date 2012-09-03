@@ -5,7 +5,6 @@ name := "gds-scala-utils"
 version := "0.6.17-SNAPSHOT"
 
 libraryDependencies ++= Seq(
-        "play" %% "play" % "2.0.2",
         "play" %% "play-test" % "2.0.3" % "test",
         "com.mongodb.casbah" %% "casbah" % "2.1.5-1",
         "javax.servlet" % "servlet-api" % "2.5" % "provided",
@@ -30,14 +29,4 @@ resolvers ++= Seq(
     "repo scalatools releases" at "https://oss.sonatype.org/content/groups/scala-tools/"
 )
 
-publishArtifact in (Test, packageSrc) := true
 
-publishTo in ThisBuild <<= (version) { version: String =>
-    val publishType = if (version.endsWith("SNAPSHOT")) "snapshots" else "releases"
-    Some(
-        Resolver.file(
-            "alphagov github " + publishType,
-            file(System.getProperty("user.home") + "/alphagov.github.com/maven/" + publishType)
-        )
-    )
-}

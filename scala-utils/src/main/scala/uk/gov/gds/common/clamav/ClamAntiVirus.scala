@@ -2,9 +2,9 @@ package uk.gov.gds.common.clamav
 
 import java.net.{InetSocketAddress, Socket}
 import java.io._
-import play.api.Logger
+import uk.gov.gds.common.logging.Logging
 
-object ClamAntiVirus extends ClamAvConfig {
+object ClamAntiVirus extends ClamAvConfig with Logging{
 
   def pingClamServer = "PONG".equals(cmd(ping))
 
@@ -24,7 +24,7 @@ object ClamAntiVirus extends ClamAvConfig {
         streamCopyThread.interrupt()
         virusDetectedFunction
 
-        Logger.error("Virus detected " + virusInformation)
+        logger.error("Virus detected " + virusInformation)
         throw new VirusDetectedException(virusInformation)
       } else {
         streamCopyThread.join()
@@ -54,7 +54,7 @@ object ClamAntiVirus extends ClamAvConfig {
 
   private def onClamAvServer(block: (ClamServer) => String) = {
     if (!antivirusActive) {
-      Logger.warn("Anti-virus checking disabled")
+      logger.warn("Anti-virus checking disabled")
       okResponse
     }
     else {
@@ -67,7 +67,7 @@ object ClamAntiVirus extends ClamAvConfig {
       }
       catch {
         case e: Exception =>
-          Logger.error("Exception communicating with clamd", e)
+          logger.error("Exception communicating with clamd", e)
           throw e
       }
       finally {
@@ -76,7 +76,7 @@ object ClamAntiVirus extends ClamAvConfig {
           if (!socket.isClosed) socket.close()
         }
         catch {
-          case e: IOException => Logger.warn("Error closing socket to clamd", e)
+          case e: IOException => logger.warn("Error closing socket to clamd", e)
         }
       }
     }
@@ -129,7 +129,7 @@ object ClamAntiVirus extends ClamAvConfig {
     }
 
     private def begin(command: String) {
-      Logger.debug("Request to clamd: " + command)
+      logger.debug("Request to clamd: " + command)
       toClam.write(command.getBytes())
     }
 
@@ -140,7 +140,7 @@ object ClamAntiVirus extends ClamAvConfig {
           .map(_.toByte)
           .toArray)
 
-      Logger.info("Response from clamd: " + response)
+      logger.info("Response from clamd: " + response)
       response.trim()
     }
   }

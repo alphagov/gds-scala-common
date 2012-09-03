@@ -1,7 +1,8 @@
 package uk.gov.gds.common.localauth
 
-import javassist.NotFoundException
 import uk.gov.gds.common.mongo.repository.{Ascending, IdentityBasedMongoRepository}
+
+class NotFoundException(message: String) extends Exception(message)
 
 abstract class AuthorityRepositoryBase extends IdentityBasedMongoRepository[Authority] {
 
