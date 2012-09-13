@@ -3,7 +3,8 @@
 clamtar=/tmp/clam-av.tar.gz
 
 if [ ! -d /opt/clam-av ]; then
-	echo "Downloading clamav install"
+	sudo mkdir /opt
+        echo "Downloading clamav install"
 	curl -o $clamtar http://alphagov.github.com/development-utils/macosx/clam-av.tar.gz
 	sudo tar -C /opt -xzf $clamtar
 fi
