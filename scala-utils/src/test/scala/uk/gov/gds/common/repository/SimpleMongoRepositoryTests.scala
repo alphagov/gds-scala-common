@@ -9,6 +9,7 @@ import com.novus.salat.annotations._
 import org.bson.types.ObjectId
 import com.mongodb.MongoException
 import com.mongodb.casbah.Imports._
+import java.io.ByteArrayOutputStream
 
 class SimpleMongoRepositoryTests extends FunSuite
 with ShouldMatchers
@@ -67,6 +68,18 @@ with SyntacticSugarForMongoQueries {
     caught.getMessage should include("E11000 duplicate key error index: gdsScalaCommonTest.testFindData.$value_1")
   }
 
+  
+   test("Should be able to dump JSON to output stream") {
+    val id1 = SimpleTestDataRepository.safeInsert(SimpleTestData(key = 1, value = "update-test-1")).id.get
+    val id2 = SimpleTestDataRepository.safeInsert(SimpleTestData(key = 2, value = "update-test-2")).id.get
+    val os = new ByteArrayOutputStream
+    SimpleTestDataRepository.dumpJSON(os)
+    val expected = """|{"_id":{"$oid":"id1"},"key":1,"value":"update-test-1"}
+    				  |{"_id":{"$oid":"id2"},"key":2,"value":"update-test-2"}
+                      |""".stripMargin.replace("id1", id1.toString()).replace("id2", id2.toString())
+    val actual = new String(os.toByteArray())                       
+    actual should equal (expected)
+  }
 }
 
 object SimpleTestDataManagerForTests extends MongoDatabaseManager {

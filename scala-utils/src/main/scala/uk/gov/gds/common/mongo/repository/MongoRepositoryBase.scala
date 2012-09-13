@@ -7,7 +7,9 @@ import com.mongodb.casbah.commons.conversions.scala.RegisterJodaTimeConversionHe
 import com.mongodb.casbah.MongoCollection
 import uk.gov.gds.common.logging.Logging
 import uk.gov.gds.common.pagination.PaginationSupport
-import uk.gov.gds.common.repository.{CursorBase, Repository}
+import uk.gov.gds.common.repository.{ CursorBase, Repository }
+import java.io.OutputStream
+import uk.gov.gds.common.repository.Cursor
 
 abstract class MongoRepositoryBase[A <: CaseClass](implicit m: Manifest[A])
   extends Repository[A]
@@ -38,6 +40,22 @@ abstract class MongoRepositoryBase[A <: CaseClass](implicit m: Manifest[A])
     createReferenceData()
   }
 
+  def dumpJSON(os: OutputStream) {
+    val allCursor = all
+    dumpPage(os, allCursor)
+    while(allCursor.hasNextPage){
+      allCursor.gotoNextPage
+      dumpPage(os, allCursor)
+    }
+  }
+  
+  private def dumpPage(os: OutputStream, page: Cursor[A]){
+    page.pageOfData.foreach { a =>
+      os.write(grater[A].toCompactJSON(a).getBytes())
+      os.write("\n".getBytes())
+    }
+  }
+
   protected def addIndex(index: DBObject,
                          unique: Boolean = Enforced,
                          sparse: Boolean = Sparse,
@@ -51,11 +69,8 @@ abstract class MongoRepositoryBase[A <: CaseClass](implicit m: Manifest[A])
           "unique" -> unique,
           "background" -> false,
           "sparse" -> sparse,
-          "dropDups" -> duplicate
-        )
-      )
-    }
-    catch {
+          "dropDups" -> duplicate))
+    } catch {
       case e: Exception =>
         logger.error("Could not create index " + index, e)
         throw e
@@ -73,13 +88,11 @@ abstract class MongoRepositoryBase[A <: CaseClass](implicit m: Manifest[A])
       query = order match {
         case Some(direction) => collection.find(query).sort(direction).skip(skipSize).limit(pageSize)
         case _ => collection.find(query).skip(skipSize).limit(pageSize)
-      }
-    )
+      })
 
     def total = logAndTimeQuery(
       logMessage = "Mongo count: " + collection.name,
-      query = collection.count(query)
-    )
+      query = collection.count(query))
   }
 
   protected object SimpleMongoCursor {
@@ -92,19 +105,16 @@ abstract class MongoRepositoryBase[A <: CaseClass](implicit m: Manifest[A])
 
     def apply(query: DBObject, page: Int, pageSize: Int) = buildCursor(
       query = query,
-      pageSize = pageSize
-    )
+      pageSize = pageSize)
 
     def apply(query: DBObject, page: Int, pageSize: Int, order: MongoDBObject) = buildCursor(
       query = query,
       pageSize = pageSize,
-      order = Some(order)
-    )
+      order = Some(order))
 
     def apply(pageSize: Int = defaultPageSize) = buildCursor(
       query = emptyQuery,
-      pageSize = pageSize
-    )
+      pageSize = pageSize)
 
     private def buildCursor(query: DBObject,
                             pageSize: Int = defaultPageSize,
