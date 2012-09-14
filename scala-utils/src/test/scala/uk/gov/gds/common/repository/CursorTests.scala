@@ -19,6 +19,25 @@ class CursorTests
 
   protected def databaseManager = SimpleTestDataManagerForCursorTests
 
+  test("A cursor can be converted to a list") {
+    given("A collection containing 5 items")
+    val items = TestDataRepository.createItems(5)
+
+    when("we load the items from the repository")
+    val cursor = TestDataRepository.sorted
+
+    then("we should have a cursor with 5 items in it on the first page")
+    cursor.total should be(5)
+    cursor.pageOfData.size should be(5)
+    cursor.pages should be(1)
+
+    then("we should be able to convert that cursor to a list, serializing all of the information from the database")
+    val list = cursor.toList
+
+    list.size should be(5)
+    list should be(items)
+  }
+
   test("A cursor with fewer items than the page size returns the correct number of results") {
     given("A collection containing 5 items")
     val items = TestDataRepository.createItems(5)

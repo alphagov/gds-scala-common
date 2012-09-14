@@ -11,8 +11,6 @@ import util.DynamicVariable
 
 abstract class MongoDatabaseManager extends Logging {
 
-  private lazy val inOperation = new DynamicVariable[Boolean](false)
-
   lazy val database: MongoDB = {
     logger.info("Connection to database: " + databaseName)
     mongoConnection(databaseName)

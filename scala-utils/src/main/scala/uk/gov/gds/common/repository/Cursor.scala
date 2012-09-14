@@ -41,6 +41,8 @@ abstract class CursorBase[A](var pageSize: Int,
       results
   }.flatten
 
+  def toList: List[A] = map(x => x).toList
+
   protected def skipSize = ((currentPage - 1) * pageSize).toInt
 
   protected def logAndTimeQuery[B](logMessage: String, query: => B) = {
