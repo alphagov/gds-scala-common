@@ -22,7 +22,7 @@ case class Ero(address: Option[GovUkAddress] = None, telephoneNumber: String = "
 case class LocalAuthority(name: String = "",
                           ero: Ero = Ero(),
                           opcsId: String,
-                          gssId: String) extends HasIdentity {
+                          gssId: String = "") extends HasIdentity {
   def id = opcsId
 }
 
