@@ -22,7 +22,6 @@ with SyntacticSugarForMongoQueries {
     SimpleTestDataRepository.safeInsert(SimpleTestData(key = 1, value = "test-2")).id should not be(None)
   }
 
-
   test("Should be able to query for data retrieveing an object of the correct type") {
     SimpleTestDataRepository.createItems(1)
     val results = SimpleTestDataRepository.findOne(where("value" -> "test"))
@@ -79,6 +78,24 @@ with SyntacticSugarForMongoQueries {
                       |""".stripMargin.replace("id1", id1.toString()).replace("id2", id2.toString())
     val actual = new String(os.toByteArray())                       
     actual should equal (expected)
+  }
+
+  test("Should be able to get an object not wrapped in an option when it exists in the database") {
+    val id = SimpleTestDataRepository.safeInsert(SimpleTestData(key = 1, value = "get-test")).id.get
+
+    val obj = SimpleTestDataRepository.get(id)
+    obj.key should be(1)
+    obj.value should be("get-test")
+  }
+
+  test("Calling get for an id that does not exist should throw an exception") {
+    val id = new ObjectId()
+
+    val caught = intercept[NoSuchObjectException] {
+      SimpleTestDataRepository.get(id)
+    }
+
+    caught.id should be(id.toString)
   }
 }
 

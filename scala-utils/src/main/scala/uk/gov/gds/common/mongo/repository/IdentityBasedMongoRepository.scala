@@ -8,7 +8,7 @@ abstract class IdentityBasedMongoRepository[A <: CaseClass with HasIdentity](imp
 
   protected val databaseIdProperty: String
 
-  override def load(id: String) = collection.findOne(where(databaseIdProperty -> id))
+  override def load(id: String) = findOne(where(databaseIdProperty -> id))
 
   override def load(ids: List[String]) = SimpleMongoCursor(where(databaseIdProperty -> in(ids)))
 
