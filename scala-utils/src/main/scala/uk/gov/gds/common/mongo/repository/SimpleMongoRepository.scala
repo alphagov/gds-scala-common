@@ -12,9 +12,9 @@ abstract class SimpleMongoRepository[A <: CaseClass](implicit m: Manifest[A]) ex
 
   def load(ids: List[String]) = SimpleMongoCursor(where("_id" -> inOids(ids)))
 
-  def get(id: String) = load(oid(id))
+  def get(id: String): A = get(oid(id))
 
-  def get(id: ObjectId) = load(id).getOrElse(throw new NoSuchObjectException(id))
+  def get(id: ObjectId): A = load(id).getOrElse(throw new NoSuchObjectException(id))
 
   def safeInsert(obj: A) = {
     try {
