@@ -1,28 +1,33 @@
 package uk.gov.gds.common.clamav
 
-import org.scalatest.FunSuite
 import org.scalatest.matchers.ShouldMatchers
-import java.io.{ByteArrayOutputStream, ByteArrayInputStream}
-import play.api.Logger
+import org.scalatest.FunSuite
+import java.io.{ByteArrayOutputStream, InputStream}
 
 class ClamAvTest extends FunSuite with ShouldMatchers {
 
   private val virusSig = "X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*\0"
 
-  test("Can ping clamd") {
-    ClamAntiVirus.pingClamServer should be(true)
-  }
-
-  test("Can get clamd status") {
-    ClamAntiVirus.clamdStatus.contains("POOLS") should be(true)
-  }
-
   test("Can scan stream without virus") {
-    ClamAntiVirus.checkStreamForVirus(inputStream = getBytes(payloadSize = 1000))
+    val clamAv = new ClamAntiVirus()
+    clamAv.sendBytesToClamd(getBytes(payloadSize = 1000))
+    clamAv.checkForVirus()
+  }
+
+  test("Can stream multiple clean blocks to clam") {
+    val clamAv = new ClamAntiVirus()
+    clamAv.sendBytesToClamd(getBytes(payloadSize = 1000))
+    clamAv.sendBytesToClamd(getBytes(payloadSize = 1000))
+    clamAv.checkForVirus()
   }
 
   test("Can detect a small stream with a virus at the beginning") {
-    intercept[VirusDetectedException](ClamAntiVirus.checkStreamForVirus(inputStream = getBytes(shouldInsertVirusAtPosition = Some(0))))
+    val clamAv = new ClamAntiVirus()
+
+    intercept[VirusDetectedException] {
+      clamAv.sendBytesToClamd(getBytes(shouldInsertVirusAtPosition = Some(0)))
+      clamAv.checkForVirus()
+    }
   }
 
   test("Calls cleanup function when a virus is detected") {
@@ -32,10 +37,11 @@ class ClamAvTest extends FunSuite with ShouldMatchers {
       cleanupCalled = true
     }
 
+    val clamAv = new ClamAntiVirus(virusDetectedFunction = cleanup())
+
     intercept[VirusDetectedException] {
-      ClamAntiVirus.checkStreamForVirus(
-        inputStream = getBytes(shouldInsertVirusAtPosition = Some(0)),
-        virusDetectedFunction = cleanup)
+      clamAv.sendBytesToClamd(getBytes(shouldInsertVirusAtPosition = Some(0)))
+      clamAv.checkForVirus()
     }
 
     cleanupCalled should be(true)
@@ -44,27 +50,23 @@ class ClamAvTest extends FunSuite with ShouldMatchers {
   test("Can pass in a function which copies input stream to output stream") {
     val outputStream = new ByteArrayOutputStream()
 
+    val clamav = new ClamAntiVirus(streamCopyFunction = {
+      inputStream: InputStream =>
+        Iterator.continually(inputStream.read())
+          .takeWhile(_ != -1)
+          .foreach {
+          byte =>
+            if (Thread.interrupted())
+              throw new InterruptedException()
+
+            outputStream.write(byte)
+            outputStream.flush()
+        }
+    })
+
     try {
-      val payload = getPayload(1000)
-      val inputStream = getBytes(payload)
-
-      ClamAntiVirus.checkStreamForVirus(
-        inputStream = inputStream,
-        streamCopyFunction = {
-          inputStream =>
-
-            Logger.info("Running thread")
-            Iterator.continually(inputStream.read())
-              .takeWhile(_ != -1)
-              .foreach {
-              byte =>
-                if (Thread.interrupted())
-                  throw new InterruptedException()
-
-                outputStream.write(byte)
-                outputStream.flush()
-            }
-        })
+      val payload = getBytes(1000)
+      clamav.sendBytesToClamd(payload)
 
       new String(outputStream.toByteArray) should be(payload)
     }
@@ -98,8 +100,7 @@ class ClamAvTest extends FunSuite with ShouldMatchers {
     payload
   }
 
-  private def getBytes(payload: String) = new ByteArrayInputStream(payload.getBytes())
-
-  private def getBytes(payloadSize: Int = 0, shouldInsertVirusAtPosition: Option[Int] = None) =
-    new ByteArrayInputStream(getPayload(payloadSize, shouldInsertVirusAtPosition).getBytes())
+  private def getBytes(payloadSize: Int = 0,
+                       shouldInsertVirusAtPosition: Option[Int] = None) =
+    getPayload(payloadSize, shouldInsertVirusAtPosition).getBytes()
 }

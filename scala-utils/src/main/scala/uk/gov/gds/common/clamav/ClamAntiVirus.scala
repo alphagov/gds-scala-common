@@ -3,22 +3,41 @@ package uk.gov.gds.common.clamav
 import java.net.{InetSocketAddress, Socket}
 import java.io._
 import play.api.Logger
+import uk.gov.gds.common.logging.Logging
 
-object ClamAntiVirus extends ClamAvConfig {
 
-  def pingClamServer = "PONG".equals(cmd(ping))
+class ClamAntiVirus(streamCopyFunction: (InputStream) => Unit = DevNull.nullStream(_),
+                    virusDetectedFunction: => Unit = ())
+  extends ClamAvConfig
+  with Logging {
 
-  def clamdStatus = cmd(status)
+  private val copyInputStream = new PipedInputStream()
+  private val copyOutputStream = new PipedOutputStream(copyInputStream)
+  private val streamCopyThread = configureStreamCopyThread()
+  private val socket = configureSocket()
+  private val toClam = new DataOutputStream(socket.getOutputStream)
+  private val fromClam = socket.getInputStream
 
-  def checkStreamForVirus(inputStream: InputStream,
-                          streamCopyFunction: (InputStream) => Unit = devNull(_),
-                          virusDetectedFunction: => Unit = ()) {
-    val pipedInputStream = new PipedInputStream()
-    val pipedOutputStream = new PipedOutputStream(pipedInputStream)
+  streamCopyThread.start()
+  toClam.write(instream.getBytes())
 
+  def sendBytesToClamd(bytes: Array[Byte]) {
+    toClam.writeInt(bytes.length)
+    toClam.write(bytes)
+    toClam.flush()
+
+    copyOutputStream.write(bytes)
+    copyOutputStream.flush()
+  }
+
+  def checkForVirus() {
     try {
-      val streamCopyThread = runStreamCopyThread(pipedInputStream, streamCopyFunction)
-      val virusInformation = onClamAvServer(_.scan(inputStream, pipedOutputStream))
+      toClam.writeInt(0)
+      toClam.flush()
+      copyOutputStream.flush()
+      copyOutputStream.close()
+
+      val virusInformation = responseFromClamd()
 
       if (!okResponse.equals(virusInformation)) {
         streamCopyThread.interrupt()
@@ -31,119 +50,48 @@ object ClamAntiVirus extends ClamAvConfig {
       }
     }
     finally {
-      inputStream.close()
-      pipedInputStream.close()
-      pipedOutputStream.close()
+      terminate
     }
   }
 
-  private def runStreamCopyThread(inputStream: PipedInputStream, block: (InputStream) => Unit) = {
-    val thread = new Thread(new Runnable() {
-      def run() {
-        block(inputStream)
-      }
-    })
-
-    thread.start()
-    thread
-  }
-
-  private def devNull(inputStream: InputStream) = Unit
-
-  private def cmd(cmd: String) = onClamAvServer(_.execute(cmd))
-
-  private def onClamAvServer(block: (ClamServer) => String) = {
-    if (!antivirusActive) {
-      Logger.warn("Anti-virus checking disabled")
-      okResponse
+  def terminate {
+    try {
+      copyInputStream.close()
+      copyOutputStream.close()
+      socket.close()
+      toClam.close()
     }
-    else {
-      val socket: Socket = new Socket
-      var dataOutputStream: DataOutputStream = null
-
-      try {
-        dataOutputStream = configureSocket(socket)
-        block(ClamServer(dataOutputStream, socket.getInputStream))
-      }
-      catch {
-        case e: Exception =>
-          Logger.error("Exception communicating with clamd", e)
-          throw e
-      }
-      finally {
-        try {
-          if (dataOutputStream != null) dataOutputStream.close()
-          if (!socket.isClosed) socket.close()
-        }
-        catch {
-          case e: IOException => Logger.warn("Error closing socket to clamd", e)
-        }
-      }
+    catch {
+      case e: IOException =>
+        Logger.warn("Error closing socket to clamd", e)
     }
   }
 
-  private def configureSocket(socket: Socket) = {
-    socket.setSoTimeout(timeout)
-    socket.connect(new InetSocketAddress(host, port))
-    new DataOutputStream(socket.getOutputStream())
-  }
-
-  private case class ClamServer(toClam: DataOutputStream, fromClam: InputStream) {
-
-    def execute(command: String) = {
-      begin(command)
-      toClam.flush()
-      responseFromClamd()
-    }
-
-    def scan(toScan: InputStream, copy: OutputStream) = {
-      begin(instream)
-
-      try {
-        streamFileToClamd(toScan, copy)
-      }
-      finally {
-        copy.close()
-      }
-
-      responseFromClamd()
-    }
-
-    private def streamFileToClamd(toScan: InputStream, copy: OutputStream) {
-      Iterator.continually(toScan.read)
+  private def responseFromClamd() = {
+    val response = new String(
+      Iterator.continually(fromClam.read)
         .takeWhile(_ != -1)
-        .grouped(chunkSize)
-        .foreach {
-        group =>
-          val bytes = group.map(_.toByte).toArray
+        .map(_.toByte)
+        .toArray)
 
-          toClam.writeInt(bytes.length)
-          toClam.write(bytes)
-          copy.write(bytes)
-          toClam.flush()
-          copy.flush()
-      }
-
-      toClam.writeInt(0)
-      toClam.flush()
-    }
-
-    private def begin(command: String) {
-      Logger.debug("Request to clamd: " + command)
-      toClam.write(command.getBytes())
-    }
-
-    private def responseFromClamd() = {
-      val response = new String(
-        Iterator.continually(fromClam.read)
-          .takeWhile(_ != -1)
-          .map(_.toByte)
-          .toArray)
-
-      Logger.info("Response from clamd: " + response)
-      response.trim()
-    }
+    Logger.debug("Response from clamd: " + response)
+    response.trim()
   }
 
+  private def configureSocket() = {
+    val sock = new Socket
+    sock.setSoTimeout(timeout)
+    sock.connect(new InetSocketAddress(host, port))
+    sock
+  }
+
+  private def configureStreamCopyThread() = new Thread(new Runnable() {
+    def run() {
+      streamCopyFunction(copyInputStream)
+    }
+  })
 }
 
+private object DevNull {
+  def nullStream(inputStream: InputStream) = Unit
+}
