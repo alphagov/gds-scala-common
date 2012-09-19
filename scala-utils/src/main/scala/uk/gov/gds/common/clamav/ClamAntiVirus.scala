@@ -23,9 +23,8 @@ class ClamAntiVirus(streamCopyFunction: (InputStream) => Unit = DevNull.nullStre
   def sendBytesToClamd(bytes: Array[Byte]) {
     toClam.writeInt(bytes.length)
     toClam.write(bytes)
-    toClam.flush()
-
     copyOutputStream.write(bytes)
+    toClam.flush()
     copyOutputStream.flush()
   }
 
@@ -97,5 +96,10 @@ class ClamAntiVirus(streamCopyFunction: (InputStream) => Unit = DevNull.nullStre
 }
 
 private object DevNull {
-  def nullStream(inputStream: InputStream) = Unit
+  def nullStream(inputStream: InputStream) =
+    Iterator.continually(inputStream.read())
+      .takeWhile(_ != -1)
+      .foreach {
+      b => // no-op. We just throw the bytes away
+    }
 }

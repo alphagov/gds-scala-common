@@ -11,14 +11,14 @@ class ClamAvTest extends FunSuite with ShouldMatchers with Logging {
 
   test("Can scan stream without virus") {
     val clamAv = new ClamAntiVirus()
-    clamAv.sendBytesToClamd(getBytes(payloadSize = 1000))
+    clamAv.sendBytesToClamd(getBytes(payloadSize = 10000))
     clamAv.checkForVirus()
   }
 
   test("Can stream multiple clean blocks to clam") {
     val clamAv = new ClamAntiVirus()
     clamAv.sendBytesToClamd(getBytes(payloadSize = 1000))
-    //clamAv.sendBytesToClamd(getBytes(payloadSize = 1000))
+    clamAv.sendBytesToClamd(getBytes(payloadSize = 1000))
     clamAv.checkForVirus()
   }
 
