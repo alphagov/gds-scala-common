@@ -3,8 +3,9 @@ package uk.gov.gds.common.clamav
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.FunSuite
 import java.io.{ByteArrayOutputStream, InputStream}
+import uk.gov.gds.common.logging.Logging
 
-class ClamAvTest extends FunSuite with ShouldMatchers {
+class ClamAvTest extends FunSuite with ShouldMatchers with Logging {
 
   private val virusSig = "X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*\0"
 
@@ -17,7 +18,7 @@ class ClamAvTest extends FunSuite with ShouldMatchers {
   test("Can stream multiple clean blocks to clam") {
     val clamAv = new ClamAntiVirus()
     clamAv.sendBytesToClamd(getBytes(payloadSize = 1000))
-    clamAv.sendBytesToClamd(getBytes(payloadSize = 1000))
+    //clamAv.sendBytesToClamd(getBytes(payloadSize = 1000))
     clamAv.checkForVirus()
   }
 
@@ -65,10 +66,11 @@ class ClamAvTest extends FunSuite with ShouldMatchers {
     })
 
     try {
-      val payload = getBytes(1000)
+      val payload = getBytes(payloadSize = 1000)
       clamav.sendBytesToClamd(payload)
+      clamav.checkForVirus()
 
-      new String(outputStream.toByteArray) should be(payload)
+      outputStream.toByteArray should be(payload)
     }
     finally {
       outputStream.close()

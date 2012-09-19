@@ -13,12 +13,11 @@ class ClamAntiVirus(streamCopyFunction: (InputStream) => Unit = DevNull.nullStre
 
   private val copyInputStream = new PipedInputStream()
   private val copyOutputStream = new PipedOutputStream(copyInputStream)
-  private val streamCopyThread = configureStreamCopyThread()
   private val socket = configureSocket()
   private val toClam = new DataOutputStream(socket.getOutputStream)
   private val fromClam = socket.getInputStream
+  private val streamCopyThread = runStreamCopyThread()
 
-  streamCopyThread.start()
   toClam.write(instream.getBytes())
 
   def sendBytesToClamd(bytes: Array[Byte]) {
@@ -74,7 +73,7 @@ class ClamAntiVirus(streamCopyFunction: (InputStream) => Unit = DevNull.nullStre
         .map(_.toByte)
         .toArray)
 
-    Logger.debug("Response from clamd: " + response)
+    Logger.info("Response from clamd: " + response)
     response.trim()
   }
 
@@ -85,11 +84,16 @@ class ClamAntiVirus(streamCopyFunction: (InputStream) => Unit = DevNull.nullStre
     sock
   }
 
-  private def configureStreamCopyThread() = new Thread(new Runnable() {
-    def run() {
-      streamCopyFunction(copyInputStream)
-    }
-  })
+  private def runStreamCopyThread() = {
+    val thread = new Thread(new Runnable() {
+      def run() {
+        streamCopyFunction(copyInputStream)
+      }
+    })
+
+    thread.start()
+    thread
+  }
 }
 
 private object DevNull {
