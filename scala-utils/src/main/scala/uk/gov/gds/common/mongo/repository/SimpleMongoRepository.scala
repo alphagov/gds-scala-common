@@ -16,18 +16,22 @@ abstract class SimpleMongoRepository[A <: CaseClass](implicit m: Manifest[A]) ex
 
   def get(id: ObjectId): A = load(id).getOrElse(throw new NoSuchObjectException(id))
 
-  def safeInsert(obj: A) = {
-    try {
-      insert(obj, WriteConcern.MAJORITY)
-    } catch {
-      case e: Exception => {
-        logger.error(e.getMessage)
-        throw e
-      }
-    }
+  def safeInsert(obj: A) = try {
+    insert(obj, WriteConcern.MAJORITY)
+  } catch {
+    case e: Exception =>
+      logger.error("safeInsert failed for " + obj, e)
+      throw e
   }
 
-  def unsafeInsert(obj: A) = insert(obj, WriteConcern.NORMAL)
+  def unsafeInsert(obj: A) = try {
+    insert(obj, WriteConcern.NORMAL)
+  }
+  catch {
+    case e: Exception =>
+      logger.warn("unsafeInsert failed for " + obj, e)
+      obj
+  }
 
   def safeUpdate(query: DBObject, obj: DBObject, upsert: Boolean = true, multi: Boolean = false) = {
     try {
@@ -55,12 +59,12 @@ abstract class SimpleMongoRepository[A <: CaseClass](implicit m: Manifest[A]) ex
 
   @inline def findOne(filter: DBObject) = collection.findOne(filter)
 
-  protected def findAll(filter: DBObject): List[A] = collection.find(filter)
+  @inline protected def findAll(filter: DBObject): List[A] = collection.find(filter)
 
-  private def update(query: DBObject, obj: DBObject, upsert: Boolean = true, multi: Boolean = false, writeConcern: WriteConcern) =
+  @inline private def update(query: DBObject, obj: DBObject, upsert: Boolean = true, multi: Boolean = false, writeConcern: WriteConcern) =
     collection.update(query, obj, upsert, multi, writeConcern)
 
-  private def insert(obj: A, writeConcern: WriteConcern) = {
+  @inline private def insert(obj: A, writeConcern: WriteConcern) = {
     val query = domainObj2mongoObj(obj)
     collection.insert(query, writeConcern)
     grater[A].asObject(query)

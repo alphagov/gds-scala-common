@@ -10,11 +10,10 @@ abstract class AuditEventRepositoryBase extends SimpleMongoRepository[AuditEvent
   def audit(event: AuditEvent) {
     logger.info(event.toString)
 
-    // TODO: (LG) perhaps we should try-catch the unsafeInsert and log the exception (probably we don't even want to rethrow it)
     unsafeInsert(event)
   }
-  
-  def audit(auditType: String, tags: Map[String, String], detail: Map[String, String]) : Unit =
+
+  def audit(auditType: String, tags: Map[String, String], detail: Map[String, String]): Unit =
     audit(AuditEvent(
       auditType = auditType,
       tags = tags,

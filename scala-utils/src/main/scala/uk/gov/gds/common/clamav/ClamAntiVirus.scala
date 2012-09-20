@@ -17,7 +17,7 @@ class ClamAntiVirus(streamCopyFunction: (InputStream) => Unit = DevNull.nullStre
   private val fromClam = socket.getInputStream
   private val streamCopyThread = runStreamCopyThread()
 
-  private var mimeTypeDetected: String = null
+  @volatile private var mimeTypeDetected: String = null
 
   toClam.write(instream.getBytes())
 
