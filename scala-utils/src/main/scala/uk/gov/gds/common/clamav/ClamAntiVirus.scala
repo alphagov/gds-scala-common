@@ -1,15 +1,14 @@
 package uk.gov.gds.common.clamav
 
-import java.net.{InetSocketAddress, Socket}
 import java.io._
 import play.api.Logger
-import uk.gov.gds.common.logging.Logging
-
+import net.sf.jmimemagic.Magic
+import java.net.{InetSocketAddress, Socket}
 
 class ClamAntiVirus(streamCopyFunction: (InputStream) => Unit = DevNull.nullStream(_),
-                    virusDetectedFunction: => Unit = ())
-  extends ClamAvConfig
-  with Logging {
+                    virusDetectedFunction: => Unit = (),
+                    allowedMimeTypes: List[String])
+  extends ClamAvConfig {
 
   private val copyInputStream = new PipedInputStream()
   private val copyOutputStream = new PipedOutputStream(copyInputStream)
@@ -18,9 +17,14 @@ class ClamAntiVirus(streamCopyFunction: (InputStream) => Unit = DevNull.nullStre
   private val fromClam = socket.getInputStream
   private val streamCopyThread = runStreamCopyThread()
 
+  private var mimeTypeDetected: String = null
+
   toClam.write(instream.getBytes())
 
   def sendBytesToClamd(bytes: Array[Byte]) {
+    if (mimeTypeDetected == null)
+      mimeTypeDetected = detectMimeType(bytes)
+
     toClam.writeInt(bytes.length)
     toClam.write(bytes)
     copyOutputStream.write(bytes)
@@ -37,12 +41,12 @@ class ClamAntiVirus(streamCopyFunction: (InputStream) => Unit = DevNull.nullStre
 
       val virusInformation = responseFromClamd()
 
-      if (!okResponse.equals(virusInformation)) {
+      if ((!okResponse.equals(virusInformation)) || !isValidMimeType) {
         streamCopyThread.interrupt()
         virusDetectedFunction
 
         Logger.error("Virus detected " + virusInformation)
-        throw new VirusDetectedException(virusInformation)
+        raiseError(virusInformation)
       } else {
         streamCopyThread.join()
       }
@@ -52,7 +56,7 @@ class ClamAntiVirus(streamCopyFunction: (InputStream) => Unit = DevNull.nullStre
     }
   }
 
-  def terminate {
+  def terminate() {
     try {
       copyInputStream.close()
       copyOutputStream.close()
@@ -63,6 +67,28 @@ class ClamAntiVirus(streamCopyFunction: (InputStream) => Unit = DevNull.nullStre
       case e: IOException =>
         Logger.warn("Error closing socket to clamd", e)
     }
+  }
+
+  private def raiseError(responseFromClamd: String): Nothing =
+    if (!isValidMimeType)
+      throw new InvalidMimeTypeException(mimeTypeDetected)
+    else
+      throw new VirusDetectedException(responseFromClamd)
+
+  private def isValidMimeType =
+    if (allowedMimeTypes.contains(mimeTypeDetected)) {
+      true
+    } else {
+      false
+    }
+
+  private def detectMimeType(bytes: Array[Byte]) = {
+    val mimeType = Magic.getMagicMatch(bytes).getMimeType
+
+    if (mimeType == null)
+      "[unknown mime type]"
+    else
+      mimeType
   }
 
   private def responseFromClamd() = {

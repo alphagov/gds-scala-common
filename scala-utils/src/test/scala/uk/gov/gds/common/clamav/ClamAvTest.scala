@@ -8,26 +8,74 @@ import uk.gov.gds.common.logging.Logging
 class ClamAvTest extends FunSuite with ShouldMatchers with Logging {
 
   private val virusSig = "X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*\0"
+  private val testPdfFileName = "/162000101.pdf"
+  private val validMimeTypes = List("application/pdf", "text/plain")
+
+  test("Can upload pdf files into the system") {
+    val clamAv = new ClamAntiVirus(allowedMimeTypes = validMimeTypes)
+    val bytes = chunkOfFile(testPdfFileName)
+
+    try {
+      clamAv.sendBytesToClamd(bytes)
+      clamAv.checkForVirus()
+    }
+    finally {
+      clamAv.terminate()
+    }
+  }
+
+  test("Cannot upload pdf files if they are not registered as a valid mime type") {
+    val clamAv = new ClamAntiVirus(allowedMimeTypes = Nil)
+    val bytes = chunkOfFile(testPdfFileName)
+
+    try {
+      intercept[InvalidMimeTypeException] {
+        clamAv.sendBytesToClamd(bytes)
+        clamAv.checkForVirus()
+      }
+    }
+    finally {
+      clamAv.terminate()
+    }
+  }
 
   test("Can scan stream without virus") {
-    val clamAv = new ClamAntiVirus()
-    clamAv.sendBytesToClamd(getBytes(payloadSize = 10000))
-    clamAv.checkForVirus()
+    logger.info("Can scan stream without virus")
+    val clamAv = new ClamAntiVirus(allowedMimeTypes = validMimeTypes)
+
+    try {
+      clamAv.sendBytesToClamd(getBytes(payloadSize = 10000))
+      clamAv.checkForVirus()
+    }
+    finally {
+      clamAv.terminate()
+    }
   }
 
   test("Can stream multiple clean blocks to clam") {
-    val clamAv = new ClamAntiVirus()
-    clamAv.sendBytesToClamd(getBytes(payloadSize = 1000))
-    clamAv.sendBytesToClamd(getBytes(payloadSize = 1000))
-    clamAv.checkForVirus()
+    val clamAv = new ClamAntiVirus(allowedMimeTypes = validMimeTypes)
+
+    try {
+      clamAv.sendBytesToClamd(getBytes(payloadSize = 1000))
+      clamAv.sendBytesToClamd(getBytes(payloadSize = 1000))
+      clamAv.checkForVirus()
+    }
+    finally {
+      clamAv.terminate()
+    }
   }
 
   test("Can detect a small stream with a virus at the beginning") {
-    val clamAv = new ClamAntiVirus()
+    val clamAv = new ClamAntiVirus(allowedMimeTypes = validMimeTypes)
 
-    intercept[VirusDetectedException] {
-      clamAv.sendBytesToClamd(getBytes(shouldInsertVirusAtPosition = Some(0)))
-      clamAv.checkForVirus()
+    try {
+      intercept[VirusDetectedException] {
+        clamAv.sendBytesToClamd(getBytes(shouldInsertVirusAtPosition = Some(0)))
+        clamAv.checkForVirus()
+      }
+    }
+    finally {
+      clamAv.terminate()
     }
   }
 
@@ -38,11 +86,16 @@ class ClamAvTest extends FunSuite with ShouldMatchers with Logging {
       cleanupCalled = true
     }
 
-    val clamAv = new ClamAntiVirus(virusDetectedFunction = cleanup())
+    val clamAv = new ClamAntiVirus(virusDetectedFunction = cleanup(), allowedMimeTypes = validMimeTypes)
 
-    intercept[VirusDetectedException] {
-      clamAv.sendBytesToClamd(getBytes(shouldInsertVirusAtPosition = Some(0)))
-      clamAv.checkForVirus()
+    try {
+      intercept[VirusDetectedException] {
+        clamAv.sendBytesToClamd(getBytes(shouldInsertVirusAtPosition = Some(0)))
+        clamAv.checkForVirus()
+      }
+    }
+    finally {
+      clamAv.terminate()
     }
 
     cleanupCalled should be(true)
@@ -51,7 +104,9 @@ class ClamAvTest extends FunSuite with ShouldMatchers with Logging {
   test("Can pass in a function which copies input stream to output stream") {
     val outputStream = new ByteArrayOutputStream()
 
-    val clamav = new ClamAntiVirus(streamCopyFunction = {
+    val clamav = new ClamAntiVirus(
+      allowedMimeTypes = validMimeTypes,
+      streamCopyFunction = {
       inputStream: InputStream =>
         Iterator.continually(inputStream.read())
           .takeWhile(_ != -1)
@@ -74,6 +129,7 @@ class ClamAvTest extends FunSuite with ShouldMatchers with Logging {
     }
     finally {
       outputStream.close()
+      clamav.terminate()
     }
   }
 
@@ -105,4 +161,18 @@ class ClamAvTest extends FunSuite with ShouldMatchers with Logging {
   private def getBytes(payloadSize: Int = 0,
                        shouldInsertVirusAtPosition: Option[Int] = None) =
     getPayload(payloadSize, shouldInsertVirusAtPosition).getBytes()
+
+  private def chunkOfFile(filename: String) = {
+    val stream = getClass.getResourceAsStream(filename)
+
+    if (stream == null)
+      throw new Exception("Could not open stream to: " + filename)
+
+    Iterator.continually(stream.read)
+      .takeWhile(_ != -1)
+      .take(1000)
+      .map(_.toByte)
+      .toArray
+  }
+
 }
