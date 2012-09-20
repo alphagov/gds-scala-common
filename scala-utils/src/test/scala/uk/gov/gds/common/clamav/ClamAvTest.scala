@@ -9,7 +9,7 @@ class ClamAvTest extends FunSuite with ShouldMatchers with Logging {
 
   private val virusSig = "X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*\0"
   private val testPdfFileName = "/162000101.pdf"
-  private val validMimeTypes = List("application/pdf", "text/plain")
+  private val validMimeTypes = Set("application/pdf", "text/plain")
 
   test("Can upload pdf files into the system") {
     val clamAv = new ClamAntiVirus(allowedMimeTypes = validMimeTypes)
@@ -25,7 +25,7 @@ class ClamAvTest extends FunSuite with ShouldMatchers with Logging {
   }
 
   test("Cannot upload pdf files if they are not registered as a valid mime type") {
-    val clamAv = new ClamAntiVirus(allowedMimeTypes = Nil)
+    val clamAv = new ClamAntiVirus(allowedMimeTypes = Set())
     val bytes = chunkOfFile(testPdfFileName)
 
     try {

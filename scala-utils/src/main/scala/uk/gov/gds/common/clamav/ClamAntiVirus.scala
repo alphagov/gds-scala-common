@@ -7,7 +7,7 @@ import java.net.{InetSocketAddress, Socket}
 
 class ClamAntiVirus(streamCopyFunction: (InputStream) => Unit = DevNull.nullStream(_),
                     virusDetectedFunction: => Unit = (),
-                    allowedMimeTypes: List[String] = Nil)
+                    allowedMimeTypes: Set[String])
   extends ClamAvConfig {
 
   private val copyInputStream = new PipedInputStream()
