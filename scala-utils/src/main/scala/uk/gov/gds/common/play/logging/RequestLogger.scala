@@ -19,7 +19,7 @@ trait RequestLogging {
         val end = new DateTime()
         Logger.info(
           "Time taken to " + ctx.method +
-            " params " + ctx.body +
+            " query string params " + ctx.queryString +
             " path " + ctx.path +
             " was " + end.minus(start.getMillis).getMillis)
         response
