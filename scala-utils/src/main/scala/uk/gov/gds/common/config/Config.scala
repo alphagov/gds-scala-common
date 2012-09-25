@@ -7,6 +7,7 @@ import uk.gov.gds.common.logging.Logging
 object Config extends Logging {
 
   private val testConfigFile = "/test-gds-java-config.properties"
+  private val testAuthConfigFile = "/testauth-gds-java-config.properties"
   private val developmentConfigFile = "/development-gds-java-config.properties"
 
   // TODO: Currently ertp specific. Genericise
@@ -42,13 +43,18 @@ object Config extends Logging {
 
     modeSystemProperty match {
       case Some(mode) if ("test".equals(mode)) => configureForTest
+      case Some(mode) if ("testauth".equals(mode)) => configureForTestAuthentication
       case _ => configureForDevelopment
     }
   }
 
-  private def modeSystemProperty = Option(System.getProperty("gds.mode"))
+  private def modeSystemProperty = {
+    Option(System.getProperty("gds.mode"))
+  }
 
   private def configureForTest = openPropertiesFile(testConfigFile)
+
+  private def configureForTestAuthentication = openPropertiesFile(testAuthConfigFile)
 
   private def configureForDevelopment = openPropertiesFile(developmentConfigFile)
 
