@@ -53,6 +53,7 @@ private[json] class ObjectIdSerializer extends org.codehaus.jackson.map.JsonSeri
 }
 
 private[json] class ObjectIdDeserializer extends JsonDeserializer[ObjectId] {
-  override def deserialize(jsonParser: JsonParser, deserializationContext: DeserializationContext): ObjectId =
+  override def deserialize(jsonParser: JsonParser, deserializationContext: DeserializationContext): ObjectId = {
     new ObjectId(jsonParser.getText())
+  }
 }
