@@ -11,3 +11,9 @@ node_modules/*
 .DS_Store
 .DS_Store
 version.conf
+*/.project
+*/.classpath
+*/.cache
+*/.settings
+*/bin
+*/.target
