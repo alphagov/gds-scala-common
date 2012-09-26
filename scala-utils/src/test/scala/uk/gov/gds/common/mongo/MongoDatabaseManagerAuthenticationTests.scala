@@ -32,8 +32,7 @@ class MongoDatabaseManagerAuthenticationTests
 
   test("Database connection authenticated") {
     given("Configuration value for username is specified")
-        Config("mongo.database.auth.username")
-      /* this would throw an exeception if it were not set... */
+      MongoConfig.authenticated == true
     then("the Scala process connects successfully to the authenticated db")
 
   }

@@ -1,8 +1,5 @@
 #!/bin/bash
 
-killall mongod
-killall mongos
-
 echo "Need an authenticated box"
 
 cachedir=~/mongo/download-cache
@@ -68,6 +65,7 @@ do
 done
 
 echo "Create admin user"
-$mongodir/$mongoPath/bin/mongo localhost:$authport/admin --eval "db.addUser('admin', 'germany');"
+$mongodir/$mongoPath/bin/mongo localhost:$authport --quiet ./setup-users.js
+#--eval "db.addUser('admin', 'germany');"
 
 

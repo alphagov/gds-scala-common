@@ -5,6 +5,7 @@ import org.scalatest.matchers.ShouldMatchers
 import uk.gov.gds.common.testutil.MongoDatabaseBackedTest
 import org.scalatest.{GivenWhenThen, FunSuite}
 import uk.gov.gds.common.config.Config
+import play.api.Logger
 
 class MongoDatabaseManagerTests
   extends FunSuite
@@ -16,6 +17,23 @@ class MongoDatabaseManagerTests
 
   private val simpleChangeScript = SimpleChangeScriptThatDoesNothing()
   private val changeScriptThatThrowsAnException = ChangeScriptThatThrowsAnException()
+
+  private val gdsMode = "test"
+
+
+  /* OK so this is not the best, but need to reach into the environment and set the value of gds.mode in order
+ to make it so that we can load an alternate config file, also need to cleanup again afterwards.
+  */
+  override protected def beforeEach() {
+    System.setProperty("gds.mode", gdsMode)
+    Logger.warn("gds_mode=" + gdsMode)
+    super.beforeEach()
+  }
+
+  override protected def afterEach() {
+    System.setProperty("gds.mode", "")
+    Logger.warn("set GDS mode to blank")
+  }
 
   test("Changelog audit stores changescript information") {
     given("A database with no changescripts applied but with one script to apply")
@@ -81,8 +99,12 @@ class MongoDatabaseManagerTests
 
   test("Database connection is established to unauthenticated database") {
     given("No configuration value for username is specified")
+
+    Logger.warn(MongoConfig.authenticated.toString())
     intercept[Exception] {
-      Config("mongo.database.auth.username")
+      Logger.warn(
+        Config("mongo.database.auth.username").toString()
+      )
     }
     then("the Scala process connects successfully to the unauthenicated db")
     databaseManager.initializeDatabase()

@@ -13,8 +13,17 @@ abstract class MongoDatabaseManager extends Logging {
 
   lazy val database: MongoDB = {
     logger.info("Connection to database: " + databaseName)
-    mongoConnection(databaseName)
+    val conn = mongoConnection(databaseName)
+    /* authenticate if a username is set in the config file */
+    if (MongoConfig.authenticated) {
+      conn.authenticate(
+        Config("mongo.database.auth.username"),
+        Config("mongo.database.auth.password")
+        )
+    }
+    conn
   }
+
 
   val changeLogRepository = new ChangeLogRepository(this)
 
