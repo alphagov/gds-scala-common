@@ -13,27 +13,10 @@ class MongoDatabaseManagerTests
   with GivenWhenThen
   with MongoDatabaseBackedTest {
 
-  protected def databaseManager = MongoDatabaseManagerForTests
+  protected def databaseManager = UnauthenticatedMongoDatabaseManagerForTests
 
   private val simpleChangeScript = SimpleChangeScriptThatDoesNothing()
   private val changeScriptThatThrowsAnException = ChangeScriptThatThrowsAnException()
-
-  private val gdsMode = "test"
-
-
-  /* OK so this is not the best, but need to reach into the environment and set the value of gds.mode in order
- to make it so that we can load an alternate config file, also need to cleanup again afterwards.
-  */
-  override protected def beforeEach() {
-    System.setProperty("gds.mode", gdsMode)
-    Logger.warn("gds_mode=" + gdsMode)
-    super.beforeEach()
-  }
-
-  override protected def afterEach() {
-    System.setProperty("gds.mode", "")
-    Logger.warn("set GDS mode to blank")
-  }
 
   test("Changelog audit stores changescript information") {
     given("A database with no changescripts applied but with one script to apply")

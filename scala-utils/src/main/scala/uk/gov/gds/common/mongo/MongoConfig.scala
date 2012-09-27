@@ -4,11 +4,11 @@ import uk.gov.gds.common.config.Config
 import uk.gov.gds.common.logging.Logging
 import util.control.Exception
 
-object MongoConfig extends Logging{
+object MongoConfig extends Logging {
 
   def authenticated = {
     try {
-      val username = Config("mongo.database.auth.username")
+      Config("mongo.database.auth.username")
       true
     } catch { case _ => false }
   }

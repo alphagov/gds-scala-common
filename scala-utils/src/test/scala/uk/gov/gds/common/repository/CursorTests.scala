@@ -5,7 +5,7 @@ import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.GivenWhenThen
 import uk.gov.gds.common.testutil.MongoDatabaseBackedTest
 import uk.gov.gds.common.pagination.PaginationSupport
-import uk.gov.gds.common.mongo.{MongoDatabaseManager, MongoDatabaseManagerForTests}
+import uk.gov.gds.common.mongo.{MongoDatabaseManager, UnauthenticatedMongoDatabaseManagerForTests}
 import org.joda.time.DateTime
 import uk.gov.gds.common.mongo.repository._
 
@@ -373,7 +373,7 @@ private[repository] case class Data(key: Int, value: String)
 
 private[repository] object TestDataRepository extends SimpleMongoRepository[Data] {
 
-  lazy val collection = MongoDatabaseManagerForTests("testData")
+  lazy val collection = UnauthenticatedMongoDatabaseManagerForTests("testData")
 
   def sorted = SimpleMongoCursor(emptyQuery, order("key" -> Ascending.order))
 
@@ -388,7 +388,7 @@ private[repository] case class DataWithTimestampField(name: String, dateOfBirth:
 private[repository] case class DataWithTimestampFieldAndSecondColumn(name: String, otherName: String, dateOfBirth: DateTime) extends HasTimestamp
 
 private[repository] object TestDateDataRepository extends TimestampBasedMongoRepository[DataWithTimestampField] {
-  lazy val collection = MongoDatabaseManagerForTests("testDateData")
+  lazy val collection = UnauthenticatedMongoDatabaseManagerForTests("testDateData")
   lazy val now = new DateTime
   val databaseTimeStampProperty = "dateOfBirth"
 
@@ -401,7 +401,7 @@ private[repository] object TestDateDataRepository extends TimestampBasedMongoRep
 }
 
 private[repository] object Test2ColumnDateDataRepository extends TimestampBasedMongoRepository[DataWithTimestampFieldAndSecondColumn] {
-  lazy val collection = MongoDatabaseManagerForTests("testDateDataTwoColumn")
+  lazy val collection = UnauthenticatedMongoDatabaseManagerForTests("testDateDataTwoColumn")
   lazy val now = new DateTime
   val databaseTimeStampProperty = "dateOfBirth"
 

@@ -9,6 +9,11 @@ authnode="authnode"
 authport=27018
 authreplicaset=gds-authreplica-set
 
+function error_exit
+{
+    echo "FATAL: ${1:-"Unknown Error"}" 1>&2
+    exit 1
+}
 
 # cleanup database files
 rm -Rf $mongodir/db/$authnode
@@ -34,6 +39,8 @@ esac
 cp ./gds-auth-testing.key $mongodir/$mongoPath/gds-auth-testing.key
 mkdir $mongodir/db/$authnode
 
+echo "J5onghIFXsta4H9lDGwTZvVNqqHbiuigEczqhI5xB3A" > $mongodir/$mongoPath/gds-auth-testing.key
+
 echo "Starting authenticated mongodb node"
 $mongodir/$mongoPath/bin/mongod --dbpath $mongodir/db/$authnode \
 	--logpath $mongodir/logs/mongodb-$authnode.log \
@@ -45,7 +52,7 @@ $mongodir/$mongoPath/bin/mongod --dbpath $mongodir/db/$authnode \
 	--directoryperdb \
 	--replSet $authreplicaset \
 	--port $authport \
-	--keyFile /home/jim/projects/gds-scala-common/scripts/gds-auth-testing.key
+	--keyFile $mongodir/$mongoPath/gds-auth-testing.key
 
 echo "Wait 5 secs to let the nodes start up"
 for i in {1..5}
