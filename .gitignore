@@ -11,9 +11,11 @@ node_modules/*
 .DS_Store
 .DS_Store
 version.conf
+<<<<<<< HEAD
 */.project
 */.classpath
 */.cache
 */.settings
 */bin
 */.target
+.idea_modules/*

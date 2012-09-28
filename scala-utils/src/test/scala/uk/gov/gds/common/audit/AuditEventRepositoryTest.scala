@@ -5,7 +5,7 @@ import org.scalatest.matchers.ShouldMatchers
 import uk.gov.gds.common.testutil.MongoDatabaseBackedTest
 import uk.gov.gds.common.logging.Logging
 import org.joda.time.DateTime
-import uk.gov.gds.common.mongo.MongoDatabaseManagerForTests
+import uk.gov.gds.common.mongo.UnauthenticatedMongoDatabaseManagerForTests
 
 class TestAuditEventRepositoryTest
   extends FunSuite
@@ -14,7 +14,7 @@ class TestAuditEventRepositoryTest
   with MongoDatabaseBackedTest
   with Logging {
 
-  protected def databaseManager = MongoDatabaseManagerForTests
+  protected def databaseManager = UnauthenticatedMongoDatabaseManagerForTests
 
   test("Can store audit event") {
     TestAuditEventRepository.audit(

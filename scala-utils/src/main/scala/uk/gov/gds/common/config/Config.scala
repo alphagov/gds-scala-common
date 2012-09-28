@@ -46,9 +46,12 @@ object Config extends Logging {
     }
   }
 
-  private def modeSystemProperty = Option(System.getProperty("gds.mode"))
+  private def modeSystemProperty = {
+    Option(System.getProperty("gds.mode"))
+  }
 
   private def configureForTest = openPropertiesFile(testConfigFile)
+
 
   private def configureForDevelopment = openPropertiesFile(developmentConfigFile)
 

@@ -2,7 +2,7 @@ package uk.gov.gds.common.repository
 
 import org.scalatest.FunSuite
 import org.scalatest.matchers.ShouldMatchers
-import uk.gov.gds.common.mongo.{MongoDatabaseManager, MongoDatabaseManagerForTests}
+import uk.gov.gds.common.mongo.{MongoDatabaseManager}
 import uk.gov.gds.common.mongo.repository._
 import uk.gov.gds.common.testutil.MongoDatabaseBackedTest
 import com.novus.salat.annotations._
@@ -10,6 +10,7 @@ import org.bson.types.ObjectId
 import com.mongodb.MongoException
 import com.mongodb.casbah.Imports._
 import java.io.ByteArrayOutputStream
+import uk.gov.gds.common.mongo.UnauthenticatedMongoDatabaseManagerForTests
 
 class SimpleMongoRepositoryTests extends FunSuite
 with ShouldMatchers
@@ -107,7 +108,7 @@ case class SimpleTestData(@Key("_id") id: Option[ObjectId] = None, key: Int, val
 
 object SimpleTestDataRepository extends SimpleMongoRepository[SimpleTestData] {
 
-  lazy val collection = MongoDatabaseManagerForTests("testFindData")
+  lazy val collection = UnauthenticatedMongoDatabaseManagerForTests("testFindData")
 
   override protected def createIndexes() {
     addIndex(index("value" -> Ascending), unique = Enforced, sparse = Complete)
