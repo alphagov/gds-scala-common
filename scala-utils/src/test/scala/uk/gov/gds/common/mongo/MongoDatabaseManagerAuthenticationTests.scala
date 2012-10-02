@@ -38,7 +38,7 @@ class MongoDatabaseManagerAuthenticationTests
 
   protected def databaseManager = AuthenticatedMongoDatabaseManagerForTests
 
-  test("Database connection authenticated", AuthTest) {
+  ignore("Database connection authenticated", AuthTest) {
     given("Configuration value for username is specified")
     then("the Scala process connects successfully to the authenticated db")
     // The connection actually happens in mongo database backed test
