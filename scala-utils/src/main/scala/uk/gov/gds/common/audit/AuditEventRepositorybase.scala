@@ -7,18 +7,19 @@ import com.mongodb.casbah.commons.MongoDBObject
 
 abstract class AuditEventRepositoryBase extends SimpleMongoRepository[AuditEvent] {
 
-  def audit(event: AuditEvent) {
-    logger.info(event.toString)
+  private lazy val applicationName = Option(System.getProperty("gds.application.name")).getOrElse("not-configured")
 
-    unsafeInsert(event)
-  }
-
-  def audit(auditType: String, tags: Map[String, String], detail: Map[String, String]): Unit =
+  def audit(auditType: String, tags: Map[String, String] = Map.empty, detail: Map[String, String] = Map.empty) {
     audit(AuditEvent(
       auditType = auditType,
       tags = tags,
-      detail = detail
-    ))
+      detail = detail))
+  }
+
+  protected def audit(event: AuditEvent) {
+    logger.info(event.toString)
+    unsafeInsert(event.copy(tags = event.tags + ("applicationName" -> applicationName)))
+  }
 
   override protected def createIndexes() {
     super.createIndexes()
@@ -45,8 +46,7 @@ abstract class AuditEventRepositoryBase extends SimpleMongoRepository[AuditEvent
   private def find(auditType: Option[String] = None, tags: Map[String, String] = Map.empty): Cursor[AuditEvent] =
     SimpleMongoCursor(
       order = order("timestamp" -> -1),
-      query = buildQuery(auditType, tags)
-    )
+      query = buildQuery(auditType, tags))
 
   private def buildQuery(auditType: Option[String], tags: Map[String, String]) = {
     val builder = MongoDBObject.newBuilder

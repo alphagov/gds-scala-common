@@ -1,16 +1,13 @@
 package uk.gov.gds.common.config
 
 import java.util.Properties
-import java.io.{FileInputStream, File, InputStream}
+import java.io.{ FileInputStream, File, InputStream }
 import uk.gov.gds.common.logging.Logging
 
 object Config extends Logging {
 
   private val testConfigFile = "/test-gds-java-config.properties"
   private val developmentConfigFile = "/development-gds-java-config.properties"
-
-  // TODO: Currently ertp specific. Genericise
-  private val productionConfigFile = "/etc/gds-ertp-config.properties"
 
   private lazy val properties = loadConfig(configFileAsStream())
 
@@ -36,8 +33,7 @@ object Config extends Logging {
   private def configFileAsStream() = if (new File(productionConfigFile).exists()) {
     logger.info("Using production configuration from " + productionConfigFile)
     new FileInputStream(productionConfigFile)
-  }
-  else {
+  } else {
     logger.info("No production config found in " + productionConfigFile + ", checking for test or development configuration")
 
     modeSystemProperty match {
@@ -46,12 +42,11 @@ object Config extends Logging {
     }
   }
 
-  private def modeSystemProperty = {
-    Option(System.getProperty("gds.mode"))
-  }
+  private def productionConfigFile = Option(System.getProperty("gds.config.file")).getOrElse("/etc/gds-ertp-config.properties")
+
+  private def modeSystemProperty = Option(System.getProperty("gds.mode"))
 
   private def configureForTest = openPropertiesFile(testConfigFile)
-
 
   private def configureForDevelopment = openPropertiesFile(developmentConfigFile)
 
@@ -67,8 +62,7 @@ object Config extends Logging {
     val props = new Properties
     props.load(propertyStream)
     props
-  }
-  finally {
+  } finally {
     propertyStream.close();
   }
 }

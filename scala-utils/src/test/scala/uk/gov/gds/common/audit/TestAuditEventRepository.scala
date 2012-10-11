@@ -4,4 +4,6 @@ import uk.gov.gds.common.mongo.UnauthenticatedMongoDatabaseManagerForTests
 
 object TestAuditEventRepository extends AuditEventRepositoryBase {
   protected val collection = UnauthenticatedMongoDatabaseManagerForTests("auditEvents")
+
+  def testAudit(event: AuditEvent) = audit(event)
 }

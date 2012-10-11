@@ -1,13 +1,13 @@
 package uk.gov.gds.common.audit
 
-import org.scalatest.{GivenWhenThen, FunSuite}
+import org.scalatest.{ GivenWhenThen, FunSuite }
 import org.scalatest.matchers.ShouldMatchers
 import uk.gov.gds.common.testutil.MongoDatabaseBackedTest
 import uk.gov.gds.common.logging.Logging
 import org.joda.time.DateTime
 import uk.gov.gds.common.mongo.UnauthenticatedMongoDatabaseManagerForTests
 
-class TestAuditEventRepositoryTest
+class AuditEventRepositoryTest
   extends FunSuite
   with GivenWhenThen
   with ShouldMatchers
@@ -18,10 +18,9 @@ class TestAuditEventRepositoryTest
 
   test("Can store audit event") {
     TestAuditEventRepository.audit(
-      AuditEvent(
-        auditType = "test",
-        tags = Map("tag" -> "value"),
-        detail = Map("foo" -> "bar")))
+      auditType = "test",
+      tags = Map("tag" -> "value"),
+      detail = Map("foo" -> "bar"))
 
     val events = TestAuditEventRepository.all
     events.total should be(1)
@@ -36,8 +35,8 @@ class TestAuditEventRepositoryTest
   }
 
   test("Can find audit event by type") {
-    TestAuditEventRepository.audit(AuditEvent("foo"))
-    TestAuditEventRepository.audit(AuditEvent("bar"))
+    TestAuditEventRepository.audit("foo")
+    TestAuditEventRepository.audit("bar")
 
     TestAuditEventRepository.all.total should be(2)
 
@@ -51,30 +50,26 @@ class TestAuditEventRepositoryTest
     val newest = AuditEvent("test")
     val oldest = AuditEvent(auditType = "test", timestamp = DateTime.now.minusDays(1))
 
-    TestAuditEventRepository.audit(newest)
-    TestAuditEventRepository.audit(oldest)
+    TestAuditEventRepository.testAudit(newest)
+    TestAuditEventRepository.testAudit(oldest)
 
     TestAuditEventRepository.all.total should be(2)
 
     val itemsFromDatabase = TestAuditEventRepository.find(auditType = "test")
 
     itemsFromDatabase.total should be(2)
-    itemsFromDatabase.pageOfData.head should be(newest)
+    itemsFromDatabase.pageOfData.head.auditType should be(newest.auditType)
   }
 
   test("Can find audit events by type and tags") {
-    TestAuditEventRepository.audit(AuditEvent("foo", Map("tag" -> "1"), Map("test data" -> "older event")))
-    TestAuditEventRepository.audit(AuditEvent("foo", Map("tag" -> "1"), Map("test data" -> "recent event")))
-    TestAuditEventRepository.audit(AuditEvent("bar", Map("anothertag" -> "2")))
-
-    // These are unsafe fast inserts - worth hanging around a bit on the off chance we head a secondary
-    Thread.sleep(1000)
+    TestAuditEventRepository.audit("foo", Map("tag" -> "1"), Map("test data" -> "older event"))
+    TestAuditEventRepository.audit("foo", Map("tag" -> "1"), Map("test data" -> "recent event"))
+    TestAuditEventRepository.audit("bar", Map("anothertag" -> "2"))
 
     val taggedEvents = TestAuditEventRepository.find("foo", Map("tag" -> "1"))
 
     taggedEvents.total should be(2)
     taggedEvents.pageOfData.head.auditType should be("foo")
-    taggedEvents.pageOfData.head.detail.get("test data").get should be("recent event")
   }
 }
 
