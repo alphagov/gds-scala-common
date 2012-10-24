@@ -71,5 +71,18 @@ class AuditEventRepositoryTest
     taggedEvents.total should be(2)
     taggedEvents.pageOfData.head.auditType should be("foo")
   }
+
+  test("Can find only one audit event by type and tags") {
+    TestAuditEventRepository.audit("foo", Map("tag" -> "1"), Map("test data" -> "older event"))
+    TestAuditEventRepository.audit("foo", Map("tag" -> "1"), Map("test data" -> "recent event"))
+    TestAuditEventRepository.audit("bar", Map("anothertag" -> "2"))
+
+    val taggedEventOption = TestAuditEventRepository.findOne("foo", Map("tag" -> "1"))
+
+    taggedEventOption should not be(None)
+    taggedEventOption.get.auditType should be("foo")
+    taggedEventOption.get.detail("test data") should be("recent event")
+  }
 }
+
 
