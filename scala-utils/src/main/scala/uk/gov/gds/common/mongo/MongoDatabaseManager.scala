@@ -8,6 +8,7 @@ import com.mongodb.casbah.{ MongoDB, MongoConnection }
 import com.mongodb.{ Bytes, WriteConcern, ServerAddress }
 import com.mongodb.WriteConcern.{ NORMAL, SAFE }
 import util.DynamicVariable
+import com.mongodb.ReadPreference
 
 abstract class MongoDatabaseManager extends Logging {
 
@@ -60,7 +61,7 @@ abstract class MongoDatabaseManager extends Logging {
 
   if (MongoConfig.slaveOk) {
     logger.info("Setting database to slaveOk mode. Will read from slaves")
-    database.slaveOk()
+    database.setReadPreference(ReadPreference.SECONDARY)
   } else {
     logger.info("Not Setting database to slaveOk mode. Will only read & write from master")
     database.underlying.setOptions(database.getOptions() & (~Bytes.QUERYOPTION_SLAVEOK))
@@ -112,7 +113,7 @@ abstract class MongoDatabaseManager extends Logging {
   }
 
   private def withWriteConcern(writeConcern: WriteConcern)(block: => Unit) = {
-    val currentWriteConcern = database.getWriteConcern()
+    val currentWriteConcern = database.getWriteConcern
 
     try {
       database.setWriteConcern(writeConcern)
