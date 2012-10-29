@@ -21,7 +21,8 @@ object CalendarApiClient extends Logging {
       " Should be one of (CACHED_MODE or PROD_MODE)")
     System.getProperty("MODE", "PROD_MODE") match {
       case "CACHED_MODE" => MockCalendarApiClient
-      case "PROD_MODE" => RealCalendarApiClient
+    //  case "PROD_MODE" => RealCalendarApiClient
+      case "PROD_MODE" => MockCalendarApiClient
       case _ => MockCalendarApiClient
     }
   }

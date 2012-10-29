@@ -37,6 +37,9 @@ abstract class AuditEventRepositoryBase extends SimpleMongoRepository[AuditEvent
     addIndex(index("timestamp" -> Descending), unique = Unenforced, sparse = Complete)
   }
 
+  def findOne(auditType: String, tags: Map[String, String]): Option[AuditEvent] =
+    findOne(filter = buildQuery(auditType = Some(auditType), tags = tags))
+
   def find(auditType: String): Cursor[AuditEvent] = find(Some(auditType))
 
   def find(auditType: String, tags: Map[String, String]): Cursor[AuditEvent] = find(Some(auditType), tags)
