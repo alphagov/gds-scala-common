@@ -49,7 +49,7 @@ abstract class CursorBase[A](var pageSize: Int,
     logger.trace(logMessage)
     val startTimeInMillis = System.currentTimeMillis()
     val queryResult = query
-    logger.info(logMessage + " completed in " + (System.currentTimeMillis() - startTimeInMillis) + "ms")
+    logger.debug(logMessage + " completed in " + (System.currentTimeMillis() - startTimeInMillis) + "ms")
     queryResult
   }
 
