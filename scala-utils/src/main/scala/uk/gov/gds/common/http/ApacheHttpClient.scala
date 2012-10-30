@@ -112,10 +112,8 @@ abstract class ApacheHttpClient extends UrlEncoding with Logging {
     else targetUrl(path)
   }
 
-  private def encodeBearerToken(token: String) = new String(Base64.encodeBase64(token.getBytes("UTF-8")))
-
   private def setAuthorizationHeader(request: HttpRequestBase, token: String) = {
-    request.addHeader("Authorization", "Bearer " + encodeBearerToken(token))
+    request.addHeader("Authorization", "Bearer " + token)
     request
   }
 
