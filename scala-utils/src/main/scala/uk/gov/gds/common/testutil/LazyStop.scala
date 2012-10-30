@@ -40,7 +40,7 @@ trait LazyStop {
   def throwIfNotStarted() {
     synchronized {
       if (counter.get <= 0 || !isStarted) {
-        error("Opps. Webapp under test not started. Ensure you call .start() on the appserver!")
+        sys.error("Opps. Webapp under test not started. Ensure you call .start() on the appserver!")
       }
     }
   }

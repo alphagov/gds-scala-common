@@ -1,26 +1,57 @@
 package uk.gov.gds.common.mongo
 
 import migration._
-import repository.{IdentityBasedMongoRepository, MongoRepositoryBase}
+import repository.{ IdentityBasedMongoRepository, MongoRepositoryBase }
 import uk.gov.gds.common.logging.Logging
 import uk.gov.gds.common.config.Config
-import com.mongodb.casbah.{MongoDB, MongoConnection}
-import com.mongodb.{Bytes, WriteConcern, ServerAddress}
-import com.mongodb.WriteConcern.{NORMAL, SAFE}
+import com.mongodb.casbah.{ MongoDB, MongoConnection }
+import com.mongodb.{ Bytes, WriteConcern, ServerAddress }
+import com.mongodb.WriteConcern.{ NORMAL, SAFE }
 import util.DynamicVariable
+import com.mongodb.ReadPreference
 
 abstract class MongoDatabaseManager extends Logging {
 
-  private lazy val inOperation = new DynamicVariable[Boolean](false)
-
   lazy val database: MongoDB = {
-    logger.info("Connection to database: " + databaseName)
-    mongoConnection(databaseName)
+    logger.info("Connecting to database: " + databaseName)
+
+    try {
+      val conn = mongoConnection(databaseName)
+      authenticateToDatabaseIfRequired(conn)
+      conn
+    } catch {
+      case e: Exception =>
+        logger.error("Failure initialising & authenticating to mongoDB: " + e.getMessage(), e)
+        throw e
+    }
   }
 
   val changeLogRepository = new ChangeLogRepository(this)
 
-  private lazy val databaseHosts = {
+  protected def databaseUsername = Config("mongo.database.auth.username")
+
+  protected def databasePasssword = Config("mongo.database.auth.password")
+
+  def shouldAuthenticate = {
+    try {
+      databaseUsername != null
+    } catch {
+      case _ => false
+    }
+  }
+
+  protected def authenticateToDatabaseIfRequired(connection: MongoDB) {
+    /* authenticate if a username is set in the config file */
+    if (shouldAuthenticate) {
+      logger.info("Attempting to authenticate as user:" + databaseUsername)
+
+      connection.authenticate(databaseUsername, databasePasssword)
+    } else {
+      logger.info("No database authentication configured")
+    }
+  }
+
+  protected lazy val databaseHosts = {
     val databaseHostString = Config("mongo.database.hosts")
     logger.info("Mongo Database Hosts: " + databaseHostString)
     databaseHostString.split(",").toList
@@ -30,9 +61,8 @@ abstract class MongoDatabaseManager extends Logging {
 
   if (MongoConfig.slaveOk) {
     logger.info("Setting database to slaveOk mode. Will read from slaves")
-    database.slaveOk()
-  }
-  else {
+    database.setReadPreference(ReadPreference.SECONDARY)
+  } else {
     logger.info("Not Setting database to slaveOk mode. Will only read & write from master")
     database.underlying.setOptions(database.getOptions() & (~Bytes.QUERYOPTION_SLAVEOK))
   }
@@ -83,13 +113,12 @@ abstract class MongoDatabaseManager extends Logging {
   }
 
   private def withWriteConcern(writeConcern: WriteConcern)(block: => Unit) = {
-    val currentWriteConcern = database.getWriteConcern()
+    val currentWriteConcern = database.getWriteConcern
 
     try {
       database.setWriteConcern(writeConcern)
       block
-    }
-    finally {
+    } finally {
       database.setWriteConcern(currentWriteConcern)
     }
   }
@@ -105,8 +134,7 @@ abstract class MongoDatabaseManager extends Logging {
         try {
           changeScript.applyToDatabase()
           changeLogRepository.safeInsert(SuccessfulChangeScriptAudit(changeScript))
-        }
-        catch {
+        } catch {
           case e: Exception =>
             changeLogRepository.safeInsert(FailedChangeScriptAudit(changeScript))
             logger.error("Change script failed to apply " + changeScript.shortName, e)

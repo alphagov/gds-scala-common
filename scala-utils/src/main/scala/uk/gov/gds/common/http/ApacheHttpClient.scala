@@ -21,6 +21,7 @@ import uk.gov.gds.common.json.JsonSerializer._
 import org.apache.http.auth.UsernamePasswordCredentials
 import org.apache.http.impl.auth.BasicScheme
 import org.apache.commons.codec.binary.Base64
+import uk.gov.gds.common.config.Config
 
 abstract class ApacheHttpClient extends UrlEncoding with Logging {
 
@@ -111,10 +112,8 @@ abstract class ApacheHttpClient extends UrlEncoding with Logging {
     else targetUrl(path)
   }
 
-  private def encodeBearerToken(token: String) = new String(Base64.encodeBase64(token.getBytes("UTF-8")))
-
   private def setAuthorizationHeader(request: HttpRequestBase, token: String) = {
-    request.addHeader("Authorization", "Bearer " + encodeBearerToken(token))
+    request.addHeader("Authorization", "Bearer " + token)
     request
   }
 
@@ -180,8 +179,8 @@ abstract class ApacheHttpClient extends UrlEncoding with Logging {
     val httpClient = new DefaultHttpClient(connectionManager)
     val httpParams = new BasicHttpParams()
 
-    HttpConnectionParams.setConnectionTimeout(httpParams, 10000);
-    HttpConnectionParams.setSoTimeout(httpParams, 10000);
+    HttpConnectionParams.setConnectionTimeout(httpParams, Config("http.connectionTimeout", 10000))
+    HttpConnectionParams.setSoTimeout(httpParams, Config("http.soTimeout", 10000))
     HttpClientParams.setRedirecting(httpParams, false)
 
     httpClient.setHttpRequestRetryHandler(new DefaultHttpRequestRetryHandler(0, false));

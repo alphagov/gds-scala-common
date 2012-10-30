@@ -41,13 +41,15 @@ abstract class CursorBase[A](var pageSize: Int,
       results
   }.flatten
 
+  def toList: List[A] = map(x => x).toList
+
   protected def skipSize = ((currentPage - 1) * pageSize).toInt
 
   protected def logAndTimeQuery[B](logMessage: String, query: => B) = {
     logger.trace(logMessage)
     val startTimeInMillis = System.currentTimeMillis()
     val queryResult = query
-    logger.info(logMessage + " completed in " + (System.currentTimeMillis() - startTimeInMillis) + "ms")
+    logger.debug(logMessage + " completed in " + (System.currentTimeMillis() - startTimeInMillis) + "ms")
     queryResult
   }
 

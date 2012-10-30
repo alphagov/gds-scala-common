@@ -1,9 +1,11 @@
 package uk.gov.gds.common.mongo
 
-import migration.{ChangeScriptFailedException, ChangeScript, ChangeScriptStatus}
+import migration.{ ChangeScriptFailedException, ChangeScript, ChangeScriptStatus }
 import org.scalatest.matchers.ShouldMatchers
 import uk.gov.gds.common.testutil.MongoDatabaseBackedTest
-import org.scalatest.{GivenWhenThen, FunSuite}
+import org.scalatest.{ GivenWhenThen, FunSuite }
+import uk.gov.gds.common.config.Config
+import play.api.Logger
 
 class MongoDatabaseManagerTests
   extends FunSuite
@@ -11,7 +13,7 @@ class MongoDatabaseManagerTests
   with GivenWhenThen
   with MongoDatabaseBackedTest {
 
-  protected def databaseManager = MongoDatabaseManagerForTests
+  protected def databaseManager = UnauthenticatedMongoDatabaseManagerForTests
 
   private val simpleChangeScript = SimpleChangeScriptThatDoesNothing()
   private val changeScriptThatThrowsAnException = ChangeScriptThatThrowsAnException()
@@ -76,6 +78,16 @@ class MongoDatabaseManagerTests
       case None => fail("Should have found an audit entry for " + changeScriptThatThrowsAnException.name)
       case Some(changeScriptAuditEntry) => changeScriptAuditEntry.status should be(ChangeScriptStatus.failed)
     }
+  }
+
+  test("Database connection is established to unauthenticated database") {
+    given("No configuration value for username is specified")
+
+    databaseManager.shouldAuthenticate should be(false)
+
+    then("the Scala process connects successfully to the unauthenicated db")
+    databaseManager.initializeDatabase()
+
   }
 
   case class DatabaseManager(changeScripts: ChangeScript*) extends MongoDatabaseManager {

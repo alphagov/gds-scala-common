@@ -2,13 +2,15 @@ package uk.gov.gds.common.repository
 
 import org.scalatest.FunSuite
 import org.scalatest.matchers.ShouldMatchers
-import uk.gov.gds.common.mongo.{MongoDatabaseManager, MongoDatabaseManagerForTests}
+import uk.gov.gds.common.mongo.{MongoDatabaseManager}
 import uk.gov.gds.common.mongo.repository._
 import uk.gov.gds.common.testutil.MongoDatabaseBackedTest
 import com.novus.salat.annotations._
 import org.bson.types.ObjectId
 import com.mongodb.MongoException
 import com.mongodb.casbah.Imports._
+import java.io.ByteArrayOutputStream
+import uk.gov.gds.common.mongo.UnauthenticatedMongoDatabaseManagerForTests
 
 class SimpleMongoRepositoryTests extends FunSuite
 with ShouldMatchers
@@ -20,7 +22,6 @@ with SyntacticSugarForMongoQueries {
   test("Should create amongo id on inserting a new row") {
     SimpleTestDataRepository.safeInsert(SimpleTestData(key = 1, value = "test-2")).id should not be(None)
   }
-
 
   test("Should be able to query for data retrieveing an object of the correct type") {
     SimpleTestDataRepository.createItems(1)
@@ -67,6 +68,36 @@ with SyntacticSugarForMongoQueries {
     caught.getMessage should include("E11000 duplicate key error index: gdsScalaCommonTest.testFindData.$value_1")
   }
 
+  
+   test("Should be able to dump JSON to output stream") {
+    val id1 = SimpleTestDataRepository.safeInsert(SimpleTestData(key = 1, value = "update-test-1")).id.get
+    val id2 = SimpleTestDataRepository.safeInsert(SimpleTestData(key = 2, value = "update-test-2")).id.get
+    val os = new ByteArrayOutputStream
+    SimpleTestDataRepository.dumpJSON(os)
+    val expected = """|{"_id":{"$oid":"id1"},"key":1,"value":"update-test-1"}
+    				  |{"_id":{"$oid":"id2"},"key":2,"value":"update-test-2"}
+                      |""".stripMargin.replace("id1", id1.toString()).replace("id2", id2.toString())
+    val actual = new String(os.toByteArray())                       
+    actual should equal (expected)
+  }
+
+  test("Should be able to get an object not wrapped in an option when it exists in the database") {
+    val id = SimpleTestDataRepository.safeInsert(SimpleTestData(key = 1, value = "get-test")).id.get
+
+    val obj = SimpleTestDataRepository.get(id)
+    obj.key should be(1)
+    obj.value should be("get-test")
+  }
+
+  test("Calling get for an id that does not exist should throw an exception") {
+    val id = new ObjectId()
+
+    val caught = intercept[NoSuchObjectException] {
+      SimpleTestDataRepository.get(id)
+    }
+
+    caught.id should be(id.toString)
+  }
 }
 
 object SimpleTestDataManagerForTests extends MongoDatabaseManager {
@@ -77,7 +108,7 @@ case class SimpleTestData(@Key("_id") id: Option[ObjectId] = None, key: Int, val
 
 object SimpleTestDataRepository extends SimpleMongoRepository[SimpleTestData] {
 
-  lazy val collection = MongoDatabaseManagerForTests("testFindData")
+  lazy val collection = UnauthenticatedMongoDatabaseManagerForTests("testFindData")
 
   override protected def createIndexes() {
     addIndex(index("value" -> Ascending), unique = Enforced, sparse = Complete)

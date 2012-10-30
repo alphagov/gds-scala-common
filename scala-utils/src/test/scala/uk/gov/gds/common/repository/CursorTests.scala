@@ -5,7 +5,7 @@ import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.GivenWhenThen
 import uk.gov.gds.common.testutil.MongoDatabaseBackedTest
 import uk.gov.gds.common.pagination.PaginationSupport
-import uk.gov.gds.common.mongo.{MongoDatabaseManager, MongoDatabaseManagerForTests}
+import uk.gov.gds.common.mongo.{MongoDatabaseManager, UnauthenticatedMongoDatabaseManagerForTests}
 import org.joda.time.DateTime
 import uk.gov.gds.common.mongo.repository._
 
@@ -18,6 +18,25 @@ class CursorTests
   with SyntacticSugarForMongoQueries{
 
   protected def databaseManager = SimpleTestDataManagerForCursorTests
+
+  test("A cursor can be converted to a list") {
+    given("A collection containing 5 items")
+    val items = TestDataRepository.createItems(5)
+
+    when("we load the items from the repository")
+    val cursor = TestDataRepository.sorted
+
+    then("we should have a cursor with 5 items in it on the first page")
+    cursor.total should be(5)
+    cursor.pageOfData.size should be(5)
+    cursor.pages should be(1)
+
+    then("we should be able to convert that cursor to a list, serializing all of the information from the database")
+    val list = cursor.toList
+
+    list.size should be(5)
+    list should be(items)
+  }
 
   test("A cursor with fewer items than the page size returns the correct number of results") {
     given("A collection containing 5 items")
@@ -354,7 +373,7 @@ private[repository] case class Data(key: Int, value: String)
 
 private[repository] object TestDataRepository extends SimpleMongoRepository[Data] {
 
-  lazy val collection = MongoDatabaseManagerForTests("testData")
+  lazy val collection = UnauthenticatedMongoDatabaseManagerForTests("testData")
 
   def sorted = SimpleMongoCursor(emptyQuery, order("key" -> Ascending.order))
 
@@ -369,7 +388,7 @@ private[repository] case class DataWithTimestampField(name: String, dateOfBirth:
 private[repository] case class DataWithTimestampFieldAndSecondColumn(name: String, otherName: String, dateOfBirth: DateTime) extends HasTimestamp
 
 private[repository] object TestDateDataRepository extends TimestampBasedMongoRepository[DataWithTimestampField] {
-  lazy val collection = MongoDatabaseManagerForTests("testDateData")
+  lazy val collection = UnauthenticatedMongoDatabaseManagerForTests("testDateData")
   lazy val now = new DateTime
   val databaseTimeStampProperty = "dateOfBirth"
 
@@ -382,7 +401,7 @@ private[repository] object TestDateDataRepository extends TimestampBasedMongoRep
 }
 
 private[repository] object Test2ColumnDateDataRepository extends TimestampBasedMongoRepository[DataWithTimestampFieldAndSecondColumn] {
-  lazy val collection = MongoDatabaseManagerForTests("testDateDataTwoColumn")
+  lazy val collection = UnauthenticatedMongoDatabaseManagerForTests("testDateDataTwoColumn")
   lazy val now = new DateTime
   val databaseTimeStampProperty = "dateOfBirth"
 
