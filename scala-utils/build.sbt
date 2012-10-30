@@ -1,6 +1,6 @@
 organization := "uk.gov.gds"
 
-name := "gds-scala-utils"
+name := "gds-scala-utils-no-play"
 
 version := "0.6.21-SNAPSHOT"
 

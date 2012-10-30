@@ -5,7 +5,7 @@ import uk.gov.gds.common.logging.Logging
 import net.sf.jmimemagic.Magic
 import java.net.{InetSocketAddress, Socket}
 
-object ClamAntiVirus (streamCopyFunction: (InputStream) => Unit = DevNull.nullStream(_),
+class ClamAntiVirus (streamCopyFunction: (InputStream) => Unit = DevNull.nullStream(_),
                       virusDetectedFunction: => Unit = (),
                       allowedMimeTypes: Set[String])
   extends ClamAvConfig with Logging{
