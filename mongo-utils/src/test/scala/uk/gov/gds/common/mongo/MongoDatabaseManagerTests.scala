@@ -5,7 +5,6 @@ import org.scalatest.matchers.ShouldMatchers
 import uk.gov.gds.common.testutil.MongoDatabaseBackedTest
 import org.scalatest.{ GivenWhenThen, FunSuite }
 import uk.gov.gds.common.config.Config
-import play.api.Logger
 
 class MongoDatabaseManagerTests
   extends FunSuite

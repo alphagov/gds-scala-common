@@ -15,9 +15,18 @@ object GdsScalaCommonBuild extends Build {
       )
   }
 
-  val root = PlayProject("gds-common", "1.0-SNAPSHOT", Seq(), file("."), mainLang = SCALA)
-	.aggregate(commonScalaUtils)
+  val root = PlayProject("gds-common", "2.0-SNAPSHOT", Seq(), file("."), mainLang = SCALA)
+	.aggregate(scalaUtils, mongoScalaUtils, govUkClients)
   
-  lazy val commonScalaUtils = Project("scala-utils", file("scala-utils"))
-	 .settings(ideaSettings: _*)
+  lazy val scalaUtils = Project("scala-utils", file("scala-utils"))
+	  .settings(ideaSettings: _*)
+
+  lazy val mongoScalaUtils = Project("mongo-utils", file("mongo-utils"))
+    .settings(ideaSettings: _*)
+    .dependsOn(scalaUtils % "test->test;test->compile;compile->compile")
+
+  lazy val govUkClients = Project("govuk-clients", file("govuk-clients"))
+    .settings(ideaSettings: _*)
+    .dependsOn(scalaUtils % "test->test;test->compile;compile->compile")
+    .dependsOn(mongoScalaUtils % "test->test;test->compile;compile->compile")
 }

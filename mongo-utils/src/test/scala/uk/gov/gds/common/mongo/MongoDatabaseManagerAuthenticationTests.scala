@@ -4,7 +4,6 @@ import migration.{ ChangeScriptFailedException, ChangeScript, ChangeScriptStatus
 import org.scalatest.matchers.ShouldMatchers
 import uk.gov.gds.common.testutil.{ IntegrationTestMutex, MongoDatabaseBackedTest }
 import org.scalatest.{ GivenWhenThen, FunSuite, Tag }
-import play.api.Logger
 import xml.dtd.SystemID
 import uk.gov.gds.common.config.Config
 import com.mongodb.casbah.MongoDB

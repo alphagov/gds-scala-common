@@ -1,6 +1,6 @@
 organization := "uk.gov.gds"
 
-name := "gds-scala-utils"
+name := "gds-mongo-utils"
 
 version := "0.7.0-SNAPSHOT"
 

@@ -3,6 +3,7 @@ package uk.gov.gds.common.calendar
 import com.google.common.cache.CacheBuilder
 import java.util.concurrent.TimeUnit
 import com.google.common.cache.CacheLoader
+import uk.gov.gds.common.http.calendar.CalendarHttpClient
 
 object RealCalendarApiClient extends CalendarApiClient {
 
