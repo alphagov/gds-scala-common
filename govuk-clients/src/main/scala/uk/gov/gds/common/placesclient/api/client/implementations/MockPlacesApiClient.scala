@@ -1,6 +1,6 @@
 package uk.gov.gds.common.placesclient.api.client.implementations
 
-import uk.gov.gds.common.placesclient.model.{LocalAuthority, Address}
+import uk.gov.gds.common.model.{LocalAuthority, Address}
 import uk.gov.gds.common.http.ApiResponseException
 import uk.gov.gds.common.placesclient.api.client.PlacesApiClient
 

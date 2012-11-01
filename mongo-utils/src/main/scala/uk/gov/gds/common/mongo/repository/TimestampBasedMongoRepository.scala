@@ -1,7 +1,7 @@
 package uk.gov.gds.common.mongo.repository
 
 import com.novus.salat.CaseClass
-import uk.gov.gds.common.repository.HasTimestamp
+import uk.gov.gds.common.model.HasTimestamp
 import org.joda.time.DateTime
 import com.mongodb.casbah.Imports._
 

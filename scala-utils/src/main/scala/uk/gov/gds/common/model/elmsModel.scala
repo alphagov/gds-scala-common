@@ -1,6 +1,5 @@
 package uk.gov.gds.common.placesclient.model
 
-import uk.gov.gds.common.repository.HasIdentity
 import com.mongodb.casbah.Imports.BasicDBList
 
 //case class ElmsAdminArea(code: String, name: String) extends HasIdentity {

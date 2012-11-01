@@ -1,6 +1,6 @@
 package uk.gov.gds.common.repository
 
-import com.mongodb.casbah.Imports._
+import com.mongodb.DBObject
 
 trait Repository[A] {
 

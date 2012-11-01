@@ -28,5 +28,5 @@ object GdsScalaCommonBuild extends Build {
   lazy val govUkClients = Project("govuk-clients", file("govuk-clients"))
     .settings(ideaSettings: _*)
     .dependsOn(scalaUtils % "test->test;test->compile;compile->compile")
-    .dependsOn(mongoScalaUtils % "test->test;test->compile;compile->compile")
+    //.dependsOn(mongoScalaUtils % "test->test;test->compile;compile->compile")
 }

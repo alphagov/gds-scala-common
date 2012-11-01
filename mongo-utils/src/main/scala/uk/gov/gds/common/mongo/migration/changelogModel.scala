@@ -1,7 +1,7 @@
 package uk.gov.gds.common.mongo.migration
 
 import org.joda.time.DateTime
-import uk.gov.gds.common.repository.HasIdentity
+import uk.gov.gds.common.model.HasIdentity
 
 object ChangeScriptStatus {
   val ok = "ok"

@@ -8,6 +8,7 @@ import uk.gov.gds.common.pagination.PaginationSupport
 import uk.gov.gds.common.mongo.{MongoDatabaseManager, UnauthenticatedMongoDatabaseManagerForTests}
 import org.joda.time.DateTime
 import uk.gov.gds.common.mongo.repository._
+import uk.gov.gds.common.model.HasTimestamp
 
 class CursorTests
   extends FunSuite

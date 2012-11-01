@@ -1,6 +1,7 @@
 package uk.gov.gds.common.localauth
 
 import uk.gov.gds.common.mongo.repository.{Ascending, IdentityBasedMongoRepository}
+import uk.gov.gds.common.model.Authority
 
 class NotFoundException(message: String) extends Exception(message)
 

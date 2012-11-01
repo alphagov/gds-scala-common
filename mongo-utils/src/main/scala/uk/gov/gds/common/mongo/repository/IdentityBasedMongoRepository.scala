@@ -1,7 +1,7 @@
 package uk.gov.gds.common.mongo.repository
 
 import com.novus.salat.CaseClass
-import uk.gov.gds.common.repository.HasIdentity
+import uk.gov.gds.common.model.HasIdentity
 
 abstract class IdentityBasedMongoRepository[A <: CaseClass with HasIdentity](implicit m: Manifest[A])
   extends SimpleMongoRepository[A] {

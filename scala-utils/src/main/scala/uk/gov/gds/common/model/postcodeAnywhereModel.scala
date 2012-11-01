@@ -1,4 +1,4 @@
-package uk.gov.gds.common.placesclient.model
+package uk.gov.gds.common.model
 
 case class PAList(Items: List[PAAddress])
 
