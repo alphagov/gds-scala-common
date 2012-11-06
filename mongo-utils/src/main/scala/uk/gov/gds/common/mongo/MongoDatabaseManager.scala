@@ -112,7 +112,7 @@ abstract class MongoDatabaseManager extends Logging {
   }
 
   private def withWriteConcern(writeConcern: WriteConcern)(block: => Unit) = {
-    val currentWriteConcern = database.getWriteConcern()
+    val currentWriteConcern = database.getWriteConcern
 
     try {
       database.setWriteConcern(writeConcern)

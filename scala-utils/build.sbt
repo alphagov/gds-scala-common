@@ -7,8 +7,6 @@ version := "0.7.0-SNAPSHOT"
 scalacOptions += "-deprecation"
 
 libraryDependencies ++= Seq(
-        "org.mongodb" %% "casbah" % "2.4.1",
-        "com.mongodb.casbah" %% "casbah" % "2.1.5-1",
         "javax.servlet" % "servlet-api" % "2.5" % "provided",
         "org.scalatest" %% "scalatest" % "1.7.2",
         "com.codahale" %% "jerkson" % "0.5.0",
