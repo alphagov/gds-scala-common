@@ -14,10 +14,16 @@ trait Cursor[A] {
   def gotoNextPage(): Unit
 
   def hasNextPage: Boolean
+
+  def foreach[B](f: (A) => B): Unit
+
+  def map[B](f: (A) => B): Seq[B]
+
+  def toList: List[A]
 }
 
 abstract class CursorBase[A](var pageSize: Int,
-                             var currentPage: Long)
+  var currentPage: Long)
   extends Cursor[A] with Logging {
 
   def pages = math.ceil(total.toDouble / pageSize.toDouble).toInt
