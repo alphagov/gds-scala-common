@@ -40,8 +40,12 @@ object CalendarApiClient extends Logging {
       if ((division == "england" || division == "wales") && !divisionCalendars.contains(division))
         "england-and-wales"
       else
-        division
-
-    divisionCalendars(divisionUpdated).calendars(year).events
+        division.toLowerCase
+        
+    val eventsOption = for{
+      divisionObj <- divisionCalendars.get(divisionUpdated)
+      yearObj <- divisionObj.calendars.get(year)
+    } yield yearObj.events
+    eventsOption.flatten.toList
   }
 }

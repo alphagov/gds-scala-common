@@ -43,13 +43,13 @@ abstract class MongoRepositoryBase[A <: CaseClass](implicit m: Manifest[A])
   def dumpJSON(os: OutputStream) {
     val allCursor = all
     dumpPage(os, allCursor)
-    while(allCursor.hasNextPage){
+    while (allCursor.hasNextPage) {
       allCursor.gotoNextPage
       dumpPage(os, allCursor)
     }
   }
-  
-  private def dumpPage(os: OutputStream, page: Cursor[A]){
+
+  private def dumpPage(os: OutputStream, page: Cursor[A]) {
     page.pageOfData.foreach { a =>
       os.write(grater[A].toCompactJSON(a).getBytes())
       os.write("\n".getBytes())
@@ -57,9 +57,9 @@ abstract class MongoRepositoryBase[A <: CaseClass](implicit m: Manifest[A])
   }
 
   protected def addIndex(index: DBObject,
-                         unique: Boolean = Enforced,
-                         sparse: Boolean = Sparse,
-                         duplicate: Boolean = Keep) {
+    unique: Boolean = Enforced,
+    sparse: Boolean = Sparse,
+    duplicate: Boolean = Keep) {
     logger.info("Adding index " + index)
 
     try {
@@ -77,10 +77,10 @@ abstract class MongoRepositoryBase[A <: CaseClass](implicit m: Manifest[A])
     }
   }
 
-  protected class SimpleMongoCursor(query: DBObject,
-                                    pageSize: Int,
-                                    currentPage: Long,
-                                    order: Option[MongoDBObject] = None)
+  class SimpleMongoCursor(query: DBObject,
+    pageSize: Int,
+    currentPage: Long,
+    order: Option[MongoDBObject] = None)
     extends CursorBase[A](pageSize, currentPage) {
 
     def pageOfData = logAndTimeQuery[List[A]](
@@ -95,7 +95,7 @@ abstract class MongoRepositoryBase[A <: CaseClass](implicit m: Manifest[A])
       query = collection.count(query))
   }
 
-  protected object SimpleMongoCursor {
+  object SimpleMongoCursor {
 
     def apply(query: DBObject) = buildCursor(query)
 
@@ -117,9 +117,9 @@ abstract class MongoRepositoryBase[A <: CaseClass](implicit m: Manifest[A])
       pageSize = pageSize)
 
     private def buildCursor(query: DBObject,
-                            pageSize: Int = defaultPageSize,
-                            currentPage: Int = 1,
-                            order: Option[MongoDBObject] = None) =
+      pageSize: Int = defaultPageSize,
+      currentPage: Int = 1,
+      order: Option[MongoDBObject] = None) =
       new SimpleMongoCursor(
         query = query,
         pageSize = pageSize,

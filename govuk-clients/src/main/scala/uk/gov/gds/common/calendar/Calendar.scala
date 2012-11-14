@@ -1,6 +1,6 @@
 package uk.gov.gds.common.calendar
 
-import org.joda.time.{LocalDate, DateTime}
+import org.joda.time.{ LocalDate, DateTime }
 
 object Calendar {
 
@@ -9,7 +9,6 @@ object Calendar {
       plusDaysWithHolidays(division, date, daysAhead)
     else
       date.plusDays(daysAhead)
-
 
   def plusDaysWithHolidays(division: String, date: DateTime, daysAhead: Int) = {
     val localDate = date.toLocalDate
@@ -29,11 +28,11 @@ object Calendar {
     finalDate.toDateTime(date.toLocalTime)
   }
 
-  private def getNextMondayIfWeekend(date: LocalDate) = date.plusDays(date.getDayOfWeek match {
-    case 6 => 2
-    case 7 => 1
-    case _ => 0
-  })
-
+  private def getNextMondayIfWeekend(date: LocalDate) =
+    date.plusDays(date.getDayOfWeek match {
+      case 6 => 2
+      case 7 => 1
+      case _ => 0
+    })
 
 }
