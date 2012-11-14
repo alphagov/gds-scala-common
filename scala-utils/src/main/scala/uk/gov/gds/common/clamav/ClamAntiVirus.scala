@@ -1,14 +1,14 @@
 package uk.gov.gds.common.clamav
 
 import java.io._
-import play.api.Logger
+import uk.gov.gds.common.logging.Logging
 import net.sf.jmimemagic.Magic
 import java.net.{InetSocketAddress, Socket}
 
-class ClamAntiVirus(streamCopyFunction: (InputStream) => Unit = DevNull.nullStream(_),
-                    virusDetectedFunction: => Unit = (),
-                    allowedMimeTypes: Set[String])
-  extends ClamAvConfig {
+class ClamAntiVirus (streamCopyFunction: (InputStream) => Unit = DevNull.nullStream(_),
+                      virusDetectedFunction: => Unit = (),
+                      allowedMimeTypes: Set[String])
+  extends ClamAvConfig with Logging{
 
   private val copyInputStream = new PipedInputStream()
   private val copyOutputStream = new PipedOutputStream(copyInputStream)
@@ -45,7 +45,7 @@ class ClamAntiVirus(streamCopyFunction: (InputStream) => Unit = DevNull.nullStre
         streamCopyThread.interrupt()
         virusDetectedFunction
 
-        Logger.error("Virus detected " + virusInformation)
+        logger.error("Virus detected " + virusInformation)
         raiseError(virusInformation)
       } else {
         streamCopyThread.join()
@@ -65,7 +65,7 @@ class ClamAntiVirus(streamCopyFunction: (InputStream) => Unit = DevNull.nullStre
     }
     catch {
       case e: IOException =>
-        Logger.warn("Error closing socket to clamd", e)
+        logger.warn("Error closing socket to clamd", e)
     }
   }
 
@@ -98,7 +98,7 @@ class ClamAntiVirus(streamCopyFunction: (InputStream) => Unit = DevNull.nullStre
         .map(_.toByte)
         .toArray)
 
-    Logger.info("Response from clamd: " + response)
+    logger.info("Response from clamd: " + response)
     response.trim()
   }
 

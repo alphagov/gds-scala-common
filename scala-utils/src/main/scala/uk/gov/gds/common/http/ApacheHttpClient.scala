@@ -94,7 +94,7 @@ abstract class ApacheHttpClient extends UrlEncoding with Logging {
   def postPlainJsonWithBearerToken(path: String, json: String, token: String) =
     execute(setAuthorizationHeader(createPlainJsonPostRequest(path, json), token))
 
-  private def createPlainJsonPostRequest(path: String, json: String) = {
+  private[http] def createPlainJsonPostRequest(path: String, json: String) = {
     val postRequest = new HttpPost(targetUrl(path))
 
     val jsonEntity = new StringEntity(json)
@@ -105,19 +105,19 @@ abstract class ApacheHttpClient extends UrlEncoding with Logging {
     postRequest
   }
 
-  protected def targetUrl(path: String): String
+  private[http] def targetUrl(path: String): String
 
-  protected def targetUrl(path: String, paramsAsString: String): String = {
+  private[http] def targetUrl(path: String, paramsAsString: String): String = {
     if (paramsAsString.nonEmpty) targetUrl(path + "?" + paramsAsString)
     else targetUrl(path)
   }
 
-  private def setAuthorizationHeader(request: HttpRequestBase, token: String) = {
+  private[http] def setAuthorizationHeader(request: HttpRequestBase, token: String) = {
     request.addHeader("Authorization", "Bearer " + token)
     request
   }
 
-  private def startupConnectionCleanerThread() {
+  private[http] def startupConnectionCleanerThread() {
     logger.info("Starting dead connection cleaner")
 
     cleanupThread.scheduleAtFixedRate(new Runnable {
@@ -129,7 +129,7 @@ abstract class ApacheHttpClient extends UrlEncoding with Logging {
     }, 10, 10, TimeUnit.SECONDS)
   }
 
-  private def paramsToUrlParams(params: Map[String, Any]) = params.map {
+  private[http] def paramsToUrlParams(params: Map[String, Any]) = params.map {
     case (n, v) =>
       v match {
         case None =>
@@ -139,23 +139,23 @@ abstract class ApacheHttpClient extends UrlEncoding with Logging {
 
   }.mkString("&")
 
-  private def addParam(name: String, value: String) = urlEncode(name) + "=" + urlEncode(value)
+  private[http] def addParam(name: String, value: String) = urlEncode(name) + "=" + urlEncode(value)
 
-  private def execute(request: HttpUriRequest) = {
+  private[http] def execute(request: HttpUriRequest) = {
     executeEither(request) match {
       case Left(result) => result
       case Right(exception) => throw exception
     }
   }
 
-  private def executeOptional(request: HttpUriRequest) = {
+  private[http] def executeOptional(request: HttpUriRequest) = {
     executeEither(request) match {
       case Left(result) => Some(result)
       case Right(exception) => None
     }
   }
 
-  private def executeEither(request: HttpUriRequest): Either[String, ApiResponseException] = {
+  private[http] def executeEither(request: HttpUriRequest): Either[String, ApiResponseException] = {
     logger.info("About to query: " + request.getMethod + " " + request.getURI)
 
     val response = httpClient.execute(request)
@@ -170,12 +170,12 @@ abstract class ApacheHttpClient extends UrlEncoding with Logging {
       Left(EntityUtils.toString(response.getEntity, "UTF-8"))
   }
 
-  private def jsonToPostOverWire(json: String) = new UrlEncodedFormEntity(List(new BasicNameValuePair("json", json)), "UTF-8")
+  private[http] def jsonToPostOverWire(json: String) = new UrlEncodedFormEntity(List(new BasicNameValuePair("json", json)), "UTF-8")
 
-  private def jsonToPostOverWire(jsonParams: Map[String, String]) =
+  private[http] def jsonToPostOverWire(jsonParams: Map[String, String]) =
     new UrlEncodedFormEntity(jsonParams.toList.map(nameAndValue => new BasicNameValuePair(nameAndValue._1, nameAndValue._2)), "UTF-8")
 
-  private def configureHttpClient() = {
+  private[http] def configureHttpClient() = {
     val httpClient = new DefaultHttpClient(connectionManager)
     val httpParams = new BasicHttpParams()
 
