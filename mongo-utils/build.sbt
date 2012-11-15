@@ -13,7 +13,7 @@ libraryDependencies ++= Seq(
         "com.codahale" %% "jerkson" % "0.5.0",
         "joda-time" % "joda-time" % "2.1",
         "org.joda" % "joda-convert" % "1.2",
-        "com.novus" %% "salat" % "0.0.8",
+        "com.novus" %% "salat-core" % "0.0.8",
         "org.apache.httpcomponents" % "httpclient" % "4.1.2",
         "jmimemagic" % "jmimemagic" % "0.1.1",
         "com.google.guava" % "guava" % "13.0",
