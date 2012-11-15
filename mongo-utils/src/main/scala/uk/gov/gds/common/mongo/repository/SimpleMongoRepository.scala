@@ -48,8 +48,10 @@ abstract class SimpleMongoRepository[A <: CaseClass](implicit m: Manifest[A]) ex
     collection.update(query, obj, upsert, multi, WriteConcern.NORMAL)
 
   def delete(id: String) {
-    collection -= where("_id" -> oid(id))
+    collection.remove(where("_id" -> oid(id)))
   }
+
+  def delete(query: DBObject) = collection.remove(query)
 
   def deleteAll() {
     collection.remove(query())
