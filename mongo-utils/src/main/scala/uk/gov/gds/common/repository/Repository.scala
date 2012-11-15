@@ -1,6 +1,7 @@
 package uk.gov.gds.common.repository
 
 import com.mongodb.DBObject
+import com.mongodb.WriteResult
 
 trait Repository[A] {
 
@@ -14,7 +15,13 @@ trait Repository[A] {
 
   def load(ids: List[String]): Cursor[A]
 
-  def delete(id: String): Unit
+  def safeDelete(id: String): WriteResult
+
+  def unsafeDelete(id: String): WriteResult
+
+  def safeDelete(query: DBObject): WriteResult
+
+  def unsafeDelete(query: DBObject): WriteResult
 
   def deleteAll(): Unit
 
