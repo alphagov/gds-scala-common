@@ -2,6 +2,7 @@ package uk.gov.gds.common.mongo.repository
 
 import com.novus.salat.CaseClass
 import uk.gov.gds.common.model.HasIdentity
+import com.mongodb.WriteConcern
 
 abstract class IdentityBasedMongoRepository[A <: CaseClass with HasIdentity](implicit m: Manifest[A])
   extends SimpleMongoRepository[A] {
@@ -12,7 +13,9 @@ abstract class IdentityBasedMongoRepository[A <: CaseClass with HasIdentity](imp
 
   override def load(ids: List[String]) = SimpleMongoCursor(where(databaseIdProperty -> in(ids)))
 
-  override def delete(id: String) = collection -= where(databaseIdProperty -> id)
+  override def unsafeDelete(id: String) = collection.remove(where(databaseIdProperty -> id), WriteConcern.NORMAL)
+
+  override def safeDelete(id: String) = collection.remove(where(databaseIdProperty -> id), WriteConcern.MAJORITY)
 
   override def startup() {
     super.startup()
