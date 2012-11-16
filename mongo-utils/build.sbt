@@ -32,7 +32,6 @@ resolvers ++= Seq(
     "repo scalatools releases" at "https://oss.sonatype.org/content/groups/scala-tools/"
 )
 
-
 publishArtifact in (Test, packageSrc) := true
 
 publishTo in ThisBuild <<= (version) { version: String =>
