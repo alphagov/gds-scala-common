@@ -16,26 +16,27 @@ abstract class SimpleMongoRepository[A <: CaseClass](implicit m: Manifest[A]) ex
 
   def get(id: ObjectId): A = load(id).getOrElse(throw new NoSuchObjectException(id))
 
-  def safeInsert(obj: A) = try {
-    insert(obj, WriteConcern.MAJORITY)
+  def insertWith(writeConcern: WriteConcern, obj: A) = try {
+    insert(obj, writeConcern)
   } catch {
-    case e: Exception =>
-      logger.error("safeInsert failed for " + obj, e)
+    case e: Exception => {
+      logger.error("insert with concern " + writeConcern.toString + " failed for " + obj, e)
       throw e
+    }
   }
 
-  def unsafeInsert(obj: A) = try {
-    insert(obj, WriteConcern.NORMAL)
-  }
-  catch {
-    case e: Exception =>
-      logger.warn("unsafeInsert failed for " + obj, e)
-      obj
+  def bulkInsertWith(writeConcern: WriteConcern, obj: List[A]) = try {
+    bulkInsert(obj, writeConcern)
+  } catch {
+    case e: Exception => {
+      logger.error("insert with concern " + writeConcern.toString + " failed for " + obj, e)
+      throw e
+    }
   }
 
-  def safeUpdate(query: DBObject, obj: DBObject, upsert: Boolean = true, multi: Boolean = false) = {
+  def updateWith(writeConcern: WriteConcern, query: DBObject, obj: DBObject, upsert: Boolean, multi: Boolean) = {
     try {
-      collection.update(query, obj, upsert, multi, WriteConcern.MAJORITY)
+      collection.update(query, obj, upsert, multi, writeConcern)
     } catch {
       case e: Exception => {
         logger.error(e.getMessage)
@@ -44,8 +45,15 @@ abstract class SimpleMongoRepository[A <: CaseClass](implicit m: Manifest[A]) ex
     }
   }
 
+  def safeInsert(obj: A) = insertWith(WriteConcern.SAFE, obj)
+
+  def unsafeInsert(obj: A) = insertWith(WriteConcern.MAJORITY, obj)
+
+  def safeUpdate(query: DBObject, obj: DBObject, upsert: Boolean = true, multi: Boolean = false) =
+    updateWith(WriteConcern.SAFE, query, obj, upsert, multi)
+
   def unSafeUpdate(query: DBObject, obj: DBObject, upsert: Boolean = true, multi: Boolean = false) =
-    collection.update(query, obj, upsert, multi, WriteConcern.NORMAL)
+    updateWith(WriteConcern.MAJORITY, query, obj, upsert, multi)
 
   def delete(id: String) {
     collection -= where("_id" -> oid(id))
@@ -56,6 +64,22 @@ abstract class SimpleMongoRepository[A <: CaseClass](implicit m: Manifest[A]) ex
   }
 
   def all = SimpleMongoCursor()
+
+  def allFields = MongoDBObject.empty
+
+  def addFieldWith(writeConcern: WriteConcern, fieldName: String, defaultValue: String = "") = updateWith(writeConcern,
+    allFields, update("$set" -> field(fieldName, defaultValue)), false, true)
+
+  def removeFieldWith(writeConcern: WriteConcern, fieldName: String, defaultValue: String = "") = updateWith(writeConcern,
+    allFields, update("$unset" -> field(fieldName, defaultValue)), false, true)
+
+  def field(fieldName: String, defaultValue: String = "") = values(fieldName -> defaultValue)
+
+  def addField(fieldName: String, defaultValue: String = "") = safeUpdate(allFields,
+    update("$set" -> field(fieldName, defaultValue)), false, true)
+
+  def removeField(fieldName: String, defaultValue: String = "") = safeUpdate(allFields,
+    update("$unset" -> field(fieldName, defaultValue)), false, true)
 
   @inline def findOne(filter: DBObject) = collection.findOne(filter)
 
@@ -68,5 +92,11 @@ abstract class SimpleMongoRepository[A <: CaseClass](implicit m: Manifest[A]) ex
     val query = domainObj2mongoObj(obj)
     collection.insert(query, writeConcern)
     grater[A].asObject(query)
+  }
+
+  @inline private def bulkInsert(obj: List[A], writeConcern: WriteConcern) = {
+    val query = domainList2MongoObj(obj)
+    collection.insert(query, writeConcern)
+    query.map(grater[A].asObject(_))
   }
 }
