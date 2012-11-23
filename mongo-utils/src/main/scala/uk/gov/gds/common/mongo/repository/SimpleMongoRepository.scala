@@ -55,8 +55,24 @@ abstract class SimpleMongoRepository[A <: CaseClass](implicit m: Manifest[A]) ex
   def unSafeUpdate(query: DBObject, obj: DBObject, upsert: Boolean = true, multi: Boolean = false) =
     updateWith(WriteConcern.MAJORITY, query, obj, upsert, multi)
 
-  def delete(id: String) {
-    collection -= where("_id" -> oid(id))
+  def unsafeDelete(id: String) = unsafeDelete(where("_id" -> oid(id)))
+
+  def safeDelete(id: String) = safeDelete(where("_id" -> oid(id)))
+
+  def unsafeDelete(query: DBObject) = try {
+    collection.remove(query, WriteConcern.NORMAL)
+  } catch {
+    case e =>
+      logger.error("unsafeDelete failed for %s".format(query.toString), e)
+      throw e
+  }
+
+  def safeDelete(query: DBObject) = try {
+    collection.remove(query, WriteConcern.MAJORITY)
+  } catch {
+    case e =>
+      logger.error("unsafeDelete failed for %s".format(query.toString), e)
+      throw e
   }
 
   def deleteAll() {

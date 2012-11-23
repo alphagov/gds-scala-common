@@ -49,6 +49,46 @@ with SyntacticSugarForMongoQueries {
     SimpleTestDataRepository.findOne(where("key" -> 2)) should be(None)
   }
 
+  test("Should be able to delete objects by query in a synchronous manner") {
+    SimpleTestDataRepository.safeInsert(SimpleTestData(key = 1, value = "delete-test-1"))
+    SimpleTestDataRepository.safeInsert(SimpleTestData(key = 2, value = "delete-test-2"))
+    SimpleTestDataRepository.safeDelete(where("key" -> 1))
+
+    SimpleTestDataRepository.findOne(where("key" -> 1)) should be(None)
+    SimpleTestDataRepository.findOne(where("key" -> 2)).get.value should be("delete-test-2")
+  }
+
+  test("Should be able to delete objects by query in a fire and forget manner") {
+    SimpleTestDataRepository.safeInsert(SimpleTestData(key = 1, value = "delete-test-1"))
+    SimpleTestDataRepository.safeInsert(SimpleTestData(key = 2, value = "delete-test-2"))
+    SimpleTestDataRepository.safeDelete(where("key" -> 1))
+
+    Thread.sleep(1000)
+
+    SimpleTestDataRepository.findOne(where("key" -> 1)) should be(None)
+    SimpleTestDataRepository.findOne(where("key" -> 2)).get.value should be("delete-test-2")
+  }
+
+  test("Should be able to delete objects by id in a synchronous manner") {
+    val id = SimpleTestDataRepository.safeInsert(SimpleTestData(key = 1, value = "delete-test-1")).id.get.toString
+    SimpleTestDataRepository.safeInsert(SimpleTestData(key = 2, value = "delete-test-2"))
+    SimpleTestDataRepository.safeDelete(id)
+
+    SimpleTestDataRepository.findOne(where("key" -> 1)) should be(None)
+    SimpleTestDataRepository.findOne(where("key" -> 2)).get.value should be("delete-test-2")
+  }
+
+  test("Should be able to delete objects by id in a fire and forget manner") {
+    val id = SimpleTestDataRepository.safeInsert(SimpleTestData(key = 1, value = "delete-test-1")).id.get.toString
+    SimpleTestDataRepository.safeInsert(SimpleTestData(key = 2, value = "delete-test-2"))
+    SimpleTestDataRepository.safeDelete(id)
+
+    Thread.sleep(1000)
+
+    SimpleTestDataRepository.findOne(where("key" -> 1)) should be(None)
+    SimpleTestDataRepository.findOne(where("key" -> 2)).get.value should be("delete-test-2")
+  }
+
   test("Should be able to update an existing object") {
     SimpleTestDataRepository.safeInsert(SimpleTestData(key = 1, value = "update-test"))
     val Some(results) = SimpleTestDataRepository.findOne(where("value" -> "update-test"))
