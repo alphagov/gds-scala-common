@@ -2,7 +2,7 @@ organization := "uk.gov.gds"
 
 name := "gds-mongo-utils"
 
-version := "0.1.2-SNAPSHOT"
+version := "0.1.3-SNAPSHOT"
 
 scalacOptions += "-deprecation"
 
