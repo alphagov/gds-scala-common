@@ -3,10 +3,6 @@ import org.sbtidea.SbtIdeaPlugin
 import PlayProject._
 
 object GdsScalaCommonBuild extends Build {
- 
-	// As a result of play 2.0.2 importing the SBT idea plugin and renaming it "idea" we need
-  	// to configure a version of this plugin against all non-play projects so that we can run the
-  	// "idea" command against them
 
   def ideaSettings = {
     SbtIdeaPlugin.ideaSettings ++
@@ -16,7 +12,7 @@ object GdsScalaCommonBuild extends Build {
   }
 
   val root = PlayProject("gds-common", "2.0-SNAPSHOT", Seq(), file("."), mainLang = SCALA)
-	.aggregate(scalaUtils, mongoScalaUtils, govUkClients)
+	 .aggregate(scalaUtils, mongoScalaUtils, govUkClients, govUkGuiceUtils)
   
   lazy val scalaUtils = Project("scala-utils", file("scala-utils"))
 	  .settings(ideaSettings: _*)
@@ -28,5 +24,7 @@ object GdsScalaCommonBuild extends Build {
   lazy val govUkClients = Project("govuk-clients", file("govuk-clients"))
     .settings(ideaSettings: _*)
     .dependsOn(scalaUtils % "test->test;test->compile;compile->compile")
-    //.dependsOn(mongoScalaUtils % "test->test;test->compile;compile->compile")
+
+  lazy val govUkGuiceUtils = Project("govuk-guice-utils", file("govuk-guice-utils"))
+    .settings(ideaSettings: _*)
 }

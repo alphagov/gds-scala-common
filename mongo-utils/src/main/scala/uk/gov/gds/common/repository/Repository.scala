@@ -2,6 +2,7 @@ package uk.gov.gds.common.repository
 
 import com.mongodb.DBObject
 import com.mongodb.WriteResult
+import org.bson.types.ObjectId
 
 trait Repository[A] {
 
@@ -26,5 +27,9 @@ trait Repository[A] {
   def deleteAll(): Unit
 
   def all: Cursor[A]
+
+  def get(id: String): A
+
+  def get(id: ObjectId): A 
 }
 
