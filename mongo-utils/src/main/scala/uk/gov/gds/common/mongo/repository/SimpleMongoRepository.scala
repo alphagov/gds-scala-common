@@ -45,15 +45,15 @@ abstract class SimpleMongoRepository[A <: CaseClass](implicit m: Manifest[A]) ex
     }
   }
 
-  def safeInsert(obj: A) = insertWith(WriteConcern.SAFE, obj)
+  def safeInsert(obj: A) = insertWith(WriteConcern.MAJORITY, obj)
 
-  def unsafeInsert(obj: A) = insertWith(WriteConcern.MAJORITY, obj)
+  def unsafeInsert(obj: A) = insertWith(WriteConcern.NORMAL, obj)
 
   def safeUpdate(query: DBObject, obj: DBObject, upsert: Boolean = true, multi: Boolean = false) =
-    updateWith(WriteConcern.SAFE, query, obj, upsert, multi)
+    updateWith(WriteConcern.MAJORITY, query, obj, upsert, multi)
 
   def unSafeUpdate(query: DBObject, obj: DBObject, upsert: Boolean = true, multi: Boolean = false) =
-    updateWith(WriteConcern.MAJORITY, query, obj, upsert, multi)
+    updateWith(WriteConcern.NORMAL, query, obj, upsert, multi)
 
   def unsafeDelete(id: String) = unsafeDelete(where("_id" -> oid(id)))
 
