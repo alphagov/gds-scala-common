@@ -23,6 +23,13 @@ trait DependencyInjectionProvider {
   @inline protected final def dependency[A <: AnyRef](implicit m: Manifest[A]) = GuiceContainer.dependency[A]
 }
 
+/**
+ * The GuiceContainer sets up & provides access to the Guice DI containter within the app. Note: This object is not
+ * threadsafe, as it needs to provide access to Guice in a static context also, so integration tests that require Guice
+ * objects (which include play framework FakeApplication tests) MUST be run in series, as the DI container will be re-initialized
+ * on each test.
+ */
+
 object GuiceContainer {
 
   private var di: Injector = null;
@@ -49,9 +56,6 @@ object GuiceContainer {
 
   @inline private final def performInit(modules: List[Module]) {
     synchronized {
-      if (di != null)
-        throw new IllegalStateException("Guice is already initialized")
-
       di = Guice.createInjector(modules.toSeq: _*)
     }
   }
