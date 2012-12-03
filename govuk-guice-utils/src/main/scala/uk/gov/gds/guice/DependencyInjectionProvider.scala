@@ -49,7 +49,7 @@ object GuiceContainer {
 
   @inline private final def performInit(modules: List[Module]) {
     synchronized {
-      if (injector != null)
+      if (di != null)
         throw new IllegalStateException("Guice is already initialized")
 
       di = Guice.createInjector(modules.toSeq: _*)
