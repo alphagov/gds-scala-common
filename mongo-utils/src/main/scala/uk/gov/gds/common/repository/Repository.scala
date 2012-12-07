@@ -27,7 +27,7 @@ trait Repository[A] {
   
   def deleteAll(): Unit
 
-  def findAndModify(query: DBObject, update: DBObject): Option[A]
+  def findAndModify(query: DBObject, update: DBObject, returnNew: Boolean = false): Option[A]
   
   def all: Cursor[A]
 

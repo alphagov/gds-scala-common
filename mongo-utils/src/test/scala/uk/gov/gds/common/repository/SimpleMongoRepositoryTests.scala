@@ -17,11 +17,25 @@ with SyntacticSugarForMongoQueries {
 
   protected def databaseManager = SimpleTestDataManagerForTests
 
-  test("Should be able to find and modify an object") {
+  test("Should be able to find and modify an object and retreive the old object") {
     val original = SimpleTestData(key = 1, value = "value")
     SimpleTestDataRepository.safeInsert(original)
 
     val updated = SimpleTestDataRepository.findAndModify(where("value" -> "value"), $set("value" -> "updated")).get
+    val reloaded = SimpleTestDataRepository.findOne(where("key" -> 1)).get
+
+    reloaded.key should be(1)
+    reloaded.value should be("updated")
+
+    updated.key should be(1)
+    updated.value should be("value")
+  }
+
+  test("Should be able to find and modify an object and retreive the new object") {
+    val original = SimpleTestData(key = 1, value = "value")
+    SimpleTestDataRepository.safeInsert(original)
+
+    val updated = SimpleTestDataRepository.findAndModify(where("value" -> "value"), $set("value" -> "updated"), returnNew = true).get
     val reloaded = SimpleTestDataRepository.findOne(where("key" -> 1)).get
 
     reloaded.key should be(1)
