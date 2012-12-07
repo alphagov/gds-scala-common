@@ -79,6 +79,14 @@ abstract class SimpleMongoRepository[A <: CaseClass](implicit m: Manifest[A]) ex
     collection.remove(query())
   }
 
+  def findAndModify(query: DBObject, update: DBObject) = try {
+    collection.findAndModify(query, update)
+  } catch {
+    case e =>
+      logger.error("findAndModify failed for %s %s".format(query.toString, update.toString), e)
+      throw e
+  }
+  
   def all = SimpleMongoCursor()
 
   def allFields = MongoDBObject.empty

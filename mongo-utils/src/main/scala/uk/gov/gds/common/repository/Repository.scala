@@ -23,9 +23,11 @@ trait Repository[A] {
   def safeDelete(query: DBObject): WriteResult
 
   def unsafeDelete(query: DBObject): WriteResult
-
+  
   def deleteAll(): Unit
 
+  def findAndModify(query: DBObject, update: DBObject): Option[A]
+  
   def all: Cursor[A]
 
   def get(id: String): A
