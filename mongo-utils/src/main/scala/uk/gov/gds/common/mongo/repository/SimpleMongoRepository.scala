@@ -80,7 +80,7 @@ abstract class SimpleMongoRepository[A <: CaseClass](implicit m: Manifest[A]) ex
   }
 
   def findAndModify(query: DBObject, update: DBObject) = try {
-    collection.findAndModify(query, update)
+    collection.findAndModify(query = query, update = update, sort = null, fields = null, remove = false, returnNew = true, upsert = false)
   } catch {
     case e =>
       logger.error("findAndModify failed for %s %s".format(query.toString, update.toString), e)

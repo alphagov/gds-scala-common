@@ -2,12 +2,10 @@ package uk.gov.gds.common.repository
 
 import org.scalatest.FunSuite
 import org.scalatest.matchers.ShouldMatchers
-import uk.gov.gds.common.mongo.{MongoDatabaseManager}
+import uk.gov.gds.common.mongo.MongoDatabaseManager
 import uk.gov.gds.common.mongo.repository._
 import uk.gov.gds.common.testutil.MongoDatabaseBackedTest
 import com.novus.salat.annotations._
-import org.bson.types.ObjectId
-import com.mongodb.MongoException
 import com.mongodb.casbah.Imports._
 import java.io.ByteArrayOutputStream
 import uk.gov.gds.common.mongo.UnauthenticatedMongoDatabaseManagerForTests
@@ -23,14 +21,18 @@ with SyntacticSugarForMongoQueries {
     val original = SimpleTestData(key = 1, value = "value")
     SimpleTestDataRepository.safeInsert(original)
 
-    val updated = SimpleTestDataRepository.findAndModify(where("key" -> 1), update("key" -> 2)).get
+    val updated = SimpleTestDataRepository.findAndModify(where("value" -> "value"), $set("value" -> "updated")).get
+    val reloaded = SimpleTestDataRepository.findOne(where("key" -> 1)).get
+
+    reloaded.key should be(1)
+    reloaded.value should be("updated")
 
     updated.key should be(1)
-    updated.value should be("value")
+    updated.value should be("updated")
   }
 
   test("Should create amongo id on inserting a new row") {
-    SimpleTestDataRepository.safeInsert(SimpleTestData(key = 1, value = "test-2")).id should not be(None)
+    SimpleTestDataRepository.safeInsert(SimpleTestData(key = 1, value = "test-2")).id should not be (None)
   }
 
   test("Should be able to query for data retrieveing an object of the correct type") {
@@ -112,13 +114,13 @@ with SyntacticSugarForMongoQueries {
     SimpleTestDataRepository.safeInsert(SimpleTestData(key = 1, value = "update-test-1"))
     SimpleTestDataRepository.safeInsert(SimpleTestData(key = 2, value = "update-test-2"))
 
-    val caught = intercept[MongoException]{
+    val caught = intercept[MongoException] {
       SimpleTestDataRepository.safeUpdate(where("key" -> 2), $set("value" -> "update-test-1"))
     }
     caught.getMessage should include("E11000 duplicate key error index: gdsScalaCommonTest.testFindData.$value_1")
   }
 
-  
+
    test("Should be able to dump JSON to output stream") {
     val id1 = SimpleTestDataRepository.safeInsert(SimpleTestData(key = 1, value = "update-test-1")).id.get
     val id2 = SimpleTestDataRepository.safeInsert(SimpleTestData(key = 2, value = "update-test-2")).id.get
@@ -127,7 +129,7 @@ with SyntacticSugarForMongoQueries {
     val expected = """|{"_id":{"$oid":"id1"},"key":1,"value":"update-test-1"}
     				  |{"_id":{"$oid":"id2"},"key":2,"value":"update-test-2"}
                       |""".stripMargin.replace("id1", id1.toString()).replace("id2", id2.toString())
-    val actual = new String(os.toByteArray())                       
+    val actual = new String(os.toByteArray())
     actual should equal (expected)
   }
 
