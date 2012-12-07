@@ -3,6 +3,7 @@ package uk.gov.gds.common.repository
 import com.mongodb.DBObject
 import com.mongodb.WriteResult
 import org.bson.types.ObjectId
+import com.mongodb.casbah.Imports._
 
 trait Repository[A] {
 
@@ -23,9 +24,11 @@ trait Repository[A] {
   def safeDelete(query: DBObject): WriteResult
 
   def unsafeDelete(query: DBObject): WriteResult
-
+  
   def deleteAll(): Unit
 
+  def findAndModify(query: DBObject, update: DBObject, returnNew: Boolean = false): Option[A]
+  
   def all: Cursor[A]
 
   def get(id: String): A

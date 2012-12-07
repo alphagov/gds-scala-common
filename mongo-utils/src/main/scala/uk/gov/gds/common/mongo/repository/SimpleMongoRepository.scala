@@ -79,6 +79,14 @@ abstract class SimpleMongoRepository[A <: CaseClass](implicit m: Manifest[A]) ex
     collection.remove(query())
   }
 
+  def findAndModify(query: DBObject, update: DBObject, returnNew: Boolean = false) = try {
+    collection.findAndModify(query = query, update = update, sort = null, fields = null, remove = false, returnNew = returnNew, upsert = false)
+  } catch {
+    case e =>
+      logger.error("findAndModify failed for %s %s".format(query.toString, update.toString), e)
+      throw e
+  }
+  
   def all = SimpleMongoCursor()
 
   def allFields = MongoDBObject.empty
@@ -97,20 +105,20 @@ abstract class SimpleMongoRepository[A <: CaseClass](implicit m: Manifest[A]) ex
   def removeField(fieldName: String, defaultValue: String = "") = safeUpdate(allFields,
     update("$unset" -> field(fieldName, defaultValue)), false, true)
 
-  @inline def findOne(filter: DBObject) = collection.findOne(filter)
+  def findOne(filter: DBObject) = collection.findOne(filter)
 
-  @inline protected def findAll(filter: DBObject): List[A] = collection.find(filter)
+  protected def findAll(filter: DBObject): List[A] = collection.find(filter)
 
-  @inline private def update(query: DBObject, obj: DBObject, upsert: Boolean = true, multi: Boolean = false, writeConcern: WriteConcern) =
+  @inline private final def update(query: DBObject, obj: DBObject, upsert: Boolean = true, multi: Boolean = false, writeConcern: WriteConcern) =
     collection.update(query, obj, upsert, multi, writeConcern)
 
-  @inline private def insert(obj: A, writeConcern: WriteConcern) = {
+  @inline private final def insert(obj: A, writeConcern: WriteConcern) = {
     val query = domainObj2mongoObj(obj)
     collection.insert(query, writeConcern)
     grater[A].asObject(query)
   }
 
-  @inline private def bulkInsert(obj: List[A], writeConcern: WriteConcern) = {
+  @inline private final def bulkInsert(obj: List[A], writeConcern: WriteConcern) = {
     val query = domainList2MongoObj(obj)
     collection.insert(query, writeConcern)
     query.map(grater[A].asObject(_))

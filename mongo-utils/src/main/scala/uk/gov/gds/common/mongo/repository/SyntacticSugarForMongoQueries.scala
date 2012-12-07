@@ -40,24 +40,24 @@ trait SyntacticSugarForMongoQueries {
 
   protected implicit def duplicates2bool(d: Duplicate) = d.duplicate
 
-  @inline protected def where[A <: String, B <: Any](t: (A, B)*) = (build[A, B] ++= t).result
+  @inline protected final def where[A <: String, B <: Any](t: (A, B)*) = (build[A, B] ++= t).result
 
-  @inline protected def update[A <: String, B <: Any](t: (A, B)*) = (build[A, B] ++= t).result
+  @inline protected final def update[A <: String, B <: Any](t: (A, B)*) = (build[A, B] ++= t).result
 
-  @inline protected def values[A <: String, B <: Any](t: (A, B)*) = (build[A, B] ++= t).result
+  @inline protected final def values[A <: String, B <: Any](t: (A, B)*) = (build[A, B] ++= t).result
 
-  @inline protected def query[A <: String, B <: Any](t: (A, B)*) = (build[A, B] ++= t).result
+  @inline protected final def query[A <: String, B <: Any](t: (A, B)*) = (build[A, B] ++= t).result
 
-  @inline protected def order[A <: String, B <: Int](t: (A, B)*) = (build[A, B] ++= t).result
+  @inline protected final def order[A <: String, B <: Int](t: (A, B)*) = (build[A, B] ++= t).result
 
-  @inline protected def neq(a: String) = query("$ne" -> a)
+  @inline protected final def neq(a: String) = query("$ne" -> a)
 
-  @inline protected def in(ids: List[String]) = query("$in" -> ids)
+  @inline protected final def in(ids: List[String]) = query("$in" -> ids)
 
-  @inline protected def inOids(ids: List[String]) = query("$in" -> ids.map(oid(_)))
+  @inline protected final def inOids(ids: List[String]) = query("$in" -> ids.map(oid(_)))
 
-  @inline protected def oid(id: String) = new ObjectId(id)
+  @inline protected final def oid(id: String) = new ObjectId(id)
 
-  @inline protected def index(t: (String, Int)*) = (build[String, Int] ++= t).result
+  @inline protected final def index(t: (String, Int)*) = (build[String, Int] ++= t).result
 
 }
