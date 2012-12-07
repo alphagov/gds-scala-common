@@ -19,6 +19,16 @@ with SyntacticSugarForMongoQueries {
 
   protected def databaseManager = SimpleTestDataManagerForTests
 
+  test("Should be able to find and modify an object") {
+    val original = SimpleTestData(key = 1, value = "value")
+    SimpleTestDataRepository.safeInsert(original)
+
+    val updated = SimpleTestDataRepository.findAndModify(where("key" -> 1), update("key" -> 2)).get
+
+    updated.key should be(1)
+    updated.value should be("value")
+  }
+
   test("Should create amongo id on inserting a new row") {
     SimpleTestDataRepository.safeInsert(SimpleTestData(key = 1, value = "test-2")).id should not be(None)
   }

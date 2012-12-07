@@ -3,6 +3,7 @@ package uk.gov.gds.common.repository
 import com.mongodb.DBObject
 import com.mongodb.WriteResult
 import org.bson.types.ObjectId
+import com.mongodb.casbah.Imports._
 
 trait Repository[A] {
 
