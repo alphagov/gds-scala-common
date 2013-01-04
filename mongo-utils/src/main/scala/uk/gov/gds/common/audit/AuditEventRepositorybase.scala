@@ -4,6 +4,7 @@ import uk.gov.gds.common.mongo.repository._
 import scala.Some
 import uk.gov.gds.common.repository.Cursor
 import com.mongodb.casbah.commons.MongoDBObject
+import org.joda.time.DateTime
 
 abstract class AuditEventRepositoryBase extends SimpleMongoRepository[AuditEvent] {
 
@@ -42,16 +43,30 @@ abstract class AuditEventRepositoryBase extends SimpleMongoRepository[AuditEvent
 
   def find(auditType: String): Cursor[AuditEvent] = find(Some(auditType))
 
-  def find(auditType: String, tags: Map[String, String]): Cursor[AuditEvent] = find(Some(auditType), tags)
+  def find(auditType: String,
+           tags: Map[String, String]): Cursor[AuditEvent] =
+    find(Some(auditType), tags, None, None)
+
+  def find(auditType: String,
+           tags: Map[String, String],
+           after: Option[DateTime],
+           before: Option[DateTime]): Cursor[AuditEvent] =
+    find(Some(auditType), tags, after, before)
 
   def find(tags: Map[String, String]): Cursor[AuditEvent] = find(None, tags)
 
-  private def find(auditType: Option[String] = None, tags: Map[String, String] = Map.empty): Cursor[AuditEvent] =
+  private def find(auditType: Option[String] = None,
+                   tags: Map[String, String] = Map.empty,
+                   after: Option[DateTime] = None,
+                   before: Option[DateTime] = None): Cursor[AuditEvent] =
     SimpleMongoCursor(
       order = order("timestamp" -> -1),
-      query = buildQuery(auditType, tags))
+      query = buildQuery(auditType, tags, after, before))
 
-  private def buildQuery(auditType: Option[String], tags: Map[String, String]) = {
+  private def buildQuery(auditType: Option[String],
+                         tags: Map[String, String],
+                         after: Option[DateTime] = None,
+                         before: Option[DateTime] = None) = {
     val builder = MongoDBObject.newBuilder
 
     if (tags.size > 0)
@@ -59,6 +74,10 @@ abstract class AuditEventRepositoryBase extends SimpleMongoRepository[AuditEvent
 
     if (!auditType.isEmpty)
       builder += "auditType" -> auditType.get
+
+    val timeRange = List(after.map(("$gte" -> _)), before.map(("$lte" -> _))).flatten
+    if (!timeRange.isEmpty)
+      builder += ("timestamp" -> query(timeRange: _*))
 
     builder.result
   }
