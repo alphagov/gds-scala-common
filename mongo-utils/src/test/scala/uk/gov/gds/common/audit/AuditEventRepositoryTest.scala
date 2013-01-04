@@ -72,6 +72,22 @@ class AuditEventRepositoryTest
     taggedEvents.pageOfData.head.auditType should be("foo")
   }
 
+  test("Can find audit events by type and timestamp") {
+    TestAuditEventRepository.testAudit(AuditEvent("foo", Map("tag" -> "1"), Map("test data" -> "older event"), timestamp = DateTime.parse("2012-12-03T12:00:00.000Z")))
+    TestAuditEventRepository.testAudit(AuditEvent("foo", Map("tag" -> "1"), Map("test data" -> "older event"), timestamp = DateTime.parse("2012-12-03T12:01:00.000Z")))
+    TestAuditEventRepository.testAudit(AuditEvent("foo", Map("tag" -> "1"), Map("test data" -> "older event"), timestamp = DateTime.parse("2012-12-03T12:02:00.000Z")))
+    TestAuditEventRepository.testAudit(AuditEvent("bar", Map("tag" -> "1"), Map("test data" -> "older event"), timestamp = DateTime.parse("2012-12-03T12:03:00.000Z")))
+    TestAuditEventRepository.testAudit(AuditEvent("foo", Map("tag" -> "1"), Map("test data" -> "older event"), timestamp = DateTime.parse("2012-12-03T12:04:00.000Z")))
+
+    val taggedEvents = TestAuditEventRepository.find("foo",
+      Map("tag" -> "1"),
+      Some(DateTime.parse("2012-12-03T12:00:30.000Z")),
+      Some(DateTime.parse("2012-12-03T12:03:30.000Z")))
+
+    taggedEvents.total should be(2)
+    taggedEvents.pageOfData.head.auditType should be("foo")
+  }
+
   test("Can find only one audit event by type and tags") {
     TestAuditEventRepository.audit("foo", Map("tag" -> "1"), Map("test data" -> "older event"))
     TestAuditEventRepository.audit("foo", Map("tag" -> "1"), Map("test data" -> "recent event"))
@@ -79,7 +95,7 @@ class AuditEventRepositoryTest
 
     val taggedEventOption = TestAuditEventRepository.findOne("foo", Map("tag" -> "1"))
 
-    taggedEventOption should not be(None)
+    taggedEventOption should not be (None)
     taggedEventOption.get.auditType should be("foo")
     taggedEventOption.get.detail("test data") should be("recent event")
   }
