@@ -87,6 +87,10 @@ abstract class SimpleMongoRepository[A <: CaseClass](implicit m: Manifest[A]) ex
       throw e
   }
   
+  def dropCollection() {
+    collection.drop()
+  }
+
   def all = SimpleMongoCursor()
 
   def allFields = MongoDBObject.empty
