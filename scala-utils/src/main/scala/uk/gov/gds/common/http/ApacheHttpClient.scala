@@ -129,12 +129,10 @@ abstract class ApacheHttpClient extends UrlEncoding with Logging {
     }, 10, 10, TimeUnit.SECONDS)
   }
 
-  private[http] def paramsToUrlParams(params: Map[String, Any]) = params.map {
-    case (n, v) =>
-      v match {
-        case None =>
-        case Some(value) => addParam(n, value.toString)
-        case _ => addParam(n, v.toString)
+  private[http] def paramsToUrlParams(params: Map[String, Any]) = params.filterNot(_._2 == None).map {
+    case (n, v) => v match {
+      case Some(value) => addParam(n, value.toString)
+      case _ => addParam(n, v.toString)
       }
 
   }.mkString("&")

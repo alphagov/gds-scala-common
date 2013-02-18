@@ -2,7 +2,7 @@ organization := "uk.gov.gds"
 
 name := "gds-scala-utils"
 
-version := "0.7.3-SNAPSHOT"
+version := "0.7.4-SNAPSHOT"
 
 scalacOptions += "-deprecation"
 
