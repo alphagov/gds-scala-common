@@ -3,12 +3,13 @@ package uk.gov.gds.common.calendar
 import org.joda.time.LocalDate
 import uk.gov.gds.common.logging.Logging
 import uk.gov.gds.common.json.JsonSerializer._
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
 trait CalendarApiClient {
   def getBankHolidays: String
 }
 
-case class EventMap(division: String, calendars: Map[Int, Year])
+case class EventMap(division: String, calendars: Map[String, Year])
 
 case class Year(year: Int, division: String, events: List[Event])
 
@@ -21,7 +22,7 @@ object CalendarApiClient extends Logging {
       " Should be one of (CACHED_MODE or PROD_MODE)")
     System.getProperty("MODE", "PROD_MODE") match {
       case "CACHED_MODE" => MockCalendarApiClient
-    //  case "PROD_MODE" => RealCalendarApiClient
+      //  case "PROD_MODE" => RealCalendarApiClient
       case "PROD_MODE" => MockCalendarApiClient
       case _ => MockCalendarApiClient
     }
@@ -29,7 +30,6 @@ object CalendarApiClient extends Logging {
 
   def isBankHoliday(division: String, date: LocalDate): Boolean =
     getEvents(division.toLowerCase, date.getYear).find(_.date == date.toString).isDefined
-
 
   def getBankHolidays(division: String, year: Int) =
     getEvents(division.toLowerCase, year).map(event => LocalDate.parse(event.date))
@@ -41,11 +41,13 @@ object CalendarApiClient extends Logging {
         "england-and-wales"
       else
         division.toLowerCase
-        
-    val eventsOption = for{
-      divisionObj <- divisionCalendars.get(divisionUpdated)
-      yearObj <- divisionObj.calendars.get(year)
-    } yield yearObj.events
-    eventsOption.flatten.toList
+    
+    val eventsOption = for {
+      divisionObj <- divisionCalendars.get(divisionUpdated);
+      yearObj <- divisionObj.calendars.get(year.toString)
+    } yield {
+      yearObj.events
+    }
+    eventsOption.getOrElse(Nil)
   }
 }

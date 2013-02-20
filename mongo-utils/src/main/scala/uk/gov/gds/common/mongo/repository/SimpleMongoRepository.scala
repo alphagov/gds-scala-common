@@ -123,8 +123,10 @@ abstract class SimpleMongoRepository[A <: CaseClass](implicit m: Manifest[A]) ex
   }
 
   @inline private final def bulkInsert(obj: List[A], writeConcern: WriteConcern) = {
+    implicit val w = writeConcern
+    collection.insert(obj :_* )
+    
     val query = domainList2MongoObj(obj)
-    collection.insert(query, writeConcern)
     query.map(grater[A].asObject(_))
   }
 }

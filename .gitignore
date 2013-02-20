@@ -11,7 +11,7 @@ node_modules/*
 .DS_Store
 .DS_Store
 version.conf
-<<<<<<< HEAD
+jmimemagic.log
 */.project
 */.classpath
 */.cache

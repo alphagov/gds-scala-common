@@ -1,6 +1,5 @@
 import sbt._
 import org.sbtidea.SbtIdeaPlugin
-import PlayProject._
 
 object GdsScalaCommonBuild extends Build {
 
@@ -11,7 +10,7 @@ object GdsScalaCommonBuild extends Build {
       )
   }
 
-  val root = PlayProject("gds-common", "2.0-SNAPSHOT", Seq(), file("."), mainLang = SCALA)
+  val root = Project("gds-common", file("."))
 	 .aggregate(scalaUtils, mongoScalaUtils, govUkClients, govUkGuiceUtils)
   
   lazy val scalaUtils = Project("scala-utils", file("scala-utils"))

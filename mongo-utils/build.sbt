@@ -6,18 +6,21 @@ version := "0.1.4-SNAPSHOT"
 
 scalacOptions += "-deprecation"
 
+scalaVersion := "2.10.0"
+
 libraryDependencies ++= Seq(
-        "com.mongodb.casbah" %% "casbah" % "2.1.5-1",
+        "org.mongodb" %% "casbah" % "2.5.0",
         "javax.servlet" % "servlet-api" % "2.5" % "provided",
-        "org.scalatest" %% "scalatest" % "1.7.2",
-        "com.codahale" %% "jerkson" % "0.5.0",
+        "org.scalatest" % "scalatest_2.10" % "1.9.1",
         "joda-time" % "joda-time" % "2.1",
         "org.joda" % "joda-convert" % "1.2",
-        "com.novus" %% "salat-core" % "0.0.8",
+        "com.novus" %% "salat-core" % "1.9.2-SNAPSHOT",
         "org.apache.httpcomponents" % "httpclient" % "4.1.2",
         "jmimemagic" % "jmimemagic" % "0.1.1",
         "com.google.guava" % "guava" % "13.0",
-	    "com.google.code.findbugs" % "jsr305" % "1.3.+"
+	    "com.google.code.findbugs" % "jsr305" % "1.3.+",
+        "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.1.3",
+        "org.scala-lang" % "scala-reflect" % "2.10.0"
     )
 
 parallelExecution in Test := false

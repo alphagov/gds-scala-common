@@ -1,32 +1,53 @@
 package uk.gov.gds.common.json
 
 import java.text.DateFormat
-import org.codehaus.jackson.Version
-import org.codehaus.jackson.map.module.SimpleModule
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.datatype.joda.JodaModule
+import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import uk.gov.gds.common.logging.Logging
+import com.fasterxml.jackson.core.`type`.TypeReference
+import java.lang.reflect.{ Type, ParameterizedType }
+import com.fasterxml.jackson.databind.DeserializationFeature
 
-object JsonSerializer extends com.codahale.jerkson.Json with Logging {
+object JsonSerializer extends Logging {
 
-  val module = new SimpleModule("CustomSerializers", new Version(1, 0, 0, ""))
-  mapper.registerModule(module)
+  val mapper = new ObjectMapper()
+  mapper.registerModule(new JodaModule())
+  mapper.registerModule(DefaultScalaModule)
+  mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
   performCustomConfiguration()
 
   def toJson(obj: AnyRef) = try {
-    generate(obj)
-  }
-  catch {
+    mapper.writeValueAsString(obj)
+  } catch {
     case e: Exception =>
       logger.error("Could not serialize TO json from: " + obj, e)
       throw e
   }
 
-  def fromJson[A](json: String)(implicit m: Manifest[A]) = try {
-    parse[A](json)
-  }
-  catch {
+  def fromJson[A](json: String)(implicit m: Manifest[A]): A = try {
+    mapper.readValue(json, typeReference[A])
+  } catch {
     case e: Exception =>
       logger.error("Could not deserialize FROM json: " + json, e)
       throw e
+  }
+
+  private[this] def typeReference[T: Manifest] = new TypeReference[T] {
+    override def getType = typeFromManifest(manifest[T])
+  }
+
+  private[this] def typeFromManifest(m: Manifest[_]): Type = {
+    if (m.typeArguments.isEmpty) { m.runtimeClass }
+    else {
+      new ParameterizedType {
+        def getRawType = m.runtimeClass
+
+        def getActualTypeArguments = m.typeArguments.map(typeFromManifest).toArray
+
+        def getOwnerType = null
+      }
+    }
   }
 
   protected def performCustomConfiguration() {

@@ -6,6 +6,8 @@ version := "0.0.1-SNAPSHOT"
 
 scalacOptions += "-deprecation"
 
+scalaVersion := "2.10.0"
+
 libraryDependencies ++= Seq(
     "com.google.inject" % "guice" % "3.0"
 )

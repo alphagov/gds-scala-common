@@ -21,14 +21,14 @@ with Logging {
   }
 
   test("Next working day after Good Thursday is the Tuesday after Easter") {
-    Calendar.plusDaysWithHolidays("England", DateTime.parse("2012-04-05"), 1) should be(DateTime.parse("2012-04-10"))
+    Calendar.plusDaysWithHolidays("England", DateTime.parse("2012-04-05"), 1) should be(LocalDate.parse("2012-04-10"))
   }
 
   test("7 working days after 2012-12-28 is 2013-01-09 (New Year Holiday)") {
-    Calendar.plusDaysWithHolidays("england", DateTime.parse("2012-12-28"), 7) should be(DateTime.parse("2013-01-09"))
+    Calendar.plusDaysWithHolidays("england", DateTime.parse("2012-12-28"), 7) should be(LocalDate.parse("2013-01-09"))
   }
 
   test("5 working days after Sunday should be the Monday after next") {
-    Calendar.plusDaysWithHolidays("england", DateTime.parse("2012-07-01"), 5) should be(DateTime.parse("2012-07-09"))
+    Calendar.plusDaysWithHolidays("england", DateTime.parse("2012-07-01"), 5) should be(LocalDate.parse("2012-07-09"))
   }
 }

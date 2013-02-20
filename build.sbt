@@ -1,5 +1,7 @@
 import java.util.jar._
 
+scalaVersion := "2.10.0"
+
 publishArtifact := false
 
 packageOptions in ThisBuild <+= (version, name) map { (v, n) =>

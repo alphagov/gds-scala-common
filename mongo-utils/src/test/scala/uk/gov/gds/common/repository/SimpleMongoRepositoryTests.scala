@@ -21,7 +21,7 @@ with SyntacticSugarForMongoQueries {
     val original = SimpleTestData(key = 1, value = "value")
     SimpleTestDataRepository.safeInsert(original)
 
-    val updated = SimpleTestDataRepository.findAndModify(where("value" -> "value"), $set("value" -> "updated")).get
+    val updated = SimpleTestDataRepository.findAndModify(where("value" -> "value"), $set(Seq("value" -> "updated"))).get
     val reloaded = SimpleTestDataRepository.findOne(where("key" -> 1)).get
 
     reloaded.key should be(1)
@@ -35,7 +35,7 @@ with SyntacticSugarForMongoQueries {
     val original = SimpleTestData(key = 1, value = "value")
     SimpleTestDataRepository.safeInsert(original)
 
-    val updated = SimpleTestDataRepository.findAndModify(where("value" -> "value"), $set("value" -> "updated"), returnNew = true).get
+    val updated = SimpleTestDataRepository.findAndModify(where("value" -> "value"), $set(Seq("value" -> "updated")), returnNew = true).get
     val reloaded = SimpleTestDataRepository.findOne(where("key" -> 1)).get
 
     reloaded.key should be(1)
@@ -119,7 +119,7 @@ with SyntacticSugarForMongoQueries {
     SimpleTestDataRepository.safeInsert(SimpleTestData(key = 1, value = "update-test"))
     val Some(results) = SimpleTestDataRepository.findOne(where("value" -> "update-test"))
     results.value should be("update-test")
-    SimpleTestDataRepository.safeUpdate(where("value" -> "update-test"), $set("value" -> "new-update-test"))
+    SimpleTestDataRepository.safeUpdate(where("value" -> "update-test"), $set(Seq("value" -> "new-update-test")))
     val Some(updatedResults) = SimpleTestDataRepository.findOne(where("value" -> "new-update-test"))
     updatedResults.value should be("new-update-test")
   }
@@ -129,7 +129,7 @@ with SyntacticSugarForMongoQueries {
     SimpleTestDataRepository.safeInsert(SimpleTestData(key = 2, value = "update-test-2"))
 
     val caught = intercept[MongoException] {
-      SimpleTestDataRepository.safeUpdate(where("key" -> 2), $set("value" -> "update-test-1"))
+      SimpleTestDataRepository.safeUpdate(where("key" -> 2), $set(Seq("value" -> "update-test-1")))
     }
     caught.getMessage should include("E11000 duplicate key error index: gdsScalaCommonTest.testFindData.$value_1")
   }
