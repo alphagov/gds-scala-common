@@ -1,21 +1,22 @@
 package uk.gov.gds.common.calendar
 
 import org.joda.time.{ LocalDate, DateTime }
+import org.joda.time.LocalDateTime
 
 object Calendar {
 
-  def plusDays(division: String, date: DateTime, daysAhead: Int, onlyWorkingDays: Boolean) =
+  def plusDays(division: String, date: DateTime, daysAhead: Int, onlyWorkingDays: Boolean):DateTime =
     if (onlyWorkingDays)
-      plusDaysWithHolidays(division, date, daysAhead)
+      plusDaysWithHolidays(division, date, daysAhead).toDateTime
     else
       date.plusDays(daysAhead)
 
-  def plusDaysWithHolidays(division: String, date: DateTime, daysAhead: Int): LocalDate = {
-    val localDate = date.toLocalDate
+  def plusDaysWithHolidays(division: String, date: DateTime, daysAhead: Int): LocalDateTime = {
+    val localDate = date.toLocalDateTime
     plusDaysWithHolidays(division, localDate, daysAhead)
   }
 
-  def plusDaysWithHolidays(division: String, date: LocalDate, daysAhead: Int, first: Boolean = true): LocalDate = {
+  def plusDaysWithHolidays(division: String, date: LocalDateTime, daysAhead: Int, first: Boolean = true): LocalDateTime = {
     if (daysAhead == 0) {
       date
     } else {
@@ -34,7 +35,7 @@ object Calendar {
     }
   }
 
-  private def rollDateIncludingWeekend(date: LocalDate, rollDays: Int): LocalDate = {
+  private def rollDateIncludingWeekend(date: LocalDateTime, rollDays: Int): LocalDateTime = {
     if (rollDays == 0) {
       date.plusDays(date.getDayOfWeek match {
         case 6 => 2
