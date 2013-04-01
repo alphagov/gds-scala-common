@@ -2,8 +2,8 @@ import sbt._
 
 object GdsScalaCommonBuild extends Build {
 
-    val root = Project("gds-common", file("."))
-	 .aggregate(scalaUtils, mongoScalaUtils, govUkClients, govUkGuiceUtils)
+  val root = Project("gds-common", file("."))
+	 .aggregate(scalaUtils, mongoScalaUtils, govUkClients, govUkGuiceUtils, akkaQuartz)
   
   lazy val scalaUtils = Project("scala-utils", file("scala-utils"))
 
@@ -14,4 +14,7 @@ object GdsScalaCommonBuild extends Build {
     .dependsOn(scalaUtils % "test->test;test->compile;compile->compile")
 
   lazy val govUkGuiceUtils = Project("govuk-guice-utils", file("govuk-guice-utils"))
+
+  lazy val akkaQuartz = Project("akka-quartz", file("akka-quartz"))
+
 }

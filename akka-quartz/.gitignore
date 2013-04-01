@@ -1,0 +1,13 @@
+mongodb/mongodb-*.tgz
+target/
+target/*
+*.ipr
+*.iml
+*.iws
+.idea/
+logs/
+node_modules/
+node_modules/*
+.DS_Store
+.DS_Store
+version.conf
