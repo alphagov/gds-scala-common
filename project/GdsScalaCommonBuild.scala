@@ -11,7 +11,7 @@ object GdsScalaCommonBuild extends Build {
   }
 
   val root = Project("gds-common", file("."))
-	 .aggregate(scalaUtils, mongoScalaUtils, govUkClients, govUkGuiceUtils)
+	 .aggregate(scalaUtils, mongoScalaUtils, govUkClients, govUkGuiceUtils, akkaQuartz)
   
   lazy val scalaUtils = Project("scala-utils", file("scala-utils"))
 	  .settings(ideaSettings: _*)
@@ -26,4 +26,7 @@ object GdsScalaCommonBuild extends Build {
 
   lazy val govUkGuiceUtils = Project("govuk-guice-utils", file("govuk-guice-utils"))
     .settings(ideaSettings: _*)
+
+  lazy val akkaQuartz = Project("akka-quartz", file("akka-quartz"))
+	  .settings(ideaSettings: _*)
 }
