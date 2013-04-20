@@ -59,19 +59,43 @@ abstract class MongoRepositoryBase[A <: CaseClass](implicit m: Manifest[A])
   }
 
   protected def addIndex(index: DBObject,
-    unique: Boolean = Enforced,
-    sparse: Boolean = Sparse,
-    duplicate: Boolean = Keep) {
+                         unique: Boolean = Enforced,
+                         sparse: Boolean = Sparse,
+                         duplicate: Boolean = Keep) = createIndex(index, unique, sparse, duplicate)
+
+  protected def addIndex(index: DBObject,
+                         unique: Boolean,
+                         sparse: Boolean,
+                         duplicate: Boolean,
+                         name: String) = createIndex(index, unique, sparse, duplicate, Some(name))
+
+  protected def dropIndex(name: String) {
+    logger.info("Dropping index '%s'".format(name))
+
+    try {
+      collection.underlying.dropIndex(name)
+    } catch {
+      case e =>
+        logger.error("Could not drop index '%s'".format(name), e)
+        throw e
+    }
+  }
+
+  private def createIndex(index: DBObject,
+                          unique: Boolean,
+                          sparse: Boolean,
+                          duplicate: Boolean,
+                          name: Option[String] = None) {
     logger.info("Adding index " + index)
+
+    val requiredOptions = List("unique" -> unique, "background" -> false, "sparse" -> sparse, "dropDups" -> duplicate)
+    val additionalOptions = name.map("name" -> _).toList
+    val options = requiredOptions ::: additionalOptions
 
     try {
       collection.underlying.ensureIndex(
         index,
-        query(
-          "unique" -> unique,
-          "background" -> false,
-          "sparse" -> sparse,
-          "dropDups" -> duplicate))
+        query(options: _*))
     } catch {
       case e: Exception =>
         logger.error("Could not create index " + index, e)
