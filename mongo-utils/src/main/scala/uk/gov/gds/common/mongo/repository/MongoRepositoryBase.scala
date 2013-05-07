@@ -131,11 +131,13 @@ abstract class MongoRepositoryBase[A <: CaseClass](implicit m: Manifest[A])
 
     def apply(query: DBObject, page: Int, pageSize: Int) = buildCursor(
       query = query,
+      currentPage = page,
       pageSize = pageSize)
 
     def apply(query: DBObject, page: Int, pageSize: Int, order: MongoDBObject) = buildCursor(
       query = query,
       pageSize = pageSize,
+      currentPage = page,
       order = Some(order))
 
     def apply(pageSize: Int = defaultPageSize) = buildCursor(
