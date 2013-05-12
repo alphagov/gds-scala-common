@@ -9,9 +9,7 @@ logs/
 node_modules/
 node_modules/*
 .DS_Store
-.DS_Store
 version.conf
-<<<<<<< HEAD
 */.project
 */.classpath
 */.cache
@@ -19,3 +17,4 @@ version.conf
 */bin
 */.target
 .idea_modules/*
+jmimemagic.log

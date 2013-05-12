@@ -3,6 +3,7 @@ package uk.gov.gds.common.mongo.repository
 import com.novus.salat._
 import com.mongodb.casbah.Imports._
 import com.mongodb.WriteConcern
+import uk.gov.gds.common.repository.Cursor
 
 abstract class SimpleMongoRepository[A <: CaseClass](implicit m: Manifest[A]) extends MongoRepositoryBase[A] {
 
@@ -91,7 +92,7 @@ abstract class SimpleMongoRepository[A <: CaseClass](implicit m: Manifest[A]) ex
     collection.drop()
   }
 
-  def all = SimpleMongoCursor()
+  def all: Cursor[A] = SimpleMongoCursor()
 
   def allFields = MongoDBObject.empty
 
