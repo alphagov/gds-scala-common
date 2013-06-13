@@ -10,6 +10,7 @@ import uk.gov.gds.common.pagination.PaginationSupport
 import uk.gov.gds.common.repository.{ CursorBase, Repository }
 import java.io.OutputStream
 import uk.gov.gds.common.repository.Cursor
+import com.mongodb.ReadPreference
 
 abstract class MongoRepositoryBase[A <: CaseClass](implicit m: Manifest[A])
   extends Repository[A]
@@ -106,19 +107,28 @@ abstract class MongoRepositoryBase[A <: CaseClass](implicit m: Manifest[A])
   class SimpleMongoCursor(query: DBObject,
     pageSize: Int,
     currentPage: Long,
-    order: Option[MongoDBObject] = None)
+    order: Option[MongoDBObject] = None,
+    customReadPreference: Option[ReadPreference] = None)
     extends CursorBase[A](pageSize, currentPage) {
 
     def pageOfData = logAndTimeQuery[List[A]](
       logMessage = "Mongo query: " + query + " with page:" + currentPage + " skip:" + skipSize + " page-size:" + pageSize + " sort order " + order,
-      query = order match {
-        case Some(direction) => collection.find(query).sort(direction).skip(skipSize).limit(pageSize)
-        case _ => collection.find(query).skip(skipSize).limit(pageSize)
-      })
+      ensureReadPreference(currentPageQuery))
 
     def total = logAndTimeQuery(
       logMessage = "Mongo count: " + collection.name,
       query = collection.count(query))
+
+    private def currentPageQuery =
+      order match {
+        case Some(direction) => collection.find(query).sort(direction).skip(skipSize).limit(pageSize)
+        case _ => collection.find(query).skip(skipSize).limit(pageSize)
+      }
+
+    private def ensureReadPreference(cursor: MongoCursor) = {
+      customReadPreference.foreach(cursor.underlying.setReadPreference)
+      cursor
+    }
   }
 
   object SimpleMongoCursor {
@@ -128,6 +138,9 @@ abstract class MongoRepositoryBase[A <: CaseClass](implicit m: Manifest[A])
     def apply(query: DBObject, order: DBObject) = buildCursor(query = query, order = Some(order))
 
     def apply(query: DBObject, order: DBObject, pageSize: Int) = buildCursor(query = query, order = Some(order), pageSize = pageSize)
+
+    def apply(query: DBObject, order: DBObject, pageSize: Int, readPreference: ReadPreference) =
+      buildCursor(query = query, order = Some(order), pageSize = pageSize, customReadPreference = Some(readPreference))
 
     def apply(query: DBObject, page: Int, pageSize: Int) = buildCursor(
       query = query,
@@ -147,12 +160,14 @@ abstract class MongoRepositoryBase[A <: CaseClass](implicit m: Manifest[A])
     private def buildCursor(query: DBObject,
       pageSize: Int = defaultPageSize,
       currentPage: Int = 1,
-      order: Option[MongoDBObject] = None) =
+      order: Option[MongoDBObject] = None,
+      customReadPreference: Option[ReadPreference] = None) =
       new SimpleMongoCursor(
         query = query,
         pageSize = pageSize,
         currentPage = currentPage,
-        order = order)
+        order = order,
+        customReadPreference = customReadPreference)
   }
 
 }
