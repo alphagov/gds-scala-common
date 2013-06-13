@@ -66,6 +66,8 @@ abstract class MongoDatabaseManager extends Logging {
     database.underlying.setOptions(database.getOptions() & (~Bytes.QUERYOPTION_SLAVEOK))
   }
 
+  MongoConfig.readPreference.foreach(database.underlying.setReadPreference)
+
   protected val repositoriesToInitialiseOnStartup: List[MongoRepositoryBase[_]]
 
   def databaseChangeScripts: List[ChangeScript] = Nil
