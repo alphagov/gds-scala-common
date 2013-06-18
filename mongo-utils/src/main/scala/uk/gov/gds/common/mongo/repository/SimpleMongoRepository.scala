@@ -2,7 +2,7 @@ package uk.gov.gds.common.mongo.repository
 
 import com.novus.salat._
 import com.mongodb.casbah.Imports._
-import com.mongodb.WriteConcern
+import com.mongodb.{ReadPreference, WriteConcern}
 import uk.gov.gds.common.repository.Cursor
 
 abstract class SimpleMongoRepository[A <: CaseClass](implicit m: Manifest[A]) extends MongoRepositoryBase[A] {
@@ -78,6 +78,12 @@ abstract class SimpleMongoRepository[A <: CaseClass](implicit m: Manifest[A]) ex
 
   def deleteAll() {
     collection.remove(query())
+  }
+
+  def find[A <% DBObject](query: A, readPreference: ReadPreference) = {
+    val cursor = collection.find(query)
+    cursor.underlying.setReadPreference(readPreference)
+    cursor
   }
 
   def findAndModify(query: DBObject, update: DBObject, returnNew: Boolean = false) = try {
