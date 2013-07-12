@@ -6,12 +6,12 @@ version := "0.1.4-SNAPSHOT"
 
 scalacOptions += "-deprecation"
 
-scalaVersion := "2.10.0"
+scalaVersion := "2.10.2"
 
 libraryDependencies ++= Seq(
         "org.mongodb" %% "casbah" % "2.5.0",
         "javax.servlet" % "servlet-api" % "2.5" % "provided",
-        "org.scalatest" % "scalatest_2.10" % "1.9.1",
+        "org.scalatest" % "scalatest_2.10" % "2.0.M5b" % "compile", //needed for test util base classes
         "joda-time" % "joda-time" % "2.1",
         "org.joda" % "joda-convert" % "1.2",
         "com.novus" %% "salat-core" % "1.9.2-SNAPSHOT",
@@ -20,7 +20,7 @@ libraryDependencies ++= Seq(
         "com.google.guava" % "guava" % "13.0",
 	    "com.google.code.findbugs" % "jsr305" % "1.3.+",
         "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.1.3",
-        "org.scala-lang" % "scala-reflect" % "2.10.0"
+        "org.scala-lang" % "scala-reflect" % "2.10.2"
     )
 
 parallelExecution in Test := false

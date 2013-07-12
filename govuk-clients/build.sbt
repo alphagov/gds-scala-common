@@ -6,11 +6,11 @@ version := "0.1.1-SNAPSHOT"
 
 scalacOptions += "-deprecation"
 
-scalaVersion := "2.10.0"
+scalaVersion := "2.10.2"
 
 libraryDependencies ++= Seq(
         "javax.servlet" % "servlet-api" % "2.5" % "provided",
-        "org.scalatest" % "scalatest_2.10" % "1.9.1",
+        "org.scalatest" % "scalatest_2.10" % "2.0.M5b" % "test",
         "joda-time" % "joda-time" % "2.1",
         "org.joda" % "joda-convert" % "1.2",
         "org.apache.httpcomponents" % "httpclient" % "4.1.2",

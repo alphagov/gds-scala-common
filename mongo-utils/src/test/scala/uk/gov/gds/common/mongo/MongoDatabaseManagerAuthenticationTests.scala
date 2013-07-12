@@ -1,12 +1,7 @@
 package uk.gov.gds.common.mongo
 
-import migration.{ ChangeScriptFailedException, ChangeScript, ChangeScriptStatus }
-import org.scalatest.matchers.ShouldMatchers
-import uk.gov.gds.common.testutil.{ IntegrationTestMutex, MongoDatabaseBackedTest }
-import org.scalatest.{ GivenWhenThen, FunSuite, Tag }
-import xml.dtd.SystemID
-import uk.gov.gds.common.config.Config
-import com.mongodb.casbah.MongoDB
+import uk.gov.gds.common.testutil.MongoDatabaseBackedTest
+import org.scalatest._
 
 object AuthTest extends Tag("uk.gov.gds.tag.MongoAuthTest")
 
@@ -38,8 +33,8 @@ class MongoDatabaseManagerAuthenticationTests
   protected def databaseManager = AuthenticatedMongoDatabaseManagerForTests
 
   ignore("Database connection authenticated", AuthTest) {
-    given("Configuration value for username is specified")
-    then("the Scala process connects successfully to the authenticated db")
+    Given("Configuration value for username is specified")
+    Then("the Scala process connects successfully to the authenticated db")
     // The connection actually happens in mongo database backed test
   }
 }

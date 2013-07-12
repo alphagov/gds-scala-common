@@ -6,11 +6,11 @@ version := "0.7.4-SNAPSHOT"
 
 scalacOptions += "-deprecation"
 
-scalaVersion := "2.10.0"
+scalaVersion := "2.10.2"
 
 libraryDependencies ++= Seq(
         "javax.servlet" % "servlet-api" % "2.5" % "provided",
-        "org.scalatest" % "scalatest_2.10" % "1.9.1" % "test",
+        "org.scalatest" % "scalatest_2.10" % "2.0.M5b" % "test",
         "joda-time" % "joda-time" % "2.1",
         "org.joda" % "joda-convert" % "1.2",
         "org.slf4j" % "slf4j-api" % "1.6.6",
@@ -20,7 +20,7 @@ libraryDependencies ++= Seq(
 	    "com.google.code.findbugs" % "jsr305" % "1.3.+",
         "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.1.3",
         "com.fasterxml.jackson.datatype" % "jackson-datatype-joda" % "2.1.1",
-        "org.scala-lang" % "scala-reflect" % "2.10.0"
+        "org.scala-lang" % "scala-reflect" % "2.10.2"
     )
 
 parallelExecution in Test := false

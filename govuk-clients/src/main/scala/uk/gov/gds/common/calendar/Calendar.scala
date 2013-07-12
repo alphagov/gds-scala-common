@@ -1,6 +1,6 @@
 package uk.gov.gds.common.calendar
 
-import org.joda.time.{ LocalDate, DateTime }
+import org.joda.time.DateTime
 import org.joda.time.LocalDateTime
 
 object Calendar {
@@ -28,8 +28,8 @@ object Calendar {
       val holidays = for {
         year <- date.getYear to noHolidayFinalDate.getYear
         holiday <- CalendarApiClient.getBankHolidays(division, year)
-        if ((first && holiday.compareTo(date) >= 0) || holiday.compareTo(date) > 0)
-        if (holiday.compareTo(noHolidayFinalDate) <= 0)
+        if ((first && holiday.compareTo(date.toLocalDate) >= 0) || holiday.compareTo(date.toLocalDate) > 0)
+        if (holiday.compareTo(noHolidayFinalDate.toLocalDate) <= 0)
       } yield holiday
       plusDaysWithHolidays(division, noHolidayFinalDate, holidays.size, false)
     }
