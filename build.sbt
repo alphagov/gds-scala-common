@@ -1,6 +1,6 @@
 import java.util.jar._
 
-scalaVersion := "2.10.2"
+scalaVersion := "2.10.0"
 
 publishArtifact := false
 

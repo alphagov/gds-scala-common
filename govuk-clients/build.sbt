@@ -6,7 +6,7 @@ version := "0.1.1-SNAPSHOT"
 
 scalacOptions += "-deprecation"
 
-scalaVersion := "2.10.2"
+scalaVersion := "2.10.0"
 
 libraryDependencies ++= Seq(
         "javax.servlet" % "servlet-api" % "2.5" % "provided",

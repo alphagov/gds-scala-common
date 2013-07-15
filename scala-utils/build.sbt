@@ -6,7 +6,7 @@ version := "0.7.4-SNAPSHOT"
 
 scalacOptions += "-deprecation"
 
-scalaVersion := "2.10.2"
+scalaVersion := "2.10.0"
 
 libraryDependencies ++= Seq(
         "javax.servlet" % "servlet-api" % "2.5" % "provided",
@@ -20,7 +20,7 @@ libraryDependencies ++= Seq(
 	    "com.google.code.findbugs" % "jsr305" % "1.3.+",
         "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.1.3",
         "com.fasterxml.jackson.datatype" % "jackson-datatype-joda" % "2.1.1",
-        "org.scala-lang" % "scala-reflect" % "2.10.2"
+        "org.scala-lang" % "scala-reflect" % "2.10.0"
     )
 
 parallelExecution in Test := false
