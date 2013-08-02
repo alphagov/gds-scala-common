@@ -2,7 +2,7 @@ organization := "uk.gov.gds"
 
 name := "gds-govuk-clients"
 
-version := "0.1.3-SNAPSHOT"
+version := "0.1.2-SNAPSHOT"
 
 scalacOptions += "-deprecation"
 

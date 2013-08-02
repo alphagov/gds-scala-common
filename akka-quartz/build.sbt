@@ -6,7 +6,7 @@ version := "1.1-SNAPSHOT"
 
 scalacOptions += "-deprecation"
 
-scalaVersion := "2.10.1"
+scalaVersion := "2.10.0"
 
 libraryDependencies ++= Seq(
         "org.quartz-scheduler" % "quartz" % "2.1.5" % "compile",
