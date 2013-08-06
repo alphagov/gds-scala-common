@@ -19,7 +19,7 @@ cd ~/alphagov.github.com/
 
 #push the local repo to remote
 git add .
-git commit -m "Successful gds-scala-common CI build $BUILD_NUMBER"
+git commit -m "Successful gds-scala-common CI build $BUILD_DISPLAY_NAME"
 git push
 
 
