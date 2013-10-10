@@ -1,5 +1,6 @@
 package uk.gov.gds.common.json
 
+import _root_.com.fasterxml.jackson.annotation.JsonInclude
 import java.text.DateFormat
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.joda.JodaModule
@@ -9,12 +10,14 @@ import com.fasterxml.jackson.core.`type`.TypeReference
 import java.lang.reflect.{ Type, ParameterizedType }
 import com.fasterxml.jackson.databind.DeserializationFeature
 
-object JsonSerializer extends Logging {
+trait JsonSerializer extends Logging {
 
   val mapper = new ObjectMapper()
   mapper.registerModule(new JodaModule())
   mapper.registerModule(DefaultScalaModule)
-  mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+  mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+  mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL)
+  mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
   performCustomConfiguration()
 
   def toJson(obj: AnyRef) = try {
@@ -54,3 +57,5 @@ object JsonSerializer extends Logging {
     mapper.setDateFormat(DateFormat.getDateTimeInstance)
   }
 }
+
+object JsonSerializer extends JsonSerializer
