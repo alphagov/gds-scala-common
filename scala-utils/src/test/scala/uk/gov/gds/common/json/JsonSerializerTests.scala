@@ -16,15 +16,6 @@ class JsonSerializerTests extends FunSuite with ShouldMatchers {
     json should include( """{"this":"string"}""")
   }
 
-  test("Should not write out a keys for empty fields") {
-    val test = TestSerialization(stringField = "", arrayField = List.empty, mapField = Map.empty)
-    val json = toJson(test)
-
-    json should not include "stringField"
-    json should not include "arrayField"
-    json should not include "mapField"
-  }
-
   test("should be able to turn case class into json string") {
     val test = TestSerialization(stringField = "this is a string", arrayField = List("1", "2", "3"), mapField = Map("key" -> 100))
     val json = toJson(test)

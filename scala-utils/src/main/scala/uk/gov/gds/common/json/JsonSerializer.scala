@@ -16,8 +16,7 @@ trait JsonSerializer extends Logging {
   mapper.registerModule(new JodaModule())
   mapper.registerModule(DefaultScalaModule)
   mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-  mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL)
-  mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
+
   performCustomConfiguration()
 
   def toJson(obj: AnyRef) = try {
