@@ -1,6 +1,6 @@
 package uk.gov.gds.common.placesclient.api.client.implementations
 
-import uk.gov.gds.common.model.{LocalAuthority, Address}
+import uk.gov.gds.common.model.{ LocalAuthority, Address }
 import uk.gov.gds.common.http.ApiResponseException
 import uk.gov.gds.common.placesclient.api.client.PlacesApiClient
 
@@ -75,7 +75,8 @@ object MockPlacesApiClient extends PlacesApiClient {
         Address(
           lineOne = "Aviation House", lineTwo = "125 Kingsway", city = "London", postcode = "WC2B 6SE", county = "Camden", uprn = Some("26254659")
         )
-      )),
+      )
+    ),
     MockAddressItem(
       postcode = "SW11 2DR",
       addresses = List(

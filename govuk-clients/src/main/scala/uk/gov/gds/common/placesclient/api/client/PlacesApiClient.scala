@@ -1,6 +1,6 @@
 package uk.gov.gds.common.placesclient.api.client
 
-import uk.gov.gds.common.placesclient.api.client.implementations.{RealPlacesApiClient, MockPlacesApiClient}
+import uk.gov.gds.common.placesclient.api.client.implementations.{ RealPlacesApiClient, MockPlacesApiClient }
 import uk.gov.gds.common.logging.Logging
 import uk.gov.gds.common.model.LocalAuthority
 import uk.gov.gds.common.model.Address

@@ -16,7 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import akka.actor.{Cancellable, ActorRef, Actor}
+import akka.actor.{ Cancellable, ActorRef, Actor }
 import akka.event.Logging
 import org.quartz.impl.StdSchedulerFactory
 import java.util.Properties
@@ -53,19 +53,18 @@ case class AddCronScheduleFailure(reason: Throwable) extends AddCronScheduleResu
  */
 case class RemoveJob(cancel: Cancellable)
 
-
 /**
  * Internal class to make Quartz work.
  * This should be in QuartzActor, but for some reason Quartz
  * ends up with a construction error when it is.
  */
 private class QuartzIsNotScalaExecutor() extends Job {
-	def execute(ctx: JobExecutionContext) {
-		val jdm = ctx.getJobDetail.getJobDataMap() // Really?
-		val msg = jdm.get("message")
-		val actor = jdm.get("actor").asInstanceOf[ActorRef]
-		actor ! msg
-	}
+  def execute(ctx: JobExecutionContext) {
+    val jdm = ctx.getJobDetail.getJobDataMap() // Really?
+    val msg = jdm.get("message")
+    val actor = jdm.get("actor").asInstanceOf[ActorRef]
+    actor ! msg
+  }
 }
 
 /**
@@ -73,81 +72,80 @@ private class QuartzIsNotScalaExecutor() extends Job {
  * and processes Add and Remove messages.
  */
 class QuartzActor extends Actor {
-	val log = Logging(context.system, this)
+  val log = Logging(context.system, this)
 
-	// Create a sane default quartz scheduler
-	private[this] val props = new Properties()
-	props.setProperty("org.quartz.scheduler.instanceName", context.self.path.name)
-	props.setProperty("org.quartz.threadPool.threadCount", "1")
-	props.setProperty("org.quartz.jobStore.class", "org.quartz.simpl.RAMJobStore")
-	props.setProperty("org.quartz.scheduler.skipUpdateCheck", "true")	// Whoever thought this was smart shall be shot
+  // Create a sane default quartz scheduler
+  private[this] val props = new Properties()
+  props.setProperty("org.quartz.scheduler.instanceName", context.self.path.name)
+  props.setProperty("org.quartz.threadPool.threadCount", "1")
+  props.setProperty("org.quartz.jobStore.class", "org.quartz.simpl.RAMJobStore")
+  props.setProperty("org.quartz.scheduler.skipUpdateCheck", "true") // Whoever thought this was smart shall be shot
 
-	val scheduler = new StdSchedulerFactory(props).getScheduler
+  val scheduler = new StdSchedulerFactory(props).getScheduler
 
+  /**
+   * Cancellable to later kill the job. Yes this is mutable, I'm sorry.
+   * @param job
+   */
+  class CancelSchedule(val job: JobKey, val trig: TriggerKey) extends Cancellable {
+    var cancelled = false
 
-	/**
-	 * Cancellable to later kill the job. Yes this is mutable, I'm sorry.
-	 * @param job
-	 */
-	class CancelSchedule(val job: JobKey, val trig: TriggerKey) extends Cancellable {
-		var cancelled = false
+    def isCancelled: Boolean = cancelled
 
-		def isCancelled: Boolean = cancelled
-
-		def cancel(): Boolean = {
+    def cancel(): Boolean = {
       context.self ! RemoveJob(this)
       true
-		}
+    }
 
-	}
+  }
 
-	override def preStart() {
-		scheduler.start()
-		log.info("Scheduler started")
-	}
+  override def preStart() {
+    scheduler.start()
+    log.info("Scheduler started")
+  }
 
-	override def postStop() {
-		scheduler.shutdown()
-	}
+  override def postStop() {
+    scheduler.shutdown()
+  }
 
-	// Largely imperative glue code to make quartz work :)
-	def receive = {
-		case RemoveJob(cancel) => cancel match {
-			case cs: CancelSchedule => scheduler.deleteJob(cs.job); cs.cancelled = true
-			case _ => log.error("Incorrect cancelable sent")
-		}
-		case AddCronSchedule(to, cron, message, reply) =>
-			// Try to derive a unique name for this job
-			// Using hashcode is odd, suggestions for something better?
-			val jobkey = new JobKey(Key.DEFAULT_GROUP, "%X".format((to.toString() + message.toString + cron + "job").hashCode))
-			// Perhaps just a string is better :)
-			val trigkey = new TriggerKey(Key.DEFAULT_GROUP, to.toString() + message.toString + cron + "trigger")
-			// We use JobDataMaps to pass data to the newly created job runner class
-			val jd = org.quartz.JobBuilder.newJob(classOf[QuartzIsNotScalaExecutor])
-			val jdm = new JobDataMap()
-			jdm.put("message", message)
-			jdm.put("actor", to)
-			val job = jd.usingJobData(jdm).withIdentity(jobkey).build()
+  // Largely imperative glue code to make quartz work :)
+  def receive = {
+    case RemoveJob(cancel) => cancel match {
+      case cs: CancelSchedule =>
+        scheduler.deleteJob(cs.job); cs.cancelled = true
+      case _ => log.error("Incorrect cancelable sent")
+    }
+    case AddCronSchedule(to, cron, message, reply) =>
+      // Try to derive a unique name for this job
+      // Using hashcode is odd, suggestions for something better?
+      val jobkey = new JobKey(Key.DEFAULT_GROUP, "%X".format((to.toString() + message.toString + cron + "job").hashCode))
+      // Perhaps just a string is better :)
+      val trigkey = new TriggerKey(Key.DEFAULT_GROUP, to.toString() + message.toString + cron + "trigger")
+      // We use JobDataMaps to pass data to the newly created job runner class
+      val jd = org.quartz.JobBuilder.newJob(classOf[QuartzIsNotScalaExecutor])
+      val jdm = new JobDataMap()
+      jdm.put("message", message)
+      jdm.put("actor", to)
+      val job = jd.usingJobData(jdm).withIdentity(jobkey).build()
 
-			try {
-				scheduler.scheduleJob(job, org.quartz.TriggerBuilder.newTrigger().startNow()
-					.withIdentity(trigkey).forJob(job)
-					.withSchedule(org.quartz.CronScheduleBuilder.cronSchedule(cron)).build())
+      try {
+        scheduler.scheduleJob(job, org.quartz.TriggerBuilder.newTrigger().startNow()
+          .withIdentity(trigkey).forJob(job)
+          .withSchedule(org.quartz.CronScheduleBuilder.cronSchedule(cron)).build())
 
-				if (reply)
-					context.sender ! AddCronScheduleSuccess(new CancelSchedule(jobkey, trigkey))
+        if (reply)
+          context.sender ! AddCronScheduleSuccess(new CancelSchedule(jobkey, trigkey))
 
-			} catch { // Quartz will drop a throwable if you give it an invalid cron expression - pass that info on
-				case e: Throwable =>
-					log.error("Quartz failed to add a task: ", e)
-					if (reply)
-						context.sender ! AddCronScheduleFailure(e)
+      } catch { // Quartz will drop a throwable if you give it an invalid cron expression - pass that info on
+        case e: Throwable =>
+          log.error("Quartz failed to add a task: ", e)
+          if (reply)
+            context.sender ! AddCronScheduleFailure(e)
 
-			}
-		// I'm relatively unhappy with the two message replies, but it works
+      }
+    // I'm relatively unhappy with the two message replies, but it works
 
-		case _ => //
-	}
-
+    case _ => //
+  }
 
 }

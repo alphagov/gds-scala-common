@@ -1,12 +1,12 @@
 package uk.gov.gds.common.mongo
 
-import com.mongodb.WriteConcern.{NORMAL, SAFE}
-import com.mongodb.casbah.{MongoClient, MongoConnection, MongoCredential, MongoDB}
-import com.mongodb.{Bytes, ServerAddress, WriteConcern}
+import com.mongodb.WriteConcern.{ NORMAL, SAFE }
+import com.mongodb.casbah._
+import com.mongodb.{ Bytes, ServerAddress, WriteConcern }
 import uk.gov.gds.common.config.Config
 import uk.gov.gds.common.logging.Logging
 import uk.gov.gds.common.mongo.migration._
-import uk.gov.gds.common.mongo.repository.{IdentityBasedMongoRepository, MongoRepositoryBase}
+import uk.gov.gds.common.mongo.repository.{ IdentityBasedMongoRepository, MongoRepositoryBase }
 
 abstract class MongoDatabaseManager extends Logging {
 
@@ -56,11 +56,11 @@ abstract class MongoDatabaseManager extends Logging {
     databaseHostString.split(",").toList
   }
 
-  private lazy val mongoConnection = MongoConnection(databaseHosts.map(new ServerAddress(_)))
+  private lazy val mongoConnection = MongoClient(databaseHosts.map(new ServerAddress(_)))
 
   if (MongoConfig.slaveOk) {
     logger.info("Setting database to slaveOk mode. Will read from slaves")
-    database.slaveOk()
+    database.setReadPreference(ReadPreference.Secondary)
   } else {
     logger.info("Not Setting database to slaveOk mode. Will only read & write from master")
     database.underlying.setOptions(database.getOptions & (~Bytes.QUERYOPTION_SLAVEOK))

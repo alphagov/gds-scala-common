@@ -63,7 +63,7 @@ abstract class SimpleMongoRepository[A <: CaseClass](implicit m: Manifest[A]) ex
   def unsafeDelete(query: DBObject) = try {
     collection.remove(query, WriteConcern.NORMAL)
   } catch {
-    case e =>
+    case e: Throwable =>
       logger.error("unsafeDelete failed for %s".format(query.toString), e)
       throw e
   }
@@ -71,7 +71,7 @@ abstract class SimpleMongoRepository[A <: CaseClass](implicit m: Manifest[A]) ex
   def safeDelete(query: DBObject) = try {
     collection.remove(query, WriteConcern.MAJORITY)
   } catch {
-    case e =>
+    case e: Throwable =>
       logger.error("unsafeDelete failed for %s".format(query.toString), e)
       throw e
   }
@@ -83,7 +83,7 @@ abstract class SimpleMongoRepository[A <: CaseClass](implicit m: Manifest[A]) ex
   def findAndModify(query: DBObject, update: DBObject, returnNew: Boolean = false) = try {
     collection.findAndModify(query = query, update = update, sort = null, fields = null, remove = false, returnNew = returnNew, upsert = false)
   } catch {
-    case e =>
+    case e: Throwable =>
       logger.error("findAndModify failed for %s %s".format(query.toString, update.toString), e)
       throw e
   }

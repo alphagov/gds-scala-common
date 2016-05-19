@@ -41,7 +41,7 @@ object CalendarApiClient extends Logging {
         "england-and-wales"
       else
         division.toLowerCase
-    
+
     val eventsOption = for {
       divisionObj <- divisionCalendars.get(divisionUpdated);
       yearObj <- divisionObj.calendars.get(year.toString)

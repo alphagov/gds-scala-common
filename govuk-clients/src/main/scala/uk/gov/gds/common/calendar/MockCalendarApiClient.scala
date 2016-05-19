@@ -2,7 +2,7 @@ package uk.gov.gds.common.calendar
 
 object MockCalendarApiClient extends CalendarApiClient {
   def getBankHolidays =
-"""
+    """
 {
    "england-and-wales":{
       "division":"england-and-wales",

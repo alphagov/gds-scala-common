@@ -5,7 +5,7 @@ import org.joda.time.LocalDateTime
 
 object Calendar {
 
-  def plusDays(division: String, date: DateTime, daysAhead: Int, onlyWorkingDays: Boolean):DateTime =
+  def plusDays(division: String, date: DateTime, daysAhead: Int, onlyWorkingDays: Boolean): DateTime =
     if (onlyWorkingDays)
       plusDaysWithHolidays(division, date, daysAhead).toDateTime
     else
