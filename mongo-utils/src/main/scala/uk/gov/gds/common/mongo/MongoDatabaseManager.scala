@@ -1,24 +1,21 @@
 package uk.gov.gds.common.mongo
 
-import migration._
-import repository.{ IdentityBasedMongoRepository, MongoRepositoryBase }
-import uk.gov.gds.common.logging.Logging
+import com.mongodb.WriteConcern.{NORMAL, SAFE}
+import com.mongodb.casbah.{MongoClient, MongoConnection, MongoCredential, MongoDB}
+import com.mongodb.{Bytes, ServerAddress, WriteConcern}
 import uk.gov.gds.common.config.Config
-import com.mongodb.casbah.{ MongoDB, MongoConnection }
-import com.mongodb.{ Bytes, WriteConcern, ServerAddress }
-import com.mongodb.WriteConcern.{ NORMAL, SAFE }
-import util.DynamicVariable
+import uk.gov.gds.common.logging.Logging
+import uk.gov.gds.common.mongo.migration._
+import uk.gov.gds.common.mongo.repository.{IdentityBasedMongoRepository, MongoRepositoryBase}
 
 abstract class MongoDatabaseManager extends Logging {
 
   lazy val database: MongoDB = {
     logger.info("Connecting to database: " + databaseName)
 
-    try {
-      val conn = mongoConnection(databaseName)
-      authenticateToDatabaseIfRequired(conn)
-      conn
-    } catch {
+    try
+      getDatabaseClient.apply(databaseName)
+    catch {
       case e: Exception =>
         logger.error("Failure initialising & authenticating to mongoDB: " + e.getMessage(), e)
         throw e
@@ -35,18 +32,21 @@ abstract class MongoDatabaseManager extends Logging {
     try {
       databaseUsername != null
     } catch {
-      case _ => false
+      case _: Throwable => false
     }
   }
 
-  protected def authenticateToDatabaseIfRequired(connection: MongoDB) {
+  protected val getDatabaseClient = {
     /* authenticate if a username is set in the config file */
+    val server = new ServerAddress(databaseName, 27017)
     if (shouldAuthenticate) {
       logger.info("Attempting to authenticate as user:" + databaseUsername)
-
-      connection.authenticate(databaseUsername, databasePasssword)
+      // TODO: check that this authentication method is correct
+      val credentials = MongoCredential.createCredential(databaseUsername, "localhost", databasePasssword.toCharArray)
+      MongoClient(server, List(credentials))
     } else {
       logger.info("No database authentication configured")
+      MongoClient(server)
     }
   }
 

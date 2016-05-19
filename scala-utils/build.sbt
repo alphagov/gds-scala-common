@@ -6,7 +6,7 @@ version := "0.7.7-SNAPSHOT"
 
 scalacOptions += "-deprecation"
 
-scalaVersion := "2.10.0"
+scalaVersion := "2.11.8"
 
 libraryDependencies ++= Seq(
         "javax.servlet" % "servlet-api" % "2.5" % "provided",
@@ -18,9 +18,10 @@ libraryDependencies ++= Seq(
         "jmimemagic" % "jmimemagic" % "0.1.1",
         "com.google.guava" % "guava" % "13.0",
         "com.google.code.findbugs" % "jsr305" % "3.0.1",
-        "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.2.3",
+        "com.fasterxml.jackson.module" % "jackson-module-scala_2.11" % "2.7.3",
         "com.fasterxml.jackson.datatype" % "jackson-datatype-joda" % "2.1.1",
-        "org.scala-lang" % "scala-reflect" % "2.10.0"
+        "org.scala-lang" % "scala-reflect" % "2.10.0",
+        "org.scala-lang.modules" %% "scala-xml" % "1.0.3"
     )
 
 parallelExecution in Test := false
@@ -31,7 +32,6 @@ resolvers ++= Seq(
     "GDS maven repo releases" at "http://alphagov.github.com/maven/releases",
     "Java.net Maven2 Repository" at "http://download.java.net/maven/2/",
     "repo.novus snaps" at "http://repo.novus.com/snapshots/",
-    "repo.codahale" at "http://repo.codahale.com",
     "Sonatype OSS Snapshots" at "http://oss.sonatype.org/content/repositories/snapshots/",
     "repo scalatools releases" at "https://oss.sonatype.org/content/groups/scala-tools/"
 )

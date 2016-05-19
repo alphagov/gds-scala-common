@@ -2,11 +2,11 @@ organization := "uk.gov.gds"
 
 name := "govuk-guice-utils"
 
-version := "0.0.2-SNAPSHOT"
+version := "0.0.3-SNAPSHOT"
 
 scalacOptions += "-deprecation"
 
-scalaVersion := "2.10.0"
+scalaVersion := "2.11.8"
 
 libraryDependencies ++= Seq(
     "com.google.inject" % "guice" % "3.0"

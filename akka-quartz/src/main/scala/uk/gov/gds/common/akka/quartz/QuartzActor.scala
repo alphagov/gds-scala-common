@@ -94,8 +94,9 @@ class QuartzActor extends Actor {
 
 		def isCancelled: Boolean = cancelled
 
-		def cancel() {
-			context.self ! RemoveJob(this)
+		def cancel(): Boolean = {
+      context.self ! RemoveJob(this)
+      true
 		}
 
 	}

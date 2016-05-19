@@ -12,7 +12,7 @@ object UnauthenticatedMongoDatabaseManagerForTests extends MongoDatabaseManager 
 
   protected val repositoriesToInitialiseOnStartup = List(TestAuditEventRepository)
 
-  protected override def authenticateToDatabaseIfRequired(connection: MongoDB) {
-    // no-op. We're disabling authentication
+  override def shouldAuthenticate = {
+    false
   }
 }

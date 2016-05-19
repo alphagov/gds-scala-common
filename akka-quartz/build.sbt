@@ -2,17 +2,17 @@ organization := "uk.gov.gds"
 
 name := "akka-quartz"
 
-version := "1.1-SNAPSHOT"
+version := "1.2-SNAPSHOT"
 
 scalacOptions += "-deprecation"
 
-scalaVersion := "2.10.0"
+scalaVersion := "2.11.8"
 
 libraryDependencies ++= Seq(
         "org.quartz-scheduler" % "quartz" % "2.1.5" % "compile",
-        "com.typesafe.akka" %% "akka-actor" % "2.1.2" % "compile",
-        "com.typesafe.akka" %% "akka-testkit" % "2.1.2" % "test",
-        "org.specs2" %% "specs2" % "1.14" % "test"
+        "com.typesafe.akka" %% "akka-actor" % "2.4.1" % "compile",
+        "com.typesafe.akka" %% "akka-testkit" % "2.4.1" % "test",
+        "org.specs2" %% "specs2-core" % "3.0" % "test"
     )
 
 parallelExecution in Test := false
@@ -22,7 +22,6 @@ resolvers ++= Seq(
     "GDS maven repo snapshots" at "http://alphagov.github.com/maven/snapshots",
     "GDS maven repo releases" at "http://alphagov.github.com/maven/releases",
     "Java.net Maven2 Repository" at "http://download.java.net/maven/2/",
-    "repo.codahale" at "http://repo.codahale.com",
     "Sonatype OSS Snapshots" at "http://oss.sonatype.org/content/repositories/snapshots/",
     "repo scalatools releases" at "https://oss.sonatype.org/content/groups/scala-tools/"
 )

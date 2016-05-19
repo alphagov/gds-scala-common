@@ -81,7 +81,7 @@ class MongoDatabaseManagerTests
   test("Database connection is established to unauthenticated database") {
     Given("No configuration value for username is specified")
 
-    databaseManager.shouldAuthenticate should be(false)
+    databaseManager.shouldAuthenticate should not be true
 
     Then("the Scala process connects successfully to the unauthenicated db")
     databaseManager.initializeDatabase()

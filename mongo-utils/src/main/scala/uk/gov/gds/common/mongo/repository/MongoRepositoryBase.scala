@@ -67,7 +67,7 @@ abstract class MongoRepositoryBase[A <: CaseClass](implicit m: Manifest[A])
     logger.info("Adding index " + index)
 
     try {
-      collection.underlying.ensureIndex(
+      collection.underlying.createIndex(
         index,
         query(
           "unique" -> unique,

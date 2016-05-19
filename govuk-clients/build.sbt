@@ -2,11 +2,11 @@ organization := "uk.gov.gds"
 
 name := "gds-govuk-clients"
 
-version := "0.1.2-SNAPSHOT"
+version := "0.1.3-SNAPSHOT"
 
 scalacOptions += "-deprecation"
 
-scalaVersion := "2.10.0"
+scalaVersion := "2.11.8"
 
 libraryDependencies ++= Seq(
         "javax.servlet" % "servlet-api" % "2.5" % "provided",
@@ -16,7 +16,7 @@ libraryDependencies ++= Seq(
         "org.apache.httpcomponents" % "httpclient" % "4.1.2",
         "jmimemagic" % "jmimemagic" % "0.1.1",
         "com.google.guava" % "guava" % "13.0",
-	    "com.google.code.findbugs" % "jsr305" % "1.3.+"
+        "com.google.code.findbugs" % "jsr305" % "3.0.1"
     )
 
 parallelExecution in Test := false
@@ -26,7 +26,6 @@ resolvers ++= Seq(
     "GDS maven repo snapshots" at "http://alphagov.github.com/maven/snapshots",
     "GDS maven repo releases" at "http://alphagov.github.com/maven/releases",
     "Java.net Maven2 Repository" at "http://download.java.net/maven/2/",
-    "repo.codahale" at "http://repo.codahale.com",
     "Sonatype OSS Snapshots" at "http://oss.sonatype.org/content/repositories/snapshots/",
     "repo scalatools releases" at "https://oss.sonatype.org/content/groups/scala-tools/"
 )
