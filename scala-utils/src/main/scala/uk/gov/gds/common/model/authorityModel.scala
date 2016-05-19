@@ -1,15 +1,17 @@
 package uk.gov.gds.common.model
 
-case class Authority(name: String,
-                     agencyId: Int,
-                     urlSlug: String,
-                     authorityUrl: Option[String] = None,
-                     snacCode: Option[String] = None,
-                     level: String,
-                     country: Option[String] = None,
-                     countries: Set[String] = Set.empty,
-                     snacCodes: Set[String] = Set.empty)
-  extends HasIdentity {
+case class Authority(
+  name: String,
+  agencyId: Int,
+  urlSlug: String,
+  authorityUrl: Option[String] = None,
+  snacCode: Option[String] = None,
+  level: String,
+  country: Option[String] = None,
+  countries: Set[String] = Set.empty,
+  snacCodes: Set[String] = Set.empty
+)
+    extends HasIdentity {
 
   def id = urlSlug
 
@@ -36,11 +38,12 @@ object Authority {
   def urlSlugFromName(name: String) = name.replace(" ", "-").replace(".", "").toLowerCase
 }
 
-
-case class LocalAuthority(name: String = "",
-                          ero: Ero = Ero(),
-                          opcsId: String,
-                          gssId: String = "") extends HasIdentity {
+case class LocalAuthority(
+  name: String = "",
+    ero: Ero = Ero(),
+    opcsId: String,
+    gssId: String = ""
+) extends HasIdentity {
   def id = opcsId
 }
 
@@ -50,16 +53,17 @@ object LocalAuthority {
 
 case class Ero(address: Option[GovUkAddress] = None, telephoneNumber: String = "")
 
-
-case class GovUkAddress(lineOne: String = "",
-                        lineTwo: String = "",
-                        lineThree: String = "",
-                        lineFour: String = "",
-                        lineFive: String = "",
-                        city: String = "",
-                        postcode: String = "",
-                        county: String = "",
-                        uprn: Option[String] = None) {
+case class GovUkAddress(
+  lineOne: String = "",
+    lineTwo: String = "",
+    lineThree: String = "",
+    lineFour: String = "",
+    lineFive: String = "",
+    city: String = "",
+    postcode: String = "",
+    county: String = "",
+    uprn: Option[String] = None
+) {
 
   def shortString = if (lineOne.length() > 0)
     lineOne + " " + postcode

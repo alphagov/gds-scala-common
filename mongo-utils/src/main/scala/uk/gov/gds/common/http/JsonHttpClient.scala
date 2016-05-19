@@ -1,6 +1,6 @@
 package uk.gov.gds.common.http
 
-import org.apache.http.client.methods.{HttpGet, HttpPost}
+import org.apache.http.client.methods.{ HttpGet, HttpPost }
 import org.apache.http.entity.StringEntity
 import org.apache.http.client.entity.UrlEncodedFormEntity
 import org.apache.http.message.BasicNameValuePair

@@ -9,8 +9,7 @@ object IntegrationTestMutex {
   def sequentially[A](block: => A) = try {
     lock()
     block
-  }
-  finally {
+  } finally {
     unlock()
   }
 

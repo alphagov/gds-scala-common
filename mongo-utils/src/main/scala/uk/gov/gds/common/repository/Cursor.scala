@@ -22,9 +22,11 @@ trait Cursor[A] {
   def toList: List[A]
 }
 
-abstract class CursorBase[A](var pageSize: Int,
-  var currentPage: Long)
-  extends Cursor[A] with Logging {
+abstract class CursorBase[A](
+  var pageSize: Int,
+  var currentPage: Long
+)
+    extends Cursor[A] with Logging {
 
   def pages = math.ceil(total.toDouble / pageSize.toDouble).toInt
 

@@ -38,7 +38,7 @@ trait ClamAvConfig {
    * The number of threads to have in the pool to run antivirus conversion / copying
    */
 
-  val threadPoolSize = Config("clam.antivirus.threadpool" , "20").toInt
+  val threadPoolSize = Config("clam.antivirus.threadpool", "20").toInt
 
   /**
    * Clam socket commands
@@ -46,7 +46,6 @@ trait ClamAvConfig {
   val instream = "zINSTREAM\0"
   val ping = "zPING\0"
   val status = "nSTATS\n"
-
 
   // OK response from clam
   val okResponse = "stream: OK"

@@ -14,7 +14,8 @@ abstract class AuditEventRepositoryBase extends SimpleMongoRepository[AuditEvent
     audit(AuditEvent(
       auditType = auditType,
       tags = tags,
-      detail = detail))
+      detail = detail
+    ))
   }
 
   protected def audit(event: AuditEvent) {
@@ -25,13 +26,16 @@ abstract class AuditEventRepositoryBase extends SimpleMongoRepository[AuditEvent
   override protected def createIndexes() {
     super.createIndexes()
 
-    addIndex(index(
+    addIndex(
+      index(
       "auditType" -> Ascending,
       "uniqueTagIds" -> Ascending,
-      "timestamp" -> Descending),
+      "timestamp" -> Descending
+    ),
 
       unique = Unenforced,
-      sparse = Complete)
+      sparse = Complete
+    )
 
     addIndex(index("uniqueTagIds" -> Ascending), unique = Unenforced, sparse = Complete)
     addIndex(index("auditType" -> Ascending), unique = Unenforced, sparse = Complete)
@@ -43,30 +47,39 @@ abstract class AuditEventRepositoryBase extends SimpleMongoRepository[AuditEvent
 
   def find(auditType: String): Cursor[AuditEvent] = find(Some(auditType))
 
-  def find(auditType: String,
-           tags: Map[String, String]): Cursor[AuditEvent] =
+  def find(
+    auditType: String,
+    tags: Map[String, String]
+  ): Cursor[AuditEvent] =
     find(Some(auditType), tags, None, None)
 
-  def find(auditType: String,
-           tags: Map[String, String],
-           after: Option[DateTime],
-           before: Option[DateTime]): Cursor[AuditEvent] =
+  def find(
+    auditType: String,
+    tags: Map[String, String],
+    after: Option[DateTime],
+    before: Option[DateTime]
+  ): Cursor[AuditEvent] =
     find(Some(auditType), tags, after, before)
 
   def find(tags: Map[String, String]): Cursor[AuditEvent] = find(None, tags)
 
-  private def find(auditType: Option[String] = None,
-                   tags: Map[String, String] = Map.empty,
-                   after: Option[DateTime] = None,
-                   before: Option[DateTime] = None): Cursor[AuditEvent] =
+  private def find(
+    auditType: Option[String] = None,
+    tags: Map[String, String] = Map.empty,
+    after: Option[DateTime] = None,
+    before: Option[DateTime] = None
+  ): Cursor[AuditEvent] =
     SimpleMongoCursor(
       order = order("timestamp" -> -1),
-      query = buildQuery(auditType, tags, after, before))
+      query = buildQuery(auditType, tags, after, before)
+    )
 
-  private def buildQuery(auditType: Option[String],
-                         tags: Map[String, String],
-                         after: Option[DateTime] = None,
-                         before: Option[DateTime] = None) = {
+  private def buildQuery(
+    auditType: Option[String],
+    tags: Map[String, String],
+    after: Option[DateTime] = None,
+    before: Option[DateTime] = None
+  ) = {
     val builder = MongoDBObject.newBuilder
 
     if (tags.size > 0)

@@ -1,7 +1,7 @@
 package uk.gov.gds.common.testutil
 
 import java.util.concurrent.atomic.AtomicInteger
-import java.util.concurrent.{ScheduledFuture, TimeUnit, Executors}
+import java.util.concurrent.{ ScheduledFuture, TimeUnit, Executors }
 
 trait LazyStop {
   private val counter = new AtomicInteger
@@ -70,7 +70,8 @@ trait LazyStop {
             timerPing()
           }
         },
-        definitionOfSoonInSeconds, TimeUnit.SECONDS))
+        definitionOfSoonInSeconds, TimeUnit.SECONDS
+      ))
     }
   }
 

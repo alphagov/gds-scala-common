@@ -87,7 +87,7 @@ abstract class SimpleMongoRepository[A <: CaseClass](implicit m: Manifest[A]) ex
       logger.error("findAndModify failed for %s %s".format(query.toString, update.toString), e)
       throw e
   }
-  
+
   def dropCollection() {
     collection.drop()
   }
@@ -96,19 +96,27 @@ abstract class SimpleMongoRepository[A <: CaseClass](implicit m: Manifest[A]) ex
 
   def allFields = MongoDBObject.empty
 
-  def addFieldWith(writeConcern: WriteConcern, fieldName: String, defaultValue: String = "") = updateWith(writeConcern,
-    allFields, update("$set" -> field(fieldName, defaultValue)), false, true)
+  def addFieldWith(writeConcern: WriteConcern, fieldName: String, defaultValue: String = "") = updateWith(
+    writeConcern,
+    allFields, update("$set" -> field(fieldName, defaultValue)), false, true
+  )
 
-  def removeFieldWith(writeConcern: WriteConcern, fieldName: String, defaultValue: String = "") = updateWith(writeConcern,
-    allFields, update("$unset" -> field(fieldName, defaultValue)), false, true)
+  def removeFieldWith(writeConcern: WriteConcern, fieldName: String, defaultValue: String = "") = updateWith(
+    writeConcern,
+    allFields, update("$unset" -> field(fieldName, defaultValue)), false, true
+  )
 
   def field(fieldName: String, defaultValue: String = "") = values(fieldName -> defaultValue)
 
-  def addField(fieldName: String, defaultValue: String = "") = safeUpdate(allFields,
-    update("$set" -> field(fieldName, defaultValue)), false, true)
+  def addField(fieldName: String, defaultValue: String = "") = safeUpdate(
+    allFields,
+    update("$set" -> field(fieldName, defaultValue)), false, true
+  )
 
-  def removeField(fieldName: String, defaultValue: String = "") = safeUpdate(allFields,
-    update("$unset" -> field(fieldName, defaultValue)), false, true)
+  def removeField(fieldName: String, defaultValue: String = "") = safeUpdate(
+    allFields,
+    update("$unset" -> field(fieldName, defaultValue)), false, true
+  )
 
   def findOne(filter: DBObject) = collection.findOne(filter)
 
@@ -125,8 +133,8 @@ abstract class SimpleMongoRepository[A <: CaseClass](implicit m: Manifest[A]) ex
 
   @inline private final def bulkInsert(obj: List[A], writeConcern: WriteConcern) = {
     implicit val w = writeConcern
-    collection.insert(obj :_* )
-    
+    collection.insert(obj: _*)
+
     val query = domainList2MongoObj(obj)
     query.map(grater[A].asObject(_))
   }

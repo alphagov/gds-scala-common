@@ -5,17 +5,16 @@ import org.apache.http.client.methods._
 import org.apache.http.message.BasicNameValuePair
 import org.apache.http.client.entity.UrlEncodedFormEntity
 import scala.collection.JavaConversions._
-import org.apache.http.{HttpResponse, HttpEntityEnclosingRequest}
+import org.apache.http.{ HttpResponse, HttpEntityEnclosingRequest }
 import org.apache.http.params.BasicHttpParams
 import org.apache.http.cookie.Cookie
 import org.apache.http.impl.cookie.BasicClientCookie
 import java.util.Date
-import org.apache.http.client.params.{CookiePolicy, HttpClientParams}
-import org.apache.http.impl.client.{BasicCookieStore, DefaultHttpClient}
+import org.apache.http.client.params.{ CookiePolicy, HttpClientParams }
+import org.apache.http.impl.client.{ BasicCookieStore, DefaultHttpClient }
 import uk.gov.gds.common.logging.Logging
 
-
-trait HttpTestInterface extends Logging  {
+trait HttpTestInterface extends Logging {
   private type PutOrPost = HttpEntityEnclosingRequest with HttpUriRequest
 
   protected val cookieStore = new BasicCookieStore

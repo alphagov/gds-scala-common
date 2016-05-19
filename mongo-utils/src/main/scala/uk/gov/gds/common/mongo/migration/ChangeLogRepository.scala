@@ -5,8 +5,8 @@ import uk.gov.gds.common.logging.Logging
 import uk.gov.gds.common.mongo.MongoDatabaseManager
 
 abstract class ChangeLogRepository(databaseManager: MongoDatabaseManager)
-  extends IdentityBasedMongoRepository[ChangeScriptAudit]
-  with Logging {
+    extends IdentityBasedMongoRepository[ChangeScriptAudit]
+    with Logging {
 
   def databaseChangeScripts: List[ChangeScript]
 
@@ -42,14 +42,14 @@ abstract class ChangeLogRepository(databaseManager: MongoDatabaseManager)
         try {
           changeScript.applyToDatabase()
           safeInsert(SuccessfulChangeScriptAudit(changeScript))
-        }
-        catch {
+        } catch {
           case e: Exception =>
             safeInsert(FailedChangeScriptAudit(changeScript))
             logger.error("Change script failed to apply " + changeScript.shortName, e)
 
             throw new ChangeScriptFailedException(
-              "Change script failed to apply " + changeScript.shortName + " [" + e.getMessage + "]", e)
+              "Change script failed to apply " + changeScript.shortName + " [" + e.getMessage + "]", e
+            )
         }
       }
     }

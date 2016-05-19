@@ -1,6 +1,6 @@
 package uk.gov.gds.common.http
 
-import java.net.{URLEncoder, URLDecoder}
+import java.net.{ URLEncoder, URLDecoder }
 
 trait UrlEncoding {
 

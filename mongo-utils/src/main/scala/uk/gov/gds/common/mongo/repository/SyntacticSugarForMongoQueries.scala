@@ -1,6 +1,6 @@
 package uk.gov.gds.common.mongo.repository
 
-import com.mongodb.casbah.commons.MongoDBObject.{newBuilder => build}
+import com.mongodb.casbah.commons.MongoDBObject.{ newBuilder => build }
 import org.bson.types.ObjectId
 
 sealed abstract class Order(val order: Int)
@@ -26,8 +26,6 @@ sealed abstract class Duplicate(val duplicate: Boolean)
 case object Drop extends Duplicate(true)
 
 case object Keep extends Duplicate(false)
-
-
 
 trait SyntacticSugarForMongoQueries {
   self =>

@@ -6,7 +6,7 @@ import org.joda.time.DateTime
 import com.mongodb.casbah.Imports._
 
 abstract class TimestampBasedMongoRepository[A <: CaseClass with HasTimestamp](implicit m: Manifest[A])
-  extends SimpleMongoRepository[A] {
+    extends SimpleMongoRepository[A] {
 
   protected val databaseTimeStampProperty: String
 

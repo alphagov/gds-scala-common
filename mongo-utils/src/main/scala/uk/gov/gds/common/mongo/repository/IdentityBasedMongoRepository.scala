@@ -5,7 +5,7 @@ import uk.gov.gds.common.model.HasIdentity
 import com.mongodb.WriteConcern
 
 abstract class IdentityBasedMongoRepository[A <: CaseClass with HasIdentity](implicit m: Manifest[A])
-  extends SimpleMongoRepository[A] {
+    extends SimpleMongoRepository[A] {
 
   protected val databaseIdProperty: String
 

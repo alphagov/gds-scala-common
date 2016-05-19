@@ -5,7 +5,7 @@ import uk.gov.gds.common.logging.Logging
 import org.bson.types.ObjectId
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
-import com.fasterxml.jackson.databind.{JsonSerializer => JacksonJsonSerializer}
+import com.fasterxml.jackson.databind.{ JsonSerializer => JacksonJsonSerializer }
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.JsonDeserializer
@@ -15,7 +15,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.core.Version
 import com.fasterxml.jackson.datatype.joda.JodaModule
 import com.fasterxml.jackson.core.`type`.TypeReference
-import java.lang.reflect.{Type, ParameterizedType}
+import java.lang.reflect.{ Type, ParameterizedType }
 import com.fasterxml.jackson.databind.DeserializationFeature
 
 object MongoJsonSerializer extends Logging {
@@ -38,7 +38,7 @@ object MongoJsonSerializer extends Logging {
       throw e
   }
 
-  def fromJson[A](json: String)(implicit m: Manifest[A]):A = try {
+  def fromJson[A](json: String)(implicit m: Manifest[A]): A = try {
     mapper.readValue(json, typeReference[A])
   } catch {
     case e: Exception =>
@@ -49,9 +49,9 @@ object MongoJsonSerializer extends Logging {
   private[this] def typeReference[T: Manifest] = new TypeReference[T] {
     override def getType = typeFromManifest(manifest[T])
   }
-  
+
   private[this] def typeFromManifest(m: Manifest[_]): Type = {
-    if (m.typeArguments.isEmpty) {m.erasure}
+    if (m.typeArguments.isEmpty) { m.erasure }
     else {
       new ParameterizedType {
         def getRawType = m.erasure
@@ -62,7 +62,7 @@ object MongoJsonSerializer extends Logging {
       }
     }
   }
-  
+
   protected def addCustomBehaviour(module: SimpleModule) {
     module.addSerializer(classOf[ObjectId], new ObjectIdSerializer())
     module.addDeserializer[ObjectId](classOf[ObjectId], new ObjectIdDeserializer())

@@ -1,6 +1,6 @@
 package uk.gov.gds.common.testutil
 
-import org.scalatest.{BeforeAndAfterEach, Suite}
+import org.scalatest.{ BeforeAndAfterEach, Suite }
 
 import uk.gov.gds.common.logging.Logging
 import uk.gov.gds.common.mongo.MongoDatabaseManager
@@ -20,8 +20,7 @@ trait MongoDatabaseBackedTest extends BeforeAndAfterEach with Logging {
   override protected def afterEach() {
     try {
       super.afterEach()
-    }
-    finally {
+    } finally {
       logger.warn("Unlocking after Test " + super.toString)
       IntegrationTestMutex.unlock()
     }

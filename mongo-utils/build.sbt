@@ -14,7 +14,7 @@ libraryDependencies ++= Seq(
         "org.scalatest" % "scalatest_2.10" % "2.0.M5b" % "compile", //needed for test util base classes
         "joda-time" % "joda-time" % "2.1",
         "org.joda" % "joda-convert" % "1.2",
-        "com.novus" %% "salat-core" % "1.9.2-SNAPSHOT",
+        "com.novus" %% "salat" % "1.9.9",
         "org.apache.httpcomponents" % "httpclient" % "4.1.2",
         "jmimemagic" % "jmimemagic" % "0.1.1",
         "com.google.guava" % "guava" % "13.0",

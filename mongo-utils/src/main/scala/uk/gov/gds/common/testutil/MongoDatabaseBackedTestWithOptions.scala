@@ -1,9 +1,8 @@
 package uk.gov.gds.common.testutil
 
-import org.scalatest.{BeforeAndAfterEach, Suite, BeforeAndAfterAll}
+import org.scalatest.{ BeforeAndAfterEach, Suite, BeforeAndAfterAll }
 import uk.gov.gds.common.logging.Logging
 import uk.gov.gds.common.mongo.MongoDatabaseManager
-
 
 trait MongoDatabaseBackedTestWithOptions extends BeforeAndAfterAll with BeforeAndAfterEach with Logging {
   self: BeforeAndAfterAll with BeforeAndAfterEach with Suite =>

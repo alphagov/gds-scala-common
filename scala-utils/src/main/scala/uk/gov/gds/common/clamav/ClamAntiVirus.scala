@@ -3,12 +3,14 @@ package uk.gov.gds.common.clamav
 import java.io._
 import uk.gov.gds.common.logging.Logging
 import net.sf.jmimemagic.Magic
-import java.net.{InetSocketAddress, Socket}
+import java.net.{ InetSocketAddress, Socket }
 
-class ClamAntiVirus (streamCopyFunction: (InputStream) => Unit = DevNull.nullStream(_),
-                      virusDetectedFunction: => Unit = (),
-                      allowedMimeTypes: Set[String])
-  extends ClamAvConfig with Logging{
+class ClamAntiVirus(
+  streamCopyFunction: (InputStream) => Unit = DevNull.nullStream(_),
+  virusDetectedFunction: => Unit = (),
+  allowedMimeTypes: Set[String]
+)
+    extends ClamAvConfig with Logging {
 
   private val copyInputStream = new PipedInputStream()
   private val copyOutputStream = new PipedOutputStream(copyInputStream)
@@ -50,8 +52,7 @@ class ClamAntiVirus (streamCopyFunction: (InputStream) => Unit = DevNull.nullStr
       } else {
         streamCopyThread.join()
       }
-    }
-    finally {
+    } finally {
       terminate
     }
   }
@@ -62,8 +63,7 @@ class ClamAntiVirus (streamCopyFunction: (InputStream) => Unit = DevNull.nullStr
       copyOutputStream.close()
       socket.close()
       toClam.close()
-    }
-    catch {
+    } catch {
       case e: IOException =>
         logger.warn("Error closing socket to clamd", e)
     }
@@ -94,9 +94,10 @@ class ClamAntiVirus (streamCopyFunction: (InputStream) => Unit = DevNull.nullStr
   private def responseFromClamd() = {
     val response = new String(
       Iterator.continually(fromClam.read)
-        .takeWhile(_ != -1)
-        .map(_.toByte)
-        .toArray)
+      .takeWhile(_ != -1)
+      .map(_.toByte)
+      .toArray
+    )
 
     logger.info("Response from clamd: " + response)
     response.trim()
@@ -126,6 +127,6 @@ private object DevNull {
     Iterator.continually(inputStream.read())
       .takeWhile(_ != -1)
       .foreach {
-      b => // no-op. We just throw the bytes away
-    }
+        b => // no-op. We just throw the bytes away
+      }
 }

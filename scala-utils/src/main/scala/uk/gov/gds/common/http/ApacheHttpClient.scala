@@ -2,13 +2,13 @@ package uk.gov.gds.common.http
 
 import org.apache.http.conn.scheme.SchemeRegistry
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager
-import org.apache.http.client.methods.{HttpRequestBase, HttpGet, HttpPost, HttpUriRequest}
+import org.apache.http.client.methods.{ HttpRequestBase, HttpGet, HttpPost, HttpUriRequest }
 import org.apache.http.entity.StringEntity
 import org.apache.http.client.entity.UrlEncodedFormEntity
-import org.apache.http.message.{BasicHeader, BasicNameValuePair}
-import org.apache.http.util.{CharArrayBuffer, EntityUtils}
-import org.apache.http.impl.client.{DefaultHttpClient, DefaultHttpRequestRetryHandler}
-import org.apache.http.params.{BasicHttpParams, HttpConnectionParams}
+import org.apache.http.message.{ BasicHeader, BasicNameValuePair }
+import org.apache.http.util.{ CharArrayBuffer, EntityUtils }
+import org.apache.http.impl.client.{ DefaultHttpClient, DefaultHttpRequestRetryHandler }
+import org.apache.http.params.{ BasicHttpParams, HttpConnectionParams }
 import org.apache.http.client.params.HttpClientParams
 import org.apache.http.conn.scheme.Scheme
 import org.apache.http.conn.scheme.PlainSocketFactory
@@ -32,14 +32,12 @@ abstract class ApacheHttpClient extends UrlEncoding with Logging {
 
   startupConnectionCleanerThread()
 
-
   def get(path: String, params: Map[String, Any] = Map.empty) = {
     execute(new HttpGet(targetUrl(path, paramsToUrlParams(params))))
   }
 
   def getWithBearerToken(path: String, params: Map[String, Any] = Map.empty, token: String) =
     execute(setAuthorizationHeader(new HttpGet(targetUrl(path, paramsToUrlParams(params))), token))
-
 
   def getOptional(path: String, params: Map[String, Any] = Map.empty) = {
     executeOptional(new HttpGet(targetUrl(path, paramsToUrlParams(params))))
@@ -133,7 +131,7 @@ abstract class ApacheHttpClient extends UrlEncoding with Logging {
     case (n, v) => v match {
       case Some(value) => addParam(n, value.toString)
       case _ => addParam(n, v.toString)
-      }
+    }
 
   }.mkString("&")
 

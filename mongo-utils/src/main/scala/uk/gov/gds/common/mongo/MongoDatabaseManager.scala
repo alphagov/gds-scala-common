@@ -139,15 +139,16 @@ abstract class MongoDatabaseManager extends Logging {
             logger.error("Change script failed to apply " + changeScript.shortName, e)
 
             throw new ChangeScriptFailedException(
-              "Change script failed to apply " + changeScript.shortName + " [" + e.getMessage + "]", e)
+              "Change script failed to apply " + changeScript.shortName + " [" + e.getMessage + "]", e
+            )
         }
       }
     }
   }
 
   class ChangeLogRepository(databaseManager: MongoDatabaseManager)
-    extends IdentityBasedMongoRepository[ChangeScriptAudit]
-    with Logging {
+      extends IdentityBasedMongoRepository[ChangeScriptAudit]
+      with Logging {
 
     protected val collection = databaseManager("changelog")
     protected val databaseIdProperty = "name"

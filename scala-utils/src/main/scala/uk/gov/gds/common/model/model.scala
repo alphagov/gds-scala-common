@@ -4,7 +4,6 @@ package uk.gov.gds.common.model
 // TODO: Standardise on one type of address. There should not be an Address and a GovUkAddress
 // TODO: kill the ERO class, we're not using it
 
-
 case class OpcsId(value: String)
 
 object OpcsId {
@@ -14,15 +13,17 @@ object OpcsId {
   def isValid(value: String) = value.matches(opcsIdRegex.toString())
 }
 
-case class Address(lineOne: String = "",
-                   lineTwo: String = "",
-                   lineThree: String = "",
-                   lineFour: String = "",
-                   lineFive: String = "",
-                   city: String = "",
-                   postcode: String = "",
-                   county: String = "",
-                   uprn: Option[String] = None) {
+case class Address(
+  lineOne: String = "",
+    lineTwo: String = "",
+    lineThree: String = "",
+    lineFour: String = "",
+    lineFive: String = "",
+    city: String = "",
+    postcode: String = "",
+    county: String = "",
+    uprn: Option[String] = None
+) {
 
   def shortString = if (lineOne.length() > 0)
     lineOne + " " + postcode
