@@ -63,7 +63,7 @@ abstract class MongoDatabaseManager extends Logging {
     database.slaveOk()
   } else {
     logger.info("Not Setting database to slaveOk mode. Will only read & write from master")
-    database.underlying.setOptions(database.getOptions() & (~Bytes.QUERYOPTION_SLAVEOK))
+    database.underlying.setOptions(database.getOptions & (~Bytes.QUERYOPTION_SLAVEOK))
   }
 
   protected val repositoriesToInitialiseOnStartup: List[MongoRepositoryBase[_]]

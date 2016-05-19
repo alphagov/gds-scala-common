@@ -2,7 +2,7 @@ organization := "uk.gov.gds"
 
 name := "gds-scala-utils"
 
-version := "0.7.6-SNAPSHOT"
+version := "0.7.7-SNAPSHOT"
 
 scalacOptions += "-deprecation"
 
@@ -17,7 +17,7 @@ libraryDependencies ++= Seq(
         "org.apache.httpcomponents" % "httpclient" % "4.1.2",
         "jmimemagic" % "jmimemagic" % "0.1.1",
         "com.google.guava" % "guava" % "13.0",
-	    "com.google.code.findbugs" % "jsr305" % "1.3.+",
+        "com.google.code.findbugs" % "jsr305" % "3.0.1",
         "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.2.3",
         "com.fasterxml.jackson.datatype" % "jackson-datatype-joda" % "2.1.1",
         "org.scala-lang" % "scala-reflect" % "2.10.0"

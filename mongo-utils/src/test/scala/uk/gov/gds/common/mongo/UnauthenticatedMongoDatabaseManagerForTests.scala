@@ -8,7 +8,7 @@ import com.mongodb.Bytes
 object UnauthenticatedMongoDatabaseManagerForTests extends MongoDatabaseManager {
 
   database.setWriteConcern(WriteConcern.MAJORITY)
-  database.underlying.setOptions(database.getOptions() & (~Bytes.QUERYOPTION_SLAVEOK))
+  database.underlying.setOptions(database.getOptions & (~Bytes.QUERYOPTION_SLAVEOK))
 
   protected val repositoriesToInitialiseOnStartup = List(TestAuditEventRepository)
 
