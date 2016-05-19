@@ -4,7 +4,7 @@ import org.scalatest.FunSuite
 import org.scalatest.matchers.ShouldMatchers
 import MongoJsonSerializer._
 import org.bson.types.ObjectId
-import org.joda.time.{DateTimeZone, DateTime}
+import org.joda.time.{ DateTimeZone, DateTime }
 
 case class TestSerialization(stringField: String = "", arrayField: List[String] = Nil, mapField: Map[String, Int] = Map.empty)
 
@@ -22,7 +22,7 @@ class MongoJsonSerializerTests extends FunSuite with ShouldMatchers {
     val json = toJson(test)
 
     json should include(testObjectId.toString)
-    json should include( """{"id":"""" + testObjectId.toString + """"}""")
+    json should include("""{"id":"""" + testObjectId.toString + """"}""")
   }
 
   test("Should be able to seralise an option mongo objectID") {
@@ -32,12 +32,12 @@ class MongoJsonSerializerTests extends FunSuite with ShouldMatchers {
     val json = toJson(test)
 
     json should include(testObjectId.toString)
-    json should include( """{"id":"""" + testObjectId.toString + """"}""")
+    json should include("""{"id":"""" + testObjectId.toString + """"}""")
   }
 
   test("Should be able to deserialise a mongo id") {
     val testObjectId = new ObjectId
-    val deserialised = fromJson[MongoSerialisation]( """{"id":"""" + testObjectId.toString + """"}""")
+    val deserialised = fromJson[MongoSerialisation]("""{"id":"""" + testObjectId.toString + """"}""")
     deserialised.id should be(testObjectId)
   }
 
@@ -47,12 +47,12 @@ class MongoJsonSerializerTests extends FunSuite with ShouldMatchers {
     val json = toJson(test)
 
     json should include(testDate.toString)
-    json should be( """{"date":"""" + testDate.toString() + """"}""")
+    json should be("""{"date":"""" + testDate.toString() + """"}""")
   }
 
   test("Should be able to deserialise a date") {
     val testDate = new DateTime(DateTimeZone.UTC)
-    val deserialised = fromJson[DateSerialisation]( """{"date":"""" + testDate.toString() + """"}""")
+    val deserialised = fromJson[DateSerialisation]("""{"date":"""" + testDate.toString() + """"}""")
     deserialised.date.toString() should be(testDate.toString())
   }
 

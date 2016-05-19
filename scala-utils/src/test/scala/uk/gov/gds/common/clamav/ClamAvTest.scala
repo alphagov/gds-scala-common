@@ -2,7 +2,7 @@ package uk.gov.gds.common.clamav
 
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.FunSuite
-import java.io.{ByteArrayOutputStream, InputStream}
+import java.io.{ ByteArrayOutputStream, InputStream }
 import uk.gov.gds.common.logging.Logging
 
 class ClamAvTest extends FunSuite with ShouldMatchers with Logging {
@@ -18,8 +18,7 @@ class ClamAvTest extends FunSuite with ShouldMatchers with Logging {
     try {
       clamAv.sendBytesToClamd(bytes)
       clamAv.checkForVirus()
-    }
-    finally {
+    } finally {
       clamAv.terminate()
     }
   }
@@ -33,8 +32,7 @@ class ClamAvTest extends FunSuite with ShouldMatchers with Logging {
         clamAv.sendBytesToClamd(bytes)
         clamAv.checkForVirus()
       }
-    }
-    finally {
+    } finally {
       clamAv.terminate()
     }
   }
@@ -46,8 +44,7 @@ class ClamAvTest extends FunSuite with ShouldMatchers with Logging {
     try {
       clamAv.sendBytesToClamd(getBytes(payloadSize = 10000))
       clamAv.checkForVirus()
-    }
-    finally {
+    } finally {
       clamAv.terminate()
     }
   }
@@ -59,8 +56,7 @@ class ClamAvTest extends FunSuite with ShouldMatchers with Logging {
       clamAv.sendBytesToClamd(getBytes(payloadSize = 1000))
       clamAv.sendBytesToClamd(getBytes(payloadSize = 1000))
       clamAv.checkForVirus()
-    }
-    finally {
+    } finally {
       clamAv.terminate()
     }
   }
@@ -73,8 +69,7 @@ class ClamAvTest extends FunSuite with ShouldMatchers with Logging {
         clamAv.sendBytesToClamd(getBytes(shouldInsertVirusAtPosition = Some(0)))
         clamAv.checkForVirus()
       }
-    }
-    finally {
+    } finally {
       clamAv.terminate()
     }
   }
@@ -93,8 +88,7 @@ class ClamAvTest extends FunSuite with ShouldMatchers with Logging {
         clamAv.sendBytesToClamd(getBytes(shouldInsertVirusAtPosition = Some(0)))
         clamAv.checkForVirus()
       }
-    }
-    finally {
+    } finally {
       clamAv.terminate()
     }
 
@@ -111,14 +105,15 @@ class ClamAvTest extends FunSuite with ShouldMatchers with Logging {
         Iterator.continually(inputStream.read())
           .takeWhile(_ != -1)
           .foreach {
-          byte =>
-            if (Thread.interrupted())
-              throw new InterruptedException()
+            byte =>
+              if (Thread.interrupted())
+                throw new InterruptedException()
 
-            outputStream.write(byte)
-            outputStream.flush()
-        }
-    })
+              outputStream.write(byte)
+              outputStream.flush()
+          }
+    }
+    )
 
     try {
       val payload = getBytes(payloadSize = 1000)
@@ -126,8 +121,7 @@ class ClamAvTest extends FunSuite with ShouldMatchers with Logging {
       clamav.checkForVirus()
 
       outputStream.toByteArray should be(payload)
-    }
-    finally {
+    } finally {
       outputStream.close()
       clamav.terminate()
     }
@@ -158,8 +152,10 @@ class ClamAvTest extends FunSuite with ShouldMatchers with Logging {
     payload
   }
 
-  private def getBytes(payloadSize: Int = 0,
-                       shouldInsertVirusAtPosition: Option[Int] = None) =
+  private def getBytes(
+    payloadSize: Int = 0,
+    shouldInsertVirusAtPosition: Option[Int] = None
+  ) =
     getPayload(payloadSize, shouldInsertVirusAtPosition).getBytes()
 
   private def chunkOfFile(filename: String) = {

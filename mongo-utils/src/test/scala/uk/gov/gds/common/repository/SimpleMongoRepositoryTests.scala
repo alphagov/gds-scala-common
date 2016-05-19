@@ -11,9 +11,9 @@ import java.io.ByteArrayOutputStream
 import uk.gov.gds.common.mongo.UnauthenticatedMongoDatabaseManagerForTests
 
 class SimpleMongoRepositoryTests extends FunSuite
-with ShouldMatchers
-with MongoDatabaseBackedTest
-with SyntacticSugarForMongoQueries {
+    with ShouldMatchers
+    with MongoDatabaseBackedTest
+    with SyntacticSugarForMongoQueries {
 
   protected def databaseManager = SimpleTestDataManagerForTests
 
@@ -134,8 +134,7 @@ with SyntacticSugarForMongoQueries {
     caught.getMessage should include("E11000 duplicate key error index: gdsScalaCommonTest.testFindData.$value_1")
   }
 
-
-   test("Should be able to dump JSON to output stream") {
+  test("Should be able to dump JSON to output stream") {
     val id1 = SimpleTestDataRepository.safeInsert(SimpleTestData(key = 1, value = "update-test-1")).id.get
     val id2 = SimpleTestDataRepository.safeInsert(SimpleTestData(key = 2, value = "update-test-2")).id.get
     val os = new ByteArrayOutputStream
@@ -144,7 +143,7 @@ with SyntacticSugarForMongoQueries {
     				  |{"_id":{"$oid":"id2"},"key":2,"value":"update-test-2"}
                       |""".stripMargin.replace("id1", id1.toString()).replace("id2", id2.toString())
     val actual = new String(os.toByteArray())
-    actual should equal (expected)
+    actual should equal(expected)
   }
 
   test("Should be able to get an object not wrapped in an option When it exists in the database") {

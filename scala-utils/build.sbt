@@ -10,7 +10,7 @@ scalaVersion := "2.11.8"
 
 libraryDependencies ++= Seq(
         "javax.servlet" % "servlet-api" % "2.5" % "provided",
-        "org.scalatest" % "scalatest_2.10" % "2.0.M5b" % "test",
+        "org.scalatest" % "scalatest_2.11" % "2.2.6" % "test",
         "joda-time" % "joda-time" % "2.1",
         "org.joda" % "joda-convert" % "1.2",
         "org.slf4j" % "slf4j-api" % "1.6.6",
@@ -20,7 +20,7 @@ libraryDependencies ++= Seq(
         "com.google.code.findbugs" % "jsr305" % "3.0.1",
         "com.fasterxml.jackson.module" % "jackson-module-scala_2.11" % "2.7.3",
         "com.fasterxml.jackson.datatype" % "jackson-datatype-joda" % "2.1.1",
-        "org.scala-lang" % "scala-reflect" % "2.10.0",
+        "org.scala-lang" % "scala-reflect" % "2.11.8",
         "org.scala-lang.modules" %% "scala-xml" % "1.0.3"
     )
 

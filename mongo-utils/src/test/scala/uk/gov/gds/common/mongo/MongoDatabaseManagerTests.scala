@@ -6,10 +6,10 @@ import uk.gov.gds.common.testutil.MongoDatabaseBackedTest
 import org.scalatest.{ GivenWhenThen, FunSuite }
 
 class MongoDatabaseManagerTests
-  extends FunSuite
-  with ShouldMatchers
-  with GivenWhenThen
-  with MongoDatabaseBackedTest {
+    extends FunSuite
+    with ShouldMatchers
+    with GivenWhenThen
+    with MongoDatabaseBackedTest {
 
   protected def databaseManager = UnauthenticatedMongoDatabaseManagerForTests
 

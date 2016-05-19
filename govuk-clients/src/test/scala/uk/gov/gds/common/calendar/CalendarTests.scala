@@ -3,11 +3,11 @@ package uk.gov.gds.common.calendar
 import org.scalatest.FunSuite
 import org.scalatest.matchers.ShouldMatchers
 import uk.gov.gds.common.logging.Logging
-import org.joda.time.{LocalDateTime, DateTime, LocalDate}
+import org.joda.time.{ LocalDateTime, DateTime, LocalDate }
 
 class CalendarTests extends FunSuite
-with ShouldMatchers
-with Logging {
+    with ShouldMatchers
+    with Logging {
 
   test("2012-07-04 shouldn't be a holiday in England, but 2013-01-01 should be one in N.I.") {
     CalendarApiClient.isBankHoliday("england", LocalDate.parse("2012-07-04")) should be(false)

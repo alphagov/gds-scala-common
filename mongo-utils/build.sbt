@@ -11,7 +11,7 @@ scalaVersion := "2.11.8"
 libraryDependencies ++= Seq(
         "org.mongodb" %% "casbah" % "3.1.1",
         "javax.servlet" % "servlet-api" % "2.5" % "provided",
-        "org.scalatest" % "scalatest_2.10" % "2.0.M5b" % "compile", //needed for test util base classes
+        "org.scalatest" % "scalatest_2.11" % "2.2.6" % "compile", //needed for test util base classes
         "joda-time" % "joda-time" % "2.1",
         "org.joda" % "joda-convert" % "1.2",
         "com.novus" %% "salat" % "1.9.9",
@@ -20,7 +20,7 @@ libraryDependencies ++= Seq(
         "com.google.guava" % "guava" % "13.0",
         "com.google.code.findbugs" % "jsr305" % "3.0.1",
         "com.fasterxml.jackson.module" % "jackson-module-scala_2.11" % "2.7.3",
-        "org.scala-lang" % "scala-reflect" % "2.10.0"
+        "org.scala-lang" % "scala-reflect" % "2.11.8"
     )
 
 parallelExecution in Test := false

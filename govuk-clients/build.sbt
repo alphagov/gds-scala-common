@@ -10,7 +10,7 @@ scalaVersion := "2.11.8"
 
 libraryDependencies ++= Seq(
         "javax.servlet" % "servlet-api" % "2.5" % "provided",
-        "org.scalatest" % "scalatest_2.10" % "2.0.M5b" % "test",
+        "org.scalatest" % "scalatest_2.11" % "2.2.6" % "test",
         "joda-time" % "joda-time" % "2.1",
         "org.joda" % "joda-convert" % "1.2",
         "org.apache.httpcomponents" % "httpclient" % "4.1.2",

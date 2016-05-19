@@ -8,11 +8,11 @@ import org.joda.time.DateTime
 import uk.gov.gds.common.mongo.UnauthenticatedMongoDatabaseManagerForTests
 
 class AuditEventRepositoryTest
-  extends FunSuite
-  with GivenWhenThen
-  with ShouldMatchers
-  with MongoDatabaseBackedTest
-  with Logging {
+    extends FunSuite
+    with GivenWhenThen
+    with ShouldMatchers
+    with MongoDatabaseBackedTest
+    with Logging {
 
   protected def databaseManager = UnauthenticatedMongoDatabaseManagerForTests
 
@@ -20,7 +20,8 @@ class AuditEventRepositoryTest
     TestAuditEventRepository.audit(
       auditType = "test",
       tags = Map("tag" -> "value"),
-      detail = Map("foo" -> "bar"))
+      detail = Map("foo" -> "bar")
+    )
 
     val events = TestAuditEventRepository.all
     events.total should be(1)
@@ -79,10 +80,12 @@ class AuditEventRepositoryTest
     TestAuditEventRepository.testAudit(AuditEvent("bar", Map("tag" -> "1"), Map("test data" -> "older event"), timestamp = DateTime.parse("2012-12-03T12:03:00.000Z")))
     TestAuditEventRepository.testAudit(AuditEvent("foo", Map("tag" -> "1"), Map("test data" -> "older event"), timestamp = DateTime.parse("2012-12-03T12:04:00.000Z")))
 
-    val taggedEvents = TestAuditEventRepository.find("foo",
+    val taggedEvents = TestAuditEventRepository.find(
+      "foo",
       Map("tag" -> "1"),
       Some(DateTime.parse("2012-12-03T12:00:30.000Z")),
-      Some(DateTime.parse("2012-12-03T12:03:30.000Z")))
+      Some(DateTime.parse("2012-12-03T12:03:30.000Z"))
+    )
 
     taggedEvents.total should be(2)
     taggedEvents.pageOfData.head.auditType should be("foo")
@@ -100,5 +103,4 @@ class AuditEventRepositoryTest
     taggedEventOption.get.detail("test data") should be("recent event")
   }
 }
-
 

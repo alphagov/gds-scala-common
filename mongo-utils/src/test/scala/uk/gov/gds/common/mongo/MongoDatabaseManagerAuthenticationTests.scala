@@ -20,15 +20,15 @@ object AuthenticatedMongoDatabaseManagerForTests extends MongoDatabaseManager {
   protected override def databasePasssword = "secret"
 
   protected override def databaseName = "gdsScalaCommonAuthenticatedTest"
-    
+
   protected val repositoriesToInitialiseOnStartup = Nil
 }
 
 class MongoDatabaseManagerAuthenticationTests
-  extends FunSuite
-  with ShouldMatchers
-  with GivenWhenThen
-  with MongoDatabaseBackedTest {
+    extends FunSuite
+    with ShouldMatchers
+    with GivenWhenThen
+    with MongoDatabaseBackedTest {
 
   protected def databaseManager = AuthenticatedMongoDatabaseManagerForTests
 

@@ -5,18 +5,18 @@ import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.GivenWhenThen
 import uk.gov.gds.common.testutil.MongoDatabaseBackedTest
 import uk.gov.gds.common.pagination.PaginationSupport
-import uk.gov.gds.common.mongo.{MongoDatabaseManager, UnauthenticatedMongoDatabaseManagerForTests}
+import uk.gov.gds.common.mongo.{ MongoDatabaseManager, UnauthenticatedMongoDatabaseManagerForTests }
 import org.joda.time.DateTime
 import uk.gov.gds.common.mongo.repository._
 import uk.gov.gds.common.model.HasTimestamp
 
 class CursorTests
-  extends FunSuite
-  with ShouldMatchers
-  with GivenWhenThen
-  with MongoDatabaseBackedTest
-  with PaginationSupport
-  with SyntacticSugarForMongoQueries{
+    extends FunSuite
+    with ShouldMatchers
+    with GivenWhenThen
+    with MongoDatabaseBackedTest
+    with PaginationSupport
+    with SyntacticSugarForMongoQueries {
 
   protected def databaseManager = SimpleTestDataManagerForCursorTests
 
@@ -113,8 +113,7 @@ class CursorTests
       cursor.gotoNextPage
       cursor.pageOfData.size should be(10)
       cursor.hasNextPage should be(false)
-    }
-    catch {
+    } catch {
       case e: Exception => fail("Should not have thrown exception", e)
     }
   }
@@ -137,8 +136,7 @@ class CursorTests
       cursor.gotoNextPage
       cursor.pageOfData.size should be(defaultPageSize)
       cursor.hasNextPage should be(false)
-    }
-    catch {
+    } catch {
       case e: Exception => fail("Should not have thrown exception", e)
     }
   }
@@ -271,7 +269,7 @@ class CursorTests
   }
 
   test("we can retreive a cursor of data with a date based query - with order reveresed") {
-    
+
     Given("some test data that has a date component")
     TestDateDataRepository.createItems(5)
 
@@ -367,7 +365,7 @@ class CursorTests
 }
 
 object SimpleTestDataManagerForCursorTests extends MongoDatabaseManager {
-  protected val repositoriesToInitialiseOnStartup = List(TestDataRepository,TestDateDataRepository, Test2ColumnDateDataRepository)
+  protected val repositoriesToInitialiseOnStartup = List(TestDataRepository, TestDateDataRepository, Test2ColumnDateDataRepository)
 }
 
 private[repository] case class Data(key: Int, value: String)
@@ -393,7 +391,7 @@ private[repository] object TestDateDataRepository extends TimestampBasedMongoRep
   lazy val now = new DateTime
   val databaseTimeStampProperty = "dateOfBirth"
 
-  lazy val keys = List("1","2","3","4","5")
+  lazy val keys = List("1", "2", "3", "4", "5")
 
   def createItems(numberOfItems: Int) = 1.to(numberOfItems).map {
     i => safeInsert(DataWithTimestampField(name = i.toString, dateOfBirth = now.minusDays(i)))
@@ -406,10 +404,10 @@ private[repository] object Test2ColumnDateDataRepository extends TimestampBasedM
   lazy val now = new DateTime
   val databaseTimeStampProperty = "dateOfBirth"
 
-  lazy val keys = List("1","2","3","4","5")
+  lazy val keys = List("1", "2", "3", "4", "5")
 
   def createItemsWithTwoFilterColumns(numberOfItems: Int) = 1.to(numberOfItems).map {
-    i => safeInsert(DataWithTimestampFieldAndSecondColumn(name = i.toString, otherName = (i +10).toString, dateOfBirth = now.minusDays(i)))
+    i => safeInsert(DataWithTimestampFieldAndSecondColumn(name = i.toString, otherName = (i + 10).toString, dateOfBirth = now.minusDays(i)))
   }
 
 }
