@@ -16,7 +16,8 @@ libraryDependencies ++= Seq(
         "org.apache.httpcomponents" % "httpclient" % "4.1.2",
         "jmimemagic" % "jmimemagic" % "0.1.1",
         "com.google.guava" % "guava" % "13.0",
-        "com.google.code.findbugs" % "jsr305" % "3.0.1"
+        "com.google.code.findbugs" % "jsr305" % "3.0.1",
+        "org.slf4j" % "slf4j-simple" % "1.7.18"
     )
 
 parallelExecution in Test := false

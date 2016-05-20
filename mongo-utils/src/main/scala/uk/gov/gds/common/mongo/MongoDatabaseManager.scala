@@ -14,7 +14,7 @@ abstract class MongoDatabaseManager extends Logging {
     logger.info("Connecting to database: " + databaseName)
 
     try
-      getDatabaseClient.apply(databaseName)
+      mongoConnection(databaseName)
     catch {
       case e: Exception =>
         logger.error("Failure initialising & authenticating to mongoDB: " + e.getMessage(), e)
@@ -36,28 +36,21 @@ abstract class MongoDatabaseManager extends Logging {
     }
   }
 
-  protected val getDatabaseClient = {
-    /* authenticate if a username is set in the config file */
-    val server = new ServerAddress(databaseName, 27017)
-    if (shouldAuthenticate) {
-      logger.info("Attempting to authenticate as user:" + databaseUsername)
-      // TODO: check that this authentication method is correct
-      val credentials = MongoCredential.createCredential(databaseUsername, "localhost", databasePasssword.toCharArray)
-      MongoClient(server, List(credentials))
-    } else {
-      logger.info("No database authentication configured")
-      MongoClient(server)
-    }
-  }
-
   protected lazy val databaseHosts = {
     val databaseHostString = Config("mongo.database.hosts")
     logger.info("Mongo Database Hosts: " + databaseHostString)
     databaseHostString.split(",").toList
   }
 
-  private lazy val mongoConnection = MongoClient(databaseHosts.map(new ServerAddress(_)))
-
+  private lazy val mongoConnection = {
+    if (shouldAuthenticate) {
+      // TODO: check that this authentication method is correct
+      val credentials = MongoCredential.createPlainCredential(databaseUsername, "localhost", databasePasssword.toCharArray)
+      MongoClient(databaseHosts.map(new ServerAddress(_)), List(credentials))
+    } else {
+      MongoClient(databaseHosts.map(new ServerAddress(_)))
+    }
+  }
   if (MongoConfig.slaveOk) {
     logger.info("Setting database to slaveOk mode. Will read from slaves")
     database.setReadPreference(ReadPreference.Secondary)

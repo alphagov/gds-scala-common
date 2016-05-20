@@ -20,7 +20,8 @@ libraryDependencies ++= Seq(
         "com.google.guava" % "guava" % "13.0",
         "com.google.code.findbugs" % "jsr305" % "3.0.1",
         "com.fasterxml.jackson.module" % "jackson-module-scala_2.11" % "2.7.3",
-        "org.scala-lang" % "scala-reflect" % "2.11.8"
+        "org.scala-lang" % "scala-reflect" % "2.11.8",
+        "org.slf4j" % "slf4j-simple" % "1.7.18"
     )
 
 parallelExecution in Test := false

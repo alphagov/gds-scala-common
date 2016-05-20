@@ -12,7 +12,8 @@ libraryDependencies ++= Seq(
         "org.quartz-scheduler" % "quartz" % "2.1.5" % "compile",
         "com.typesafe.akka" %% "akka-actor" % "2.4.1" % "compile",
         "com.typesafe.akka" %% "akka-testkit" % "2.4.1" % "test",
-        "org.specs2" %% "specs2-core" % "3.0" % "test"
+        "org.specs2" %% "specs2-core" % "3.0" % "test",
+        "org.slf4j" % "slf4j-simple" % "1.7.18"
     )
 
 parallelExecution in Test := false

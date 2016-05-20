@@ -21,7 +21,8 @@ libraryDependencies ++= Seq(
         "com.fasterxml.jackson.module" % "jackson-module-scala_2.11" % "2.7.3",
         "com.fasterxml.jackson.datatype" % "jackson-datatype-joda" % "2.1.1",
         "org.scala-lang" % "scala-reflect" % "2.11.8",
-        "org.scala-lang.modules" %% "scala-xml" % "1.0.3"
+        "org.scala-lang.modules" %% "scala-xml" % "1.0.3",
+        "org.slf4j" % "slf4j-simple" % "1.7.18"
     )
 
 parallelExecution in Test := false
