@@ -1,10 +1,10 @@
 package uk.gov.gds.common.audit
 
-import uk.gov.gds.common.mongo.repository._
-import scala.Some
-import uk.gov.gds.common.repository.Cursor
+import com.mongodb.DuplicateKeyException
 import com.mongodb.casbah.commons.MongoDBObject
 import org.joda.time.DateTime
+import uk.gov.gds.common.mongo.repository._
+import uk.gov.gds.common.repository.Cursor
 
 abstract class AuditEventRepositoryBase extends SimpleMongoRepository[AuditEvent] {
 
@@ -20,7 +20,13 @@ abstract class AuditEventRepositoryBase extends SimpleMongoRepository[AuditEvent
 
   protected def audit(event: AuditEvent) {
     logger.info(event.toString)
-    unsafeInsert(event.copy(tags = event.tags + ("applicationName" -> applicationName)))
+    try {
+      unsafeInsert(event.copy(tags = event.tags + ("applicationName" -> applicationName)))
+    } catch {
+      case e: DuplicateKeyException =>
+        logger.warn("Duplicate key")
+        unSafeUpdate(MongoDBObject.empty, event.copy(tags = event.tags + ("applicationName" -> applicationName)))
+    }
   }
 
   override protected def createIndexes() {
@@ -28,10 +34,10 @@ abstract class AuditEventRepositoryBase extends SimpleMongoRepository[AuditEvent
 
     addIndex(
       index(
-      "auditType" -> Ascending,
-      "uniqueTagIds" -> Ascending,
-      "timestamp" -> Descending
-    ),
+        "auditType" -> Ascending,
+        "uniqueTagIds" -> Ascending,
+        "timestamp" -> Descending
+      ),
 
       unique = Unenforced,
       sparse = Complete

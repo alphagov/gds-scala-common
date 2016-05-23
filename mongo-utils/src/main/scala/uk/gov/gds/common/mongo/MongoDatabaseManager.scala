@@ -1,6 +1,6 @@
 package uk.gov.gds.common.mongo
 
-import com.mongodb.WriteConcern.{ NORMAL, SAFE }
+import com.mongodb.WriteConcern.{ UNACKNOWLEDGED, ACKNOWLEDGED }
 import com.mongodb.casbah._
 import com.mongodb.{ Bytes, ServerAddress, WriteConcern }
 import uk.gov.gds.common.config.Config
@@ -69,7 +69,7 @@ abstract class MongoDatabaseManager extends Logging {
 
   def collection(collectionName: String) = database(collectionName)
 
-  def initializeDatabase(writeConcern: WriteConcern = SAFE) {
+  def initializeDatabase(writeConcern: WriteConcern = ACKNOWLEDGED) {
     synchronized {
       withWriteConcern(writeConcern) {
         initialiseRepositories()
@@ -78,7 +78,7 @@ abstract class MongoDatabaseManager extends Logging {
     }
   }
 
-  def emptyDatabase(writeConcern: WriteConcern = NORMAL) {
+  def emptyDatabase(writeConcern: WriteConcern = UNACKNOWLEDGED) {
     synchronized {
       withWriteConcern(writeConcern) {
         repositoriesToInitialiseOnStartup.foreach(_.deleteAll())

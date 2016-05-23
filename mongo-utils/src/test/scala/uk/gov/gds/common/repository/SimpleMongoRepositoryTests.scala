@@ -61,7 +61,8 @@ class SimpleMongoRepositoryTests extends FunSuite
       SimpleTestDataRepository.safeInsert(SimpleTestData(key = 2, value = "test-2"))
     }
 
-    caught.getMessage should include("E11000 duplicate key error index: gdsScalaCommonTest.testFindData.$value_1")
+    caught.getMessage should include("E11000")
+    caught.getMessage should include("duplicate")
   }
 
   test("Should be able to save an object in a fire and forget manner - not waiting for errors") {
@@ -131,7 +132,8 @@ class SimpleMongoRepositoryTests extends FunSuite
     val caught = intercept[MongoException] {
       SimpleTestDataRepository.safeUpdate(where("key" -> 2), $set("value" -> "update-test-1"))
     }
-    caught.getMessage should include("E11000 duplicate key error index: gdsScalaCommonTest.testFindData.$value_1")
+    caught.getMessage should include("E11000")
+    caught.getMessage should include("duplicate")
   }
 
   test("Should be able to dump JSON to output stream") {
