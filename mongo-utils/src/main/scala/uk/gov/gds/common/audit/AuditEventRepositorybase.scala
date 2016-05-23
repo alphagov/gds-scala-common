@@ -1,6 +1,5 @@
 package uk.gov.gds.common.audit
 
-import com.mongodb.DuplicateKeyException
 import com.mongodb.casbah.commons.MongoDBObject
 import org.joda.time.DateTime
 import uk.gov.gds.common.mongo.repository._
@@ -20,13 +19,7 @@ abstract class AuditEventRepositoryBase extends SimpleMongoRepository[AuditEvent
 
   protected def audit(event: AuditEvent) {
     logger.info(event.toString)
-    try {
-      unsafeInsert(event.copy(tags = event.tags + ("applicationName" -> applicationName)))
-    } catch {
-      case e: DuplicateKeyException =>
-        logger.warn("Duplicate key")
-        unSafeUpdate(MongoDBObject.empty, event.copy(tags = event.tags + ("applicationName" -> applicationName)))
-    }
+    unsafeInsert(event.copy(tags = event.tags + ("applicationName" -> applicationName)))
   }
 
   override protected def createIndexes() {
@@ -88,14 +81,14 @@ abstract class AuditEventRepositoryBase extends SimpleMongoRepository[AuditEvent
   ) = {
     val builder = MongoDBObject.newBuilder
 
-    if (tags.size > 0)
+    if (tags.nonEmpty)
       builder += "uniqueTagIds" -> query("$all" -> buildTagList(tags))
 
-    if (!auditType.isEmpty)
+    if (auditType.isDefined)
       builder += "auditType" -> auditType.get
 
-    val timeRange = List(after.map(("$gte" -> _)), before.map(("$lte" -> _))).flatten
-    if (!timeRange.isEmpty)
+    val timeRange = List(after.map("$gte" -> _), before.map("$lte" -> _)).flatten
+    if (timeRange.nonEmpty)
       builder += ("timestamp" -> query(timeRange: _*))
 
     builder.result

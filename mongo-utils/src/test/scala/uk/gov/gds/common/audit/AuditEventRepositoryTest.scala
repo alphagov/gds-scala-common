@@ -1,11 +1,11 @@
 package uk.gov.gds.common.audit
 
-import org.scalatest.{ GivenWhenThen, FunSuite }
-import org.scalatest.matchers.ShouldMatchers
-import uk.gov.gds.common.testutil.MongoDatabaseBackedTest
-import uk.gov.gds.common.logging.Logging
 import org.joda.time.DateTime
+import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.{ FunSuite, GivenWhenThen }
+import uk.gov.gds.common.logging.Logging
 import uk.gov.gds.common.mongo.UnauthenticatedMongoDatabaseManagerForTests
+import uk.gov.gds.common.testutil.MongoDatabaseBackedTest
 
 class AuditEventRepositoryTest
     extends FunSuite
@@ -96,11 +96,17 @@ class AuditEventRepositoryTest
     TestAuditEventRepository.audit("foo", Map("tag" -> "1"), Map("test data" -> "recent event"))
     TestAuditEventRepository.audit("bar", Map("anothertag" -> "2"))
 
+    val taggedEvents = TestAuditEventRepository.find(
+      "foo",
+      Map("tag" -> "1")
+    )
+
+    taggedEvents.total should be(2)
+
     val taggedEventOption = TestAuditEventRepository.findOne("foo", Map("tag" -> "1"))
 
-    taggedEventOption should not be (None)
+    taggedEventOption should not be None
     taggedEventOption.get.auditType should be("foo")
-    taggedEventOption.get.detail("test data") should be("recent event")
   }
 }
 

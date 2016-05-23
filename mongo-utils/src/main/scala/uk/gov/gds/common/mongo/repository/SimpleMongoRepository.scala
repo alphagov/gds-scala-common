@@ -2,7 +2,7 @@ package uk.gov.gds.common.mongo.repository
 
 import com.novus.salat._
 import com.mongodb.casbah.Imports._
-import com.mongodb.WriteConcern
+import com.mongodb.{ MongoServerException, WriteConcern }
 import uk.gov.gds.common.repository.Cursor
 
 abstract class SimpleMongoRepository[A <: CaseClass](implicit m: Manifest[A]) extends MongoRepositoryBase[A] {
@@ -48,7 +48,13 @@ abstract class SimpleMongoRepository[A <: CaseClass](implicit m: Manifest[A]) ex
 
   def safeInsert(obj: A) = insertWith(WriteConcern.MAJORITY, obj)
 
-  def unsafeInsert(obj: A) = insertWith(WriteConcern.UNACKNOWLEDGED, obj)
+  def unsafeInsert(obj: A) = try {
+    insertWith(WriteConcern.UNACKNOWLEDGED, obj)
+  } catch {
+    case e: MongoServerException =>
+      logger.warn("Error thrown by unsafe insert: %s".format(obj.toString), e)
+      obj
+  }
 
   def safeUpdate(query: DBObject, obj: DBObject, upsert: Boolean = true, multi: Boolean = false) =
     updateWith(WriteConcern.MAJORITY, query, obj, upsert, multi)
@@ -98,24 +104,24 @@ abstract class SimpleMongoRepository[A <: CaseClass](implicit m: Manifest[A]) ex
 
   def addFieldWith(writeConcern: WriteConcern, fieldName: String, defaultValue: String = "") = updateWith(
     writeConcern,
-    allFields, update("$set" -> field(fieldName, defaultValue)), false, true
+    allFields, update("$set" -> field(fieldName, defaultValue)), upsert = false, multi = true
   )
 
   def removeFieldWith(writeConcern: WriteConcern, fieldName: String, defaultValue: String = "") = updateWith(
     writeConcern,
-    allFields, update("$unset" -> field(fieldName, defaultValue)), false, true
+    allFields, update("$unset" -> field(fieldName, defaultValue)), upsert = false, multi = true
   )
 
   def field(fieldName: String, defaultValue: String = "") = values(fieldName -> defaultValue)
 
   def addField(fieldName: String, defaultValue: String = "") = safeUpdate(
     allFields,
-    update("$set" -> field(fieldName, defaultValue)), false, true
+    update("$set" -> field(fieldName, defaultValue)), upsert = false, multi = true
   )
 
   def removeField(fieldName: String, defaultValue: String = "") = safeUpdate(
     allFields,
-    update("$unset" -> field(fieldName, defaultValue)), false, true
+    update("$unset" -> field(fieldName, defaultValue)), upsert = false, multi = true
   )
 
   def findOne(filter: DBObject) = collection.findOne(filter)
