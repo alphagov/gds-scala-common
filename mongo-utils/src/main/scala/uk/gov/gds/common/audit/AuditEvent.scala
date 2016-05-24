@@ -4,7 +4,7 @@ import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 
 case class AuditEvent(
-  auditType: String,
+    auditType: String,
     uniqueTagIds: List[String],
     tags: Map[String, String],
     detail: Map[String, String],

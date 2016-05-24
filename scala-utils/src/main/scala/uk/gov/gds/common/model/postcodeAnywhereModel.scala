@@ -3,7 +3,7 @@ package uk.gov.gds.common.model
 case class PAList(Items: List[PAAddress])
 
 case class PAAddress(
-  Udprn: Int,
+    Udprn: Int,
     Company: String,
     Department: String,
     Line1: String,

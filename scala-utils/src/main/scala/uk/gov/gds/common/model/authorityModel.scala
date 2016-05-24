@@ -39,7 +39,7 @@ object Authority {
 }
 
 case class LocalAuthority(
-  name: String = "",
+    name: String = "",
     ero: Ero = Ero(),
     opcsId: String,
     gssId: String = ""
@@ -54,7 +54,7 @@ object LocalAuthority {
 case class Ero(address: Option[GovUkAddress] = None, telephoneNumber: String = "")
 
 case class GovUkAddress(
-  lineOne: String = "",
+    lineOne: String = "",
     lineTwo: String = "",
     lineThree: String = "",
     lineFour: String = "",

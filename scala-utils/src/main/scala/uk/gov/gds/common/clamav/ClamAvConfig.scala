@@ -43,8 +43,8 @@ trait ClamAvConfig {
   /**
    * Clam socket commands
    */
-  val instream = "zINSTREAM\0"
-  val ping = "zPING\0"
+  val instream = "zINSTREAM\u0000"
+  val ping = "zPING\u0000"
   val status = "nSTATS\n"
 
   // OK response from clam

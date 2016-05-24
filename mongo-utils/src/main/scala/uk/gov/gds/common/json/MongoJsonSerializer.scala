@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 
 object MongoJsonSerializer extends Logging {
 
-  val module = new SimpleModule("CustomSerializers", new Version(1, 0, 0, ""))
+  val module = new SimpleModule("CustomSerializers", new Version(1, 0, 0, "", "", ""))
   val mapper = new ObjectMapper()
   mapper.registerModule(DefaultScalaModule)
   mapper.registerModule(new JodaModule())

@@ -9,7 +9,7 @@ scalacOptions += "-deprecation"
 scalaVersion := "2.11.8"
 
 libraryDependencies ++= Seq(
-        "org.quartz-scheduler" % "quartz" % "2.1.5" % "compile",
+        "org.quartz-scheduler" % "quartz" % "2.2.1" % "compile",
         "com.typesafe.akka" %% "akka-actor" % "2.4.1" % "compile",
         "com.typesafe.akka" %% "akka-testkit" % "2.4.1" % "test",
         "org.specs2" %% "specs2-core" % "3.0" % "test",

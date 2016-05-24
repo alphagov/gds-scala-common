@@ -3,6 +3,8 @@ package uk.gov.gds.common.mongo.repository
 import com.mongodb.casbah.commons.MongoDBObject.{ newBuilder => build }
 import org.bson.types.ObjectId
 
+import scala.language.implicitConversions
+
 sealed abstract class Order(val order: Int)
 
 case object Ascending extends Order(1)

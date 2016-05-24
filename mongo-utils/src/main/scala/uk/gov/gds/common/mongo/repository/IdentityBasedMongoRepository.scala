@@ -13,7 +13,7 @@ abstract class IdentityBasedMongoRepository[A <: CaseClass with HasIdentity](imp
 
   override def load(ids: List[String]) = SimpleMongoCursor(where(databaseIdProperty -> in(ids)))
 
-  override def unsafeDelete(id: String) = collection.remove(where(databaseIdProperty -> id), WriteConcern.NORMAL)
+  override def unsafeDelete(id: String) = collection.remove(where(databaseIdProperty -> id), WriteConcern.UNACKNOWLEDGED)
 
   override def safeDelete(id: String) = collection.remove(where(databaseIdProperty -> id), WriteConcern.MAJORITY)
 

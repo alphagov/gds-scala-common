@@ -14,7 +14,7 @@ object OpcsId {
 }
 
 case class Address(
-  lineOne: String = "",
+    lineOne: String = "",
     lineTwo: String = "",
     lineThree: String = "",
     lineFour: String = "",

@@ -1,15 +1,16 @@
 package uk.gov.gds.common.mongo.repository
 
-import com.novus.salat._
-import com.novus.salat.global.NoTypeHints
+import java.io.OutputStream
+
 import com.mongodb.casbah.Imports._
-import com.mongodb.casbah.commons.conversions.scala.RegisterJodaTimeConversionHelpers
 import com.mongodb.casbah.MongoCollection
+import com.mongodb.casbah.commons.conversions.scala.RegisterJodaTimeConversionHelpers
+import com.novus.salat._
 import uk.gov.gds.common.logging.Logging
 import uk.gov.gds.common.pagination.PaginationSupport
-import uk.gov.gds.common.repository.{ CursorBase, Repository }
-import java.io.OutputStream
-import uk.gov.gds.common.repository.Cursor
+import uk.gov.gds.common.repository.{ Cursor, CursorBase, Repository }
+
+import scala.language.implicitConversions
 
 abstract class MongoRepositoryBase[A <: CaseClass](implicit m: Manifest[A])
     extends Repository[A]
@@ -20,7 +21,10 @@ abstract class MongoRepositoryBase[A <: CaseClass](implicit m: Manifest[A])
   RegisterJodaTimeConversionHelpers()
 
   protected val collection: MongoCollection
-  protected implicit val ctx = NoTypeHints
+  protected implicit val ctx = new Context {
+    val name = "global-no-type-hints"
+    override val typeHintStrategy = NeverTypeHint
+  }
   protected lazy val emptyQuery = MongoDBObject()
 
   protected implicit def domainObj2mongoObj(o: A) = grater[A].asDBObject(o)

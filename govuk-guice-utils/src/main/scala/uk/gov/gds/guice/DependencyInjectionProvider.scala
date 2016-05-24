@@ -52,7 +52,7 @@ object GuiceContainer {
   def initialize(modules: List[Module]) = performInit(modules)
 
   @inline private[guice] final def dependency[A <: AnyRef](implicit m: Manifest[A]) =
-    injector.getInstance(m.erasure.asInstanceOf[Class[A]])
+    injector.getInstance(m.runtimeClass.asInstanceOf[Class[A]])
 
   @inline private final def performInit(modules: List[Module]) {
     synchronized {
